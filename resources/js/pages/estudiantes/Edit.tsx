@@ -71,27 +71,25 @@ export default function Edit({ estudiante, secciones, seccionesInscritas }: Edit
                                 placeholder="Número de teléfono"
                             />
                         </div>
-                        {secciones.length > 0 && (
-                            <div className="space-y-2">
-                                <Label>Sección</Label>
-                                <Select
-                                    value={data.seccion_id}
-                                    onValueChange={(v) => setData('seccion_id', v)}
-                                >
-                                    <SelectTrigger className={fieldErrors.seccion_id ? 'border-red-500' : ''}>
-                                        <SelectValue placeholder="Sin sección asignada" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {secciones.map((s) => (
-                                            <SelectItem key={s.id} value={String(s.id)}>
-                                                {s.nombre} · {s.ciclo} {s.ciclo_escolar}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {fieldErrors.seccion_id && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{fieldErrors.seccion_id}</p>}
-                            </div>
-                        )}
+                        <div className="space-y-2">
+                            <Label>Sección *</Label>
+                            <Select
+                                value={data.seccion_id}
+                                onValueChange={(v) => setData('seccion_id', v)}
+                            >
+                                <SelectTrigger className={fieldErrors.seccion_id ? 'border-red-500' : ''}>
+                                    <SelectValue placeholder="Selecciona una sección" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {secciones.map((s) => (
+                                        <SelectItem key={s.id} value={String(s.id)}>
+                                            {s.nombre} · {s.ciclo} {s.ciclo_escolar}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {fieldErrors.seccion_id && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{fieldErrors.seccion_id}</p>}
+                        </div>
                     </div>
 
                     <div className="flex gap-3">

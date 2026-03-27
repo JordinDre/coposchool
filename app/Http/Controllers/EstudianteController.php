@@ -379,9 +379,7 @@ class EstudianteController extends Controller
 
             $estudiante->assignRole('estudiante');
 
-            if (! empty($request->seccion_id)) {
-                $estudiante->secciones()->sync([$request->seccion_id]);
-            }
+            $estudiante->secciones()->sync([$request->seccion_id]);
 
             DB::commit();
 
@@ -433,7 +431,7 @@ class EstudianteController extends Controller
 
             $user->save();
 
-            $user->secciones()->sync(! empty($request->seccion_id) ? [$request->seccion_id] : []);
+            $user->secciones()->sync([$request->seccion_id]);
 
             DB::commit();
 

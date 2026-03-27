@@ -34,7 +34,7 @@ class StoreEstudianteRequest extends FormRequest
                 },
             ],
             'telefono'   => ['nullable', 'string', 'max:50'],
-            'seccion_id' => ['nullable', 'integer', 'exists:secciones,id'],
+            'seccion_id' => ['required', 'integer', 'exists:secciones,id'],
         ];
     }
 }
