@@ -1,0 +1,36 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Departamento;
+use App\Models\Municipio;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Municipio>
+ */
+class MunicipioFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = Municipio::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'nombre' => fake()->unique()->city(),
+            'departamento_id' => Departamento::factory(),
+            'creado_por' => 1,
+            'actualizado_por' => 1,
+            'eliminado_por' => null,
+        ];
+    }
+}

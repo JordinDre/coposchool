@@ -1,0 +1,91 @@
+import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { useRoles } from '@/hooks/use-roles';
+import { cn } from '@/lib/utils';
+import { type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { type PropsWithChildren, useMemo } from 'react';
+
+const sidebarNavItems: NavItem[] = [
+    {
+        title: 'Perfil',
+        href: '/settings/profile',
+        icon: null,
+    },
+    {
+        title: 'Contraseña',
+        href: '/settings/password',
+        icon: null,
+    },
+    {
+        title: 'Apariencia',
+        href: '/settings/appearance',
+        icon: null,
+    },
+    {
+        title: 'Escuela',
+        href: '/settings/company',
+        icon: null,
+        roles: ['administrador', 'super-admin'],
+    },
+];
+
+export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { url } = usePage();
+    const { hasRole } = useRoles();
+
+    // Obtener el pathname de la URL actual
+    const currentPath = useMemo(() => {
+        try {
+            const urlObj = new URL(url, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+            return urlObj.pathname;
+        } catch {
+            return url.split('?')[0];
+        }
+    }, [url]);
+
+    const filteredNavItems = useMemo(() => {
+        return sidebarNavItems.filter((item) => {
+            if (!item.roles) return true;
+            return hasRole(item.roles);
+        });
+    }, [hasRole]);
+
+    // When server-side rendering, we only render the layout on the client...
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
+    return (
+        <div className="px-4 py-6">
+            <Heading title="Configuración" description="Gestiona tu perfil y configuración de cuenta" />
+
+            <div className="flex flex-col lg:flex-row lg:space-x-12">
+                <aside className="w-full max-w-xl lg:w-48">
+                    <nav className="flex flex-col space-y-1 space-x-0">
+                        {filteredNavItems.map((item, index) => (
+                            <Button
+                                key={`${item.href}-${index}`}
+                                size="sm"
+                                variant="ghost"
+                                asChild
+                                className={cn('w-full justify-start', {
+                                    'bg-muted': currentPath === item.href,
+                                })}
+                            >
+                                <Link href={item.href} prefetch>{item.title}</Link>
+                            </Button>
+                        ))}
+                    </nav>
+                </aside>
+
+                <Separator className="my-6 lg:hidden" />
+
+                <div className="flex-1">
+                    <section className="max-w-xl space-y-12">{children}</section>
+                </div>
+            </div>
+        </div>
+    );
+}
