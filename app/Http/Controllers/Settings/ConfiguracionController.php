@@ -17,7 +17,7 @@ class ConfiguracionController extends Controller
     public function edit(): Response
     {
         return Inertia::render('settings/company', [
-            'configuracion' => Configuracion::first() ?? new Configuracion(),
+            'configuracion' => Configuracion::first() ?? new Configuracion,
         ]);
     }
 

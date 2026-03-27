@@ -41,9 +41,7 @@ const columns: ExtendedColumnDef<UserRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: UserRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />
-        ),
+        cell: ({ row }: { row: { original: UserRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -56,7 +54,11 @@ const columns: ExtendedColumnDef<UserRow>[] = [
                 <Users className="h-4 w-4 text-blue-600" />
                 <div>
                     <div className="font-medium">{row.original.name}</div>
-                    {row.original.deleted_at && <Badge variant="destructive" className="text-xs">Inactivo</Badge>}
+                    {row.original.deleted_at && (
+                        <Badge variant="destructive" className="text-xs">
+                            Inactivo
+                        </Badge>
+                    )}
                 </div>
             </div>
         ),
@@ -65,9 +67,7 @@ const columns: ExtendedColumnDef<UserRow>[] = [
         id: 'email',
         header: 'Correo',
         accessorKey: 'email',
-        cell: ({ row }: { row: { original: UserRow } }) => (
-            <span className="text-sm text-muted-foreground">{row.original.email}</span>
-        ),
+        cell: ({ row }: { row: { original: UserRow } }) => <span className="text-sm text-muted-foreground">{row.original.email}</span>,
     },
     {
         id: 'roles',
@@ -76,7 +76,9 @@ const columns: ExtendedColumnDef<UserRow>[] = [
         cell: ({ row }: { row: { original: UserRow } }) => (
             <div className="flex flex-wrap gap-1">
                 {(row.original.roles || []).map((r) => (
-                    <Badge key={r.id} variant="outline" className="text-xs capitalize">{r.name}</Badge>
+                    <Badge key={r.id} variant="outline" className="text-xs capitalize">
+                        {r.name}
+                    </Badge>
                 ))}
             </div>
         ),
@@ -86,9 +88,7 @@ const columns: ExtendedColumnDef<UserRow>[] = [
         id: 'telefono',
         header: 'Teléfono',
         accessorKey: 'telefono',
-        cell: ({ row }: { row: { original: UserRow } }) => (
-            <span className="text-sm">{row.original.telefono || '—'}</span>
-        ),
+        cell: ({ row }: { row: { original: UserRow } }) => <span className="text-sm">{row.original.telefono || '—'}</span>,
     },
     {
         id: 'created_at',
@@ -120,10 +120,12 @@ export default function Index({ users, roles }: UsuariosIndexProps) {
             <div className="p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between md:gap-3">
                     <Filter roles={roles} />
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex shrink-0 gap-2">
                         {can('crear usuarios') && (
                             <Link href={route('usuarios.create')}>
-                                <Button size="sm" color="blue">Crear Usuario</Button>
+                                <Button size="sm" color="blue">
+                                    Crear Usuario
+                                </Button>
                             </Link>
                         )}
                     </div>

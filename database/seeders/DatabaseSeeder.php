@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'jordindredev@gmail.com'],
             [
-                'name'               => 'Super Admin',
-                'password'           => Hash::make('Pass1234.'),
-                'email_verified_at'  => now(),
-                'creado_por'         => 1,
-                'actualizado_por'    => 1,
-                'eliminado_por'      => null,
+                'name' => 'Super Admin',
+                'password' => Hash::make('Pass1234.'),
+                'email_verified_at' => now(),
+                'creado_por' => 1,
+                'actualizado_por' => 1,
+                'eliminado_por' => null,
             ]
         );
 

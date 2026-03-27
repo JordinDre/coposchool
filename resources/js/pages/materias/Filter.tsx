@@ -41,7 +41,14 @@ export default function Filter() {
                 />
             </div>
             {search && (
-                <Button variant="outline" size="sm" onClick={() => { setSearch(''); applySearch(''); }}>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                        setSearch('');
+                        applySearch('');
+                    }}
+                >
                     <X className="h-4 w-4" />
                 </Button>
             )}

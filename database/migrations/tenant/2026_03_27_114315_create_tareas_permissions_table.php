@@ -27,7 +27,7 @@ return new class extends Migration
         if ($rolAdmin) {
             $rolAdmin->givePermissionTo($permissions);
         }
-        
+
         $rolCatedratico = Role::where('name', 'catedratico')->first();
         if ($rolCatedratico) {
             $rolCatedratico->givePermissionTo($permissions);

@@ -84,11 +84,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-function filterByPermission(
-    items: NavItem[],
-    can: (r: string | string[]) => boolean,
-    hasRole: (r: string | string[]) => boolean,
-): NavItem[] {
+function filterByPermission(items: NavItem[], can: (r: string | string[]) => boolean, hasRole: (r: string | string[]) => boolean): NavItem[] {
     return items
         .map((item) => {
             if (!item.required) {

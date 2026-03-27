@@ -1,4 +1,5 @@
 <?php
+
 use Spatie\Permission\Models\Role;
 
 $role = Role::where('name', 'catedratico')->first();

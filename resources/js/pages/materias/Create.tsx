@@ -42,7 +42,12 @@ export default function Create() {
                                 placeholder="Ej: Matemáticas"
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="codigo">Código</Label>
@@ -53,7 +58,12 @@ export default function Create() {
                                 placeholder="Ej: MAT-01"
                                 className={errors.codigo ? 'border-red-500' : ''}
                             />
-                            {errors.codigo && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.codigo}</p>}
+                            {errors.codigo && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.codigo}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="space-y-2">

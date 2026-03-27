@@ -45,7 +45,12 @@ export default function Edit({ materia }: EditProps) {
                                 onChange={(e) => setData('nombre', e.target.value)}
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="codigo">Código</Label>
@@ -55,17 +60,17 @@ export default function Edit({ materia }: EditProps) {
                                 onChange={(e) => setData('codigo', e.target.value)}
                                 className={errors.codigo ? 'border-red-500' : ''}
                             />
-                            {errors.codigo && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.codigo}</p>}
+                            {errors.codigo && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.codigo}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="descripcion">Descripción</Label>
-                        <Textarea
-                            id="descripcion"
-                            value={data.descripcion}
-                            onChange={(e) => setData('descripcion', e.target.value)}
-                            rows={3}
-                        />
+                        <Textarea id="descripcion" value={data.descripcion} onChange={(e) => setData('descripcion', e.target.value)} rows={3} />
                     </div>
                     <div className="flex gap-3">
                         <Button type="submit" disabled={processing} color="green">

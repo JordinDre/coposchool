@@ -2,15 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import {
-    AlertTriangle, BookOpen, CalendarDays, CalendarRange,
-    ClipboardList, GraduationCap, TrendingUp, Users,
-} from 'lucide-react';
+import { AlertTriangle, BookOpen, CalendarDays, CalendarRange, ClipboardList, GraduationCap, TrendingUp, Users } from 'lucide-react';
 import React from 'react';
-import {
-    Area, AreaChart, Bar, BarChart, CartesianGrid, Cell,
-    ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
-} from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -129,26 +123,32 @@ interface DashboardProps {
 // ── Color maps ────────────────────────────────────────────────────────────────
 
 const DIST_COLORS: Record<string, string> = {
-    'Sobresaliente': '#16a34a',
-    'Muy bueno':     '#4ade80',
-    'Bueno':         '#f59e0b',
-    'Suficiente':    '#f97316',
-    'Reprobado':     '#ef4444',
+    Sobresaliente: '#16a34a',
+    'Muy bueno': '#4ade80',
+    Bueno: '#f59e0b',
+    Suficiente: '#f97316',
+    Reprobado: '#ef4444',
 };
 
 const SUBJECT_LABELS: Record<string, string> = {
     'App\\Models\\Seccion': 'Sección',
     'App\\Models\\Materia': 'Materia',
-    'App\\Models\\Unidad':  'Unidad',
-    'App\\Models\\Nota':    'Nota',
-    'App\\Models\\User':    'Usuario',
+    'App\\Models\\Unidad': 'Unidad',
+    'App\\Models\\Nota': 'Nota',
+    'App\\Models\\User': 'Usuario',
 };
 
 const EVENT_LABELS: Record<string, { label: string; classes: string }> = {
-    created:  { label: 'creó',      classes: 'bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800' },
-    updated:  { label: 'actualizó', classes: 'bg-blue-50 text-blue-700 ring-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:ring-blue-800' },
-    deleted:  { label: 'desactivó', classes: 'bg-red-50 text-red-700 ring-red-200 dark:bg-red-950/40 dark:text-red-400 dark:ring-red-800' },
-    restored: { label: 'reactivó',  classes: 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:ring-amber-800' },
+    created: {
+        label: 'creó',
+        classes: 'bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800',
+    },
+    updated: { label: 'actualizó', classes: 'bg-blue-50 text-blue-700 ring-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:ring-blue-800' },
+    deleted: { label: 'desactivó', classes: 'bg-red-50 text-red-700 ring-red-200 dark:bg-red-950/40 dark:text-red-400 dark:ring-red-800' },
+    restored: {
+        label: 'reactivó',
+        classes: 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:ring-amber-800',
+    },
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -202,9 +202,10 @@ function MiniBar({ pct, color = 'bg-emerald-500' }: { pct: number; color?: strin
 }
 
 function PctBadge({ pct }: { pct: number | null }) {
-    if (pct === null) return <span className="text-muted-foreground/40 text-xs tabular-nums">—</span>;
-    const color = pct >= 70 ? 'text-emerald-700 dark:text-emerald-400' : pct >= 50 ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400';
-    const bar   = pct >= 70 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-500' : 'bg-red-500';
+    if (pct === null) return <span className="text-xs text-muted-foreground/40 tabular-nums">—</span>;
+    const color =
+        pct >= 70 ? 'text-emerald-700 dark:text-emerald-400' : pct >= 50 ? 'text-amber-700 dark:text-amber-400' : 'text-red-700 dark:text-red-400';
+    const bar = pct >= 70 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-500' : 'bg-red-500';
     return (
         <div className="flex items-center gap-2">
             <div className="w-20">
@@ -216,12 +217,17 @@ function PctBadge({ pct }: { pct: number | null }) {
 }
 
 function CardLabel({ children }: { children: React.ReactNode }) {
-    return <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{children}</p>;
+    return <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">{children}</p>;
 }
 
 // ── Custom tooltip ────────────────────────────────────────────────────────────
 
-function ChartTip({ active, payload, label, format }: {
+function ChartTip({
+    active,
+    payload,
+    label,
+    format,
+}: {
     active?: boolean;
     payload?: Array<{ value: number; name?: string }>;
     label?: string;
@@ -232,9 +238,7 @@ function ChartTip({ active, payload, label, format }: {
     return (
         <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-md">
             <p className="font-medium text-foreground">{label}</p>
-            {val !== undefined && (
-                <p className="mt-0.5 tabular-nums text-muted-foreground">{format ? format(val) : val}</p>
-            )}
+            {val !== undefined && <p className="mt-0.5 text-muted-foreground tabular-nums">{format ? format(val) : val}</p>}
         </div>
     );
 }
@@ -264,11 +268,21 @@ function DistribucionChart({ data }: { data: DistribucionNota[] }) {
                             active={active}
                             payload={payload as Array<{ value: number }>}
                             label={label as string}
-                            format={(v) => `${v} estudiantes · ${total > 0 ? Math.round(v / total * 100) : 0}%`}
+                            format={(v) => `${v} estudiantes · ${total > 0 ? Math.round((v / total) * 100) : 0}%`}
                         />
                     )}
                 />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={28} label={{ position: 'right', fontSize: 10, fill: 'hsl(var(--muted-foreground))', formatter: (v: number) => total > 0 ? `${Math.round(v / total * 100)}%` : '' }}>
+                <Bar
+                    dataKey="count"
+                    radius={[0, 4, 4, 0]}
+                    maxBarSize={28}
+                    label={{
+                        position: 'right',
+                        fontSize: 10,
+                        fill: 'hsl(var(--muted-foreground))',
+                        formatter: (v: number) => (total > 0 ? `${Math.round((v / total) * 100)}%` : ''),
+                    }}
+                >
                     {data.map((entry) => (
                         <Cell key={entry.rango} fill={DIST_COLORS[entry.rango] ?? '#94a3b8'} />
                     ))}
@@ -278,9 +292,7 @@ function DistribucionChart({ data }: { data: DistribucionNota[] }) {
     );
 }
 
-function PromedioUnidadChart({ data }: {
-    data: { nombre: string; orden: number; promedio: number | null; count: number }[];
-}) {
+function PromedioUnidadChart({ data }: { data: { nombre: string; orden: number; promedio: number | null; count: number }[] }) {
     if (data.length === 0) return <Empty>Sin unidades en el ciclo.</Empty>;
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -292,7 +304,7 @@ function PromedioUnidadChart({ data }: {
                     cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
                     content={({ active, payload, label }) => {
                         if (!active || !payload?.length) return null;
-                        const item = data.find(d => d.nombre === label);
+                        const item = data.find((d) => d.nombre === label);
                         return (
                             <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-md">
                                 <p className="font-medium">{label}</p>
@@ -319,7 +331,13 @@ function TopMateriasChart({ data }: { data: TopMateria[] }) {
         <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} layout="vertical" margin={{ top: 2, right: 44, bottom: 2, left: 4 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
-                <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} allowDecimals={false} />
+                <XAxis
+                    type="number"
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                />
                 <YAxis
                     type="category"
                     dataKey="nombre"
@@ -327,24 +345,30 @@ function TopMateriasChart({ data }: { data: TopMateria[] }) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(v: string) => v.length > 17 ? v.slice(0, 15) + '…' : v}
+                    tickFormatter={(v: string) => (v.length > 17 ? v.slice(0, 15) + '…' : v)}
                 />
                 <Tooltip
                     cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
                     content={({ active, payload, label }) => {
                         if (!active || !payload?.length) return null;
-                        const d = data.find(x => x.nombre === label);
+                        const d = data.find((x) => x.nombre === label);
                         return (
                             <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-md">
                                 <p className="font-medium">{label}</p>
-                                <p className="mt-0.5 text-muted-foreground">{d?.reprobadas} reprobados / {d?.total} notas ({d?.pct_reprobadas}%)</p>
+                                <p className="mt-0.5 text-muted-foreground">
+                                    {d?.reprobadas} reprobados / {d?.total} notas ({d?.pct_reprobadas}%)
+                                </p>
                                 <p className="text-muted-foreground">Promedio: {d?.promedio}</p>
                             </div>
                         );
                     }}
                 />
-                <Bar dataKey="reprobadas" radius={[0, 4, 4, 0]} maxBarSize={26}
-                    label={{ position: 'right', fontSize: 10, fill: 'hsl(var(--muted-foreground))', formatter: (v: number) => v > 0 ? v : '' }}>
+                <Bar
+                    dataKey="reprobadas"
+                    radius={[0, 4, 4, 0]}
+                    maxBarSize={26}
+                    label={{ position: 'right', fontSize: 10, fill: 'hsl(var(--muted-foreground))', formatter: (v: number) => (v > 0 ? v : '') }}
+                >
                     {data.map((entry) => (
                         <Cell key={entry.nombre} fill={entry.pct_reprobadas >= 50 ? '#ef4444' : entry.pct_reprobadas >= 30 ? '#f97316' : '#f59e0b'} />
                     ))}
@@ -362,13 +386,19 @@ function TendenciaRegistroChart({ data }: { data: TendenciaDia[] }) {
             <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 4, left: 0 }}>
                 <defs>
                     <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.3} />
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                     </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis dataKey="label" tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} interval={2} />
-                <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} allowDecimals={false} width={24} />
+                <YAxis
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                    width={24}
+                />
                 <Tooltip
                     cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1 }}
                     content={({ active, payload, label }) => {
@@ -381,25 +411,37 @@ function TendenciaRegistroChart({ data }: { data: TendenciaDia[] }) {
                         );
                     }}
                 />
-                <Area type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} fill="url(#areaGrad)"
+                <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    fill="url(#areaGrad)"
                     dot={{ fill: '#3b82f6', r: 2.5, strokeWidth: 0 }}
-                    activeDot={{ r: 4.5, fill: '#3b82f6', strokeWidth: 0 }} />
+                    activeDot={{ r: 4.5, fill: '#3b82f6', strokeWidth: 0 }}
+                />
             </AreaChart>
         </ResponsiveContainer>
     );
 }
 
 function TendenciaCatedraticoChart({ data }: { data: TendenciaUnidad[] }) {
-    if (data.length === 0 || data.every(d => d.promedio === null)) return <Empty>Sin notas registradas aún.</Empty>;
+    if (data.length === 0 || data.every((d) => d.promedio === null)) return <Empty>Sin notas registradas aún.</Empty>;
     return (
         <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis dataKey="nombre" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} tickLine={false} axisLine={false} width={26} />
-                <Tooltip cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
+                <Tooltip
+                    cursor={{ fill: 'hsl(var(--muted))', opacity: 0.4 }}
                     content={({ active, payload, label }) => (
-                        <ChartTip active={active} payload={payload as Array<{ value: number }>} label={label as string} format={(v) => `Promedio: ${v}`} />
+                        <ChartTip
+                            active={active}
+                            payload={payload as Array<{ value: number }>}
+                            label={label as string}
+                            format={(v) => `Promedio: ${v}`}
+                        />
                     )}
                 />
                 <ReferenceLine y={60} stroke="#ef4444" strokeDasharray="4 3" strokeOpacity={0.5} />
@@ -416,20 +458,16 @@ function TendenciaCatedraticoChart({ data }: { data: TendenciaUnidad[] }) {
 // ── Empty state ───────────────────────────────────────────────────────────────
 
 function Empty({ children }: { children: React.ReactNode }) {
-    return (
-        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-            {children}
-        </div>
-    );
+    return <div className="flex h-full items-center justify-center text-xs text-muted-foreground">{children}</div>;
 }
 
 // ── Activity row ──────────────────────────────────────────────────────────────
 
 function ActivityRow({ actividad }: { actividad: Actividad }) {
-    const event       = actividad.evento ?? '';
-    const eventInfo   = EVENT_LABELS[event] ?? { label: event, classes: 'bg-muted text-muted-foreground ring-border' };
-    const subjectLbl  = actividad.subject_type ? (SUBJECT_LABELS[actividad.subject_type] ?? actividad.subject_type.split('\\').pop()) : null;
-    const attrs       = actividad.propiedades?.attributes ?? {};
+    const event = actividad.evento ?? '';
+    const eventInfo = EVENT_LABELS[event] ?? { label: event, classes: 'bg-muted text-muted-foreground ring-border' };
+    const subjectLbl = actividad.subject_type ? (SUBJECT_LABELS[actividad.subject_type] ?? actividad.subject_type.split('\\').pop()) : null;
+    const attrs = actividad.propiedades?.attributes ?? {};
     const subjectName = (attrs.nombre as string) ?? (attrs.name as string) ?? (attrs.nota != null ? `Nota: ${attrs.nota}` : null);
 
     return (
@@ -443,8 +481,18 @@ function ActivityRow({ actividad }: { actividad: Actividad }) {
                     <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ring-1 ${eventInfo.classes}`}>
                         {eventInfo.label}
                     </span>
-                    {subjectLbl  && <>{' '}<span className="text-muted-foreground">{subjectLbl}</span></>}
-                    {subjectName && <>{' '}<span className="font-medium">"{subjectName}"</span></>}
+                    {subjectLbl && (
+                        <>
+                            {' '}
+                            <span className="text-muted-foreground">{subjectLbl}</span>
+                        </>
+                    )}
+                    {subjectName && (
+                        <>
+                            {' '}
+                            <span className="font-medium">"{subjectName}"</span>
+                        </>
+                    )}
                 </p>
                 {event === 'updated' && actividad.propiedades.old && (
                     <div className="mt-1 space-y-0.5">
@@ -472,7 +520,7 @@ function ActivityRow({ actividad }: { actividad: Actividad }) {
 function SectionTitle({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
     return (
         <div className="flex items-center justify-between">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{children}</h2>
+            <h2 className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">{children}</h2>
             {action}
         </div>
     );
@@ -496,44 +544,100 @@ export default function Dashboard({
 }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
 
-    const totalNotas14d  = notasUltimos14Dias.reduce((s, d) => s + d.count, 0);
+    const totalNotas14d = notasUltimos14Dias.reduce((s, d) => s + d.count, 0);
     const totalDistNotas = distribucionNotas.reduce((s, d) => s + d.count, 0);
 
     const hasDistribucion = distribucionNotas.length > 0 && totalDistNotas > 0;
-    const hasPromedioUnd  = (stats.promedioUnidades?.length ?? 0) > 0;
-    const hasTopMaterias  = topMaterias.length > 0;
-    const hasTendencia    = notasUltimos14Dias.length > 0;
-    const hasAtRisk       = estudiantesEnRiesgo.length > 0;
-    const hasRend         = rendimientoSecciones.length > 0;
-    const hasCatedratico  = misSecciones.length > 0;
-    const hasEstudiante   = misNotas.length > 0;
-    const hasActivity     = actividadReciente.length > 0;
+    const hasPromedioUnd = (stats.promedioUnidades?.length ?? 0) > 0;
+    const hasTopMaterias = topMaterias.length > 0;
+    const hasTendencia = notasUltimos14Dias.length > 0;
+    const hasAtRisk = estudiantesEnRiesgo.length > 0;
+    const hasRend = rendimientoSecciones.length > 0;
+    const hasCatedratico = misSecciones.length > 0;
+    const hasEstudiante = misNotas.length > 0;
+    const hasActivity = actividadReciente.length > 0;
 
     // Build stat rows
     const statCards = [
-        stats.totalEstudiantes !== undefined  && { key: 'est',  label: 'Estudiantes',      value: stats.totalEstudiantes,  sub: 'activos',     icon: GraduationCap, href: '/estudiantes',  accent: 'text-foreground' },
-        stats.totalCatedraticos !== undefined && { key: 'cat',  label: 'Catedráticos',     value: stats.totalCatedraticos, sub: 'activos',     icon: Users,         href: '/catedraticos', accent: 'text-foreground' },
-        stats.totalSecciones !== undefined    && { key: 'sec',  label: 'Secciones',        value: stats.totalSecciones,    sub: 'en el ciclo', icon: BookOpen,      href: '/secciones',    accent: 'text-foreground' },
-        stats.notasRegistradas !== undefined  && { key: 'not',  label: 'Notas reg.',       value: stats.notasRegistradas,  sub: 'en el ciclo', icon: ClipboardList, href: '/notas',        accent: 'text-foreground' },
-        stats.promedioGeneral != null         && { key: 'prom', label: 'Promedio',         value: stats.promedioGeneral,   sub: 'general ciclo', icon: TrendingUp,  href: '/notas',        accent: promedioColor(stats.promedioGeneral ?? null) },
-        stats.pctAprobados != null            && { key: 'pct',  label: '% Aprobados',      value: `${stats.pctAprobados}%`, sub: 'del ciclo',  icon: AlertTriangle, href: '/notas',        accent: (stats.pctAprobados ?? 0) >= 70 ? 'text-emerald-600 dark:text-emerald-400' : (stats.pctAprobados ?? 0) >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400' },
-    ].filter(Boolean) as { key: string; label: string; value: number | string; sub: string; icon: React.ComponentType<{ className?: string }>; href: string; accent: string }[];
+        stats.totalEstudiantes !== undefined && {
+            key: 'est',
+            label: 'Estudiantes',
+            value: stats.totalEstudiantes,
+            sub: 'activos',
+            icon: GraduationCap,
+            href: '/estudiantes',
+            accent: 'text-foreground',
+        },
+        stats.totalCatedraticos !== undefined && {
+            key: 'cat',
+            label: 'Catedráticos',
+            value: stats.totalCatedraticos,
+            sub: 'activos',
+            icon: Users,
+            href: '/catedraticos',
+            accent: 'text-foreground',
+        },
+        stats.totalSecciones !== undefined && {
+            key: 'sec',
+            label: 'Secciones',
+            value: stats.totalSecciones,
+            sub: 'en el ciclo',
+            icon: BookOpen,
+            href: '/secciones',
+            accent: 'text-foreground',
+        },
+        stats.notasRegistradas !== undefined && {
+            key: 'not',
+            label: 'Notas reg.',
+            value: stats.notasRegistradas,
+            sub: 'en el ciclo',
+            icon: ClipboardList,
+            href: '/notas',
+            accent: 'text-foreground',
+        },
+        stats.promedioGeneral != null && {
+            key: 'prom',
+            label: 'Promedio',
+            value: stats.promedioGeneral,
+            sub: 'general ciclo',
+            icon: TrendingUp,
+            href: '/notas',
+            accent: promedioColor(stats.promedioGeneral ?? null),
+        },
+        stats.pctAprobados != null && {
+            key: 'pct',
+            label: '% Aprobados',
+            value: `${stats.pctAprobados}%`,
+            sub: 'del ciclo',
+            icon: AlertTriangle,
+            href: '/notas',
+            accent:
+                (stats.pctAprobados ?? 0) >= 70
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : (stats.pctAprobados ?? 0) >= 50
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-red-600 dark:text-red-400',
+        },
+    ].filter(Boolean) as {
+        key: string;
+        label: string;
+        value: number | string;
+        sub: string;
+        icon: React.ComponentType<{ className?: string }>;
+        href: string;
+        accent: string;
+    }[];
 
     return (
         <>
             <Head title="Dashboard" />
 
             <div className="space-y-6 p-5">
-
                 {/* ── Header ── */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-lg font-semibold tracking-tight">
-                            Bienvenido, {auth.user?.name?.split(' ')[0]}
-                        </h1>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                            Panel de control · Ciclo escolar {cicloEscolar}
-                        </p>
+                        <h1 className="text-lg font-semibold tracking-tight">Bienvenido, {auth.user?.name?.split(' ')[0]}</h1>
+                        <p className="mt-0.5 text-xs text-muted-foreground">Panel de control · Ciclo escolar {cicloEscolar}</p>
                     </div>
                     <div className="flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1.5 text-xs font-medium">
                         <CalendarDays className="size-3 text-muted-foreground" />
@@ -542,47 +646,51 @@ export default function Dashboard({
                 </div>
 
                 {/* ── Unidad activa ── */}
-                {unidadActual && (() => {
-                    const fin  = unidadActual.fecha_fin ? new Date(unidadActual.fecha_fin + 'T12:00:00') : null;
-                    const dias = fin ? Math.max(0, Math.ceil((fin.getTime() - Date.now()) / 86400000)) : null;
-                    const pctTranscurrido = (() => {
-                        if (!unidadActual.fecha_inicio || !unidadActual.fecha_fin) return null;
-                        const start = new Date(unidadActual.fecha_inicio + 'T00:00:00').getTime();
-                        const end   = new Date(unidadActual.fecha_fin   + 'T23:59:59').getTime();
-                        const now   = Date.now();
-                        return Math.min(100, Math.max(0, Math.round((now - start) / (end - start) * 100)));
-                    })();
-                    return (
-                        <div className="flex items-center gap-4 rounded-xl border border-primary/20 bg-primary/5 px-5 py-3.5">
-                            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                                <CalendarRange className="size-4 text-primary" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-sm font-semibold text-foreground">{unidadActual.nombre}</span>
-                                    {unidadActual.fecha_inicio && unidadActual.fecha_fin && (
-                                        <span className="text-xs text-muted-foreground">
-                                            {fmtDate(unidadActual.fecha_inicio)} – {fmtDate(unidadActual.fecha_fin)}
-                                        </span>
+                {unidadActual &&
+                    (() => {
+                        const fin = unidadActual.fecha_fin ? new Date(unidadActual.fecha_fin + 'T12:00:00') : null;
+                        const dias = fin ? Math.max(0, Math.ceil((fin.getTime() - Date.now()) / 86400000)) : null;
+                        const pctTranscurrido = (() => {
+                            if (!unidadActual.fecha_inicio || !unidadActual.fecha_fin) return null;
+                            const start = new Date(unidadActual.fecha_inicio + 'T00:00:00').getTime();
+                            const end = new Date(unidadActual.fecha_fin + 'T23:59:59').getTime();
+                            const now = Date.now();
+                            return Math.min(100, Math.max(0, Math.round(((now - start) / (end - start)) * 100)));
+                        })();
+                        return (
+                            <div className="flex items-center gap-4 rounded-xl border border-primary/20 bg-primary/5 px-5 py-3.5">
+                                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                    <CalendarRange className="size-4 text-primary" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-sm font-semibold text-foreground">{unidadActual.nombre}</span>
+                                        {unidadActual.fecha_inicio && unidadActual.fecha_fin && (
+                                            <span className="text-xs text-muted-foreground">
+                                                {fmtDate(unidadActual.fecha_inicio)} – {fmtDate(unidadActual.fecha_fin)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {pctTranscurrido !== null && (
+                                        <div className="mt-1.5 flex items-center gap-2">
+                                            <div className="relative h-1 w-32 overflow-hidden rounded-full bg-primary/15">
+                                                <div
+                                                    className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                                                    style={{ width: `${pctTranscurrido}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-[10px] text-primary/70">{pctTranscurrido}% transcurrido</span>
+                                        </div>
                                     )}
                                 </div>
-                                {pctTranscurrido !== null && (
-                                    <div className="mt-1.5 flex items-center gap-2">
-                                        <div className="relative h-1 w-32 overflow-hidden rounded-full bg-primary/15">
-                                            <div className="absolute inset-y-0 left-0 rounded-full bg-primary" style={{ width: `${pctTranscurrido}%` }} />
-                                        </div>
-                                        <span className="text-[10px] text-primary/70">{pctTranscurrido}% transcurrido</span>
-                                    </div>
+                                {dias !== null && (
+                                    <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+                                        {dias === 0 ? 'Termina hoy' : `${dias}d restantes`}
+                                    </span>
                                 )}
                             </div>
-                            {dias !== null && (
-                                <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                                    {dias === 0 ? 'Termina hoy' : `${dias}d restantes`}
-                                </span>
-                            )}
-                        </div>
-                    );
-                })()}
+                        );
+                    })()}
 
                 {/* ── Stat cards ── */}
                 {statCards.length > 0 && (
@@ -607,7 +715,6 @@ export default function Dashboard({
                 {/* ── Row 1: Distribución (2/3) + Tendencia registro (1/3) ── */}
                 {(hasDistribucion || hasTendencia) && (
                     <div className="grid gap-4 lg:grid-cols-3">
-
                         {hasDistribucion && (
                             <Card className="lg:col-span-2">
                                 <CardHeader className="border-b px-5 py-4">
@@ -619,29 +726,35 @@ export default function Dashboard({
                                             </p>
                                         </div>
                                         <div className="flex flex-wrap justify-end gap-x-3 gap-y-1 pt-0.5">
-                                            {distribucionNotas.slice().reverse().map((d) => (
-                                                <span key={d.rango} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                                    <span className="size-2 rounded-full" style={{ background: DIST_COLORS[d.rango] }} />
-                                                    {d.rango}
-                                                </span>
-                                            ))}
+                                            {distribucionNotas
+                                                .slice()
+                                                .reverse()
+                                                .map((d) => (
+                                                    <span key={d.rango} className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                                        <span className="size-2 rounded-full" style={{ background: DIST_COLORS[d.rango] }} />
+                                                        {d.rango}
+                                                    </span>
+                                                ))}
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="px-2 pb-3 pt-4">
+                                <CardContent className="px-2 pt-4 pb-3">
                                     <div style={{ height: 192 }}>
                                         <DistribucionChart data={distribucionNotas} />
                                     </div>
                                     <div className="mt-3 grid grid-cols-5 divide-x border-t pt-3">
-                                        {distribucionNotas.slice().reverse().map((d) => (
-                                            <div key={d.rango} className="px-2 text-center">
-                                                <p className="text-sm font-bold tabular-nums" style={{ color: DIST_COLORS[d.rango] }}>
-                                                    {totalDistNotas > 0 ? Math.round(d.count / totalDistNotas * 100) : 0}%
-                                                </p>
-                                                <p className="text-[9px] leading-tight text-muted-foreground">{d.rango}</p>
-                                                <p className="text-[9px] text-muted-foreground/50">{d.count} notas</p>
-                                            </div>
-                                        ))}
+                                        {distribucionNotas
+                                            .slice()
+                                            .reverse()
+                                            .map((d) => (
+                                                <div key={d.rango} className="px-2 text-center">
+                                                    <p className="text-sm font-bold tabular-nums" style={{ color: DIST_COLORS[d.rango] }}>
+                                                        {totalDistNotas > 0 ? Math.round((d.count / totalDistNotas) * 100) : 0}%
+                                                    </p>
+                                                    <p className="text-[9px] leading-tight text-muted-foreground">{d.rango}</p>
+                                                    <p className="text-[9px] text-muted-foreground/50">{d.count} notas</p>
+                                                </div>
+                                            ))}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -656,21 +769,18 @@ export default function Dashboard({
                                             <p className="mt-0.5 text-xs text-muted-foreground">Notas ingresadas · 14 días</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xl font-bold tabular-nums text-blue-600 dark:text-blue-400">{totalNotas14d}</p>
+                                            <p className="text-xl font-bold text-blue-600 tabular-nums dark:text-blue-400">{totalNotas14d}</p>
                                             <p className="text-[10px] text-muted-foreground">notas</p>
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="px-2 pb-3 pt-4">
+                                <CardContent className="px-2 pt-4 pb-3">
                                     <div style={{ height: 192 }}>
                                         <TendenciaRegistroChart data={notasUltimos14Dias} />
                                     </div>
                                     <div className="mt-3 border-t pt-3 text-center">
                                         <p className="text-xs text-muted-foreground">
-                                            Promedio diario:{' '}
-                                            <span className="font-semibold text-foreground">
-                                                {(totalNotas14d / 14).toFixed(1)}
-                                            </span>
+                                            Promedio diario: <span className="font-semibold text-foreground">{(totalNotas14d / 14).toFixed(1)}</span>
                                         </p>
                                     </div>
                                 </CardContent>
@@ -682,20 +792,20 @@ export default function Dashboard({
                 {/* ── Row 2: Promedio por unidad + Top materias reprobadas ── */}
                 {(hasPromedioUnd || hasTopMaterias) && (
                     <div className="grid gap-4 lg:grid-cols-2">
-
                         {hasPromedioUnd && (
                             <Card>
                                 <CardHeader className="border-b px-5 py-4">
                                     <CardTitle className="text-sm font-semibold">Promedio general por unidad</CardTitle>
-                                    <p className="mt-0.5 text-xs text-muted-foreground">
-                                        Promedio de todas las secciones · línea roja = mínimo (60)
-                                    </p>
+                                    <p className="mt-0.5 text-xs text-muted-foreground">Promedio de todas las secciones · línea roja = mínimo (60)</p>
                                 </CardHeader>
-                                <CardContent className="px-2 pb-3 pt-4">
+                                <CardContent className="px-2 pt-4 pb-3">
                                     <div style={{ height: 200 }}>
                                         <PromedioUnidadChart data={stats.promedioUnidades!} />
                                     </div>
-                                    <div className="mt-3 grid divide-x border-t pt-3" style={{ gridTemplateColumns: `repeat(${stats.promedioUnidades!.length}, 1fr)` }}>
+                                    <div
+                                        className="mt-3 grid divide-x border-t pt-3"
+                                        style={{ gridTemplateColumns: `repeat(${stats.promedioUnidades!.length}, 1fr)` }}
+                                    >
                                         {stats.promedioUnidades!.map((u) => (
                                             <div key={u.nombre} className="px-2 text-center">
                                                 <p className={`text-sm font-bold tabular-nums ${promedioColor(u.promedio)}`}>
@@ -723,14 +833,19 @@ export default function Dashboard({
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="px-2 pb-3 pt-4">
+                                <CardContent className="px-2 pt-4 pb-3">
                                     <div style={{ height: 200 }}>
                                         <TopMateriasChart data={topMaterias} />
                                     </div>
                                     <div className="mt-3 flex items-center justify-end gap-4 border-t pt-3">
-                                        {[['#ef4444','≥50%'],['#f97316','30–49%'],['#f59e0b','<30%']].map(([c,l]) => (
+                                        {[
+                                            ['#ef4444', '≥50%'],
+                                            ['#f97316', '30–49%'],
+                                            ['#f59e0b', '<30%'],
+                                        ].map(([c, l]) => (
                                             <span key={l} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                                                <span className="inline-block size-2 rounded-full" style={{ background: c }} />{l}
+                                                <span className="inline-block size-2 rounded-full" style={{ background: c }} />
+                                                {l}
                                             </span>
                                         ))}
                                     </div>
@@ -743,12 +858,11 @@ export default function Dashboard({
                 {/* ── Row 3: Rendimiento secciones + Estudiantes en riesgo ── */}
                 {(hasRend || hasAtRisk) && (
                     <div className="grid gap-4 lg:grid-cols-2">
-
                         {hasRend && (
                             <section className="space-y-3">
                                 <SectionTitle
                                     action={
-                                        <Link href="/notas" className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+                                        <Link href="/notas" className="text-[11px] text-muted-foreground transition-colors hover:text-foreground">
                                             Ver notas →
                                         </Link>
                                     }
@@ -760,23 +874,33 @@ export default function Dashboard({
                                         <table className="w-full text-sm">
                                             <thead>
                                                 <tr className="border-b bg-muted/20">
-                                                    <th className="px-4 py-2.5 text-left"><CardLabel>Sección</CardLabel></th>
-                                                    <th className="px-4 py-2.5 text-right"><CardLabel>Alumnos</CardLabel></th>
-                                                    <th className="px-4 py-2.5 text-right"><CardLabel>Promedio</CardLabel></th>
-                                                    <th className="px-4 py-2.5"><CardLabel>% Aprobados</CardLabel></th>
+                                                    <th className="px-4 py-2.5 text-left">
+                                                        <CardLabel>Sección</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5 text-right">
+                                                        <CardLabel>Alumnos</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5 text-right">
+                                                        <CardLabel>Promedio</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5">
+                                                        <CardLabel>% Aprobados</CardLabel>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
                                                 {rendimientoSecciones.map((sec) => (
                                                     <tr key={sec.id} className="transition-colors hover:bg-muted/10">
                                                         <td className="px-4 py-2.5">
-                                                            <div className="font-medium text-sm">{sec.nombre}</div>
-                                                            <div className="text-[10px] capitalize text-muted-foreground">{sec.ciclo}</div>
+                                                            <div className="text-sm font-medium">{sec.nombre}</div>
+                                                            <div className="text-[10px] text-muted-foreground capitalize">{sec.ciclo}</div>
                                                         </td>
-                                                        <td className="px-4 py-2.5 text-right tabular-nums text-muted-foreground text-sm">{sec.total_estudiantes}</td>
+                                                        <td className="px-4 py-2.5 text-right text-sm text-muted-foreground tabular-nums">
+                                                            {sec.total_estudiantes}
+                                                        </td>
                                                         <td className="px-4 py-2.5 text-right">
                                                             {sec.promedio !== null ? (
-                                                                <span className={`tabular-nums font-semibold text-sm ${promedioColor(sec.promedio)}`}>
+                                                                <span className={`text-sm font-semibold tabular-nums ${promedioColor(sec.promedio)}`}>
                                                                     {sec.promedio.toFixed(1)}
                                                                 </span>
                                                             ) : (
@@ -808,22 +932,30 @@ export default function Dashboard({
                                         <table className="w-full text-sm">
                                             <thead>
                                                 <tr className="border-b bg-muted/20">
-                                                    <th className="px-4 py-2.5 text-left"><CardLabel>Estudiante</CardLabel></th>
-                                                    <th className="px-4 py-2.5 text-right"><CardLabel>Reprobadas</CardLabel></th>
-                                                    <th className="px-4 py-2.5 text-right"><CardLabel>Total</CardLabel></th>
-                                                    <th className="px-4 py-2.5"><CardLabel>Gravedad</CardLabel></th>
+                                                    <th className="px-4 py-2.5 text-left">
+                                                        <CardLabel>Estudiante</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5 text-right">
+                                                        <CardLabel>Reprobadas</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5 text-right">
+                                                        <CardLabel>Total</CardLabel>
+                                                    </th>
+                                                    <th className="px-4 py-2.5">
+                                                        <CardLabel>Gravedad</CardLabel>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y">
                                                 {estudiantesEnRiesgo.map((est) => {
-                                                    const pct = est.total > 0 ? Math.round(est.reprobadas / est.total * 100) : 0;
+                                                    const pct = est.total > 0 ? Math.round((est.reprobadas / est.total) * 100) : 0;
                                                     return (
                                                         <tr key={est.id} className="transition-colors hover:bg-muted/10">
-                                                            <td className="px-4 py-2.5 font-medium text-sm">{est.name}</td>
-                                                            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-red-600 dark:text-red-400 text-sm">
+                                                            <td className="px-4 py-2.5 text-sm font-medium">{est.name}</td>
+                                                            <td className="px-4 py-2.5 text-right text-sm font-semibold text-red-600 tabular-nums dark:text-red-400">
                                                                 {est.reprobadas}
                                                             </td>
-                                                            <td className="px-4 py-2.5 text-right tabular-nums text-muted-foreground text-sm">
+                                                            <td className="px-4 py-2.5 text-right text-sm text-muted-foreground tabular-nums">
                                                                 {est.total}
                                                             </td>
                                                             <td className="px-4 py-2.5">
@@ -831,7 +963,7 @@ export default function Dashboard({
                                                                     <div className="w-16">
                                                                         <MiniBar pct={pct} color="bg-red-500" />
                                                                     </div>
-                                                                    <span className="w-8 text-right text-xs font-semibold tabular-nums text-red-600 dark:text-red-400">
+                                                                    <span className="w-8 text-right text-xs font-semibold text-red-600 tabular-nums dark:text-red-400">
                                                                         {pct}%
                                                                     </span>
                                                                 </div>
@@ -875,7 +1007,7 @@ export default function Dashboard({
                                         <CardHeader className="border-b px-4 py-3">
                                             <div className="flex items-start justify-between gap-2">
                                                 <CardTitle className="text-sm leading-snug">{seccion.nombre}</CardTitle>
-                                                <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+                                                <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground capitalize">
                                                     {seccion.ciclo}
                                                 </span>
                                             </div>
@@ -897,16 +1029,14 @@ export default function Dashboard({
                             </div>
                         </section>
 
-                        {notasTendenciaCatedratico.some(d => d.promedio !== null) && (
+                        {notasTendenciaCatedratico.some((d) => d.promedio !== null) && (
                             <section className="space-y-3">
                                 <SectionTitle>Tendencia por unidad · mis materias</SectionTitle>
                                 <Card>
                                     <CardHeader className="border-b px-5 py-4">
-                                        <p className="text-xs text-muted-foreground">
-                                            Promedio de mis materias asignadas · línea roja = mínimo (60)
-                                        </p>
+                                        <p className="text-xs text-muted-foreground">Promedio de mis materias asignadas · línea roja = mínimo (60)</p>
                                     </CardHeader>
-                                    <CardContent className="px-2 pb-3 pt-4">
+                                    <CardContent className="px-2 pt-4 pb-3">
                                         <div style={{ height: 200 }}>
                                             <TendenciaCatedraticoChart data={notasTendenciaCatedratico} />
                                         </div>
@@ -926,10 +1056,18 @@ export default function Dashboard({
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="border-b bg-muted/20">
-                                            <th className="px-4 py-2.5 text-left"><CardLabel>Sección</CardLabel></th>
-                                            <th className="px-4 py-2.5 text-left"><CardLabel>Materia</CardLabel></th>
-                                            <th className="px-4 py-2.5 text-left"><CardLabel>Unidad</CardLabel></th>
-                                            <th className="px-4 py-2.5 text-right"><CardLabel>Nota</CardLabel></th>
+                                            <th className="px-4 py-2.5 text-left">
+                                                <CardLabel>Sección</CardLabel>
+                                            </th>
+                                            <th className="px-4 py-2.5 text-left">
+                                                <CardLabel>Materia</CardLabel>
+                                            </th>
+                                            <th className="px-4 py-2.5 text-left">
+                                                <CardLabel>Unidad</CardLabel>
+                                            </th>
+                                            <th className="px-4 py-2.5 text-right">
+                                                <CardLabel>Nota</CardLabel>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y">
@@ -939,9 +1077,7 @@ export default function Dashboard({
                                                 <td className="px-4 py-2.5 font-medium">{nota.materia.nombre}</td>
                                                 <td className="px-4 py-2.5 text-muted-foreground">{nota.unidad.nombre}</td>
                                                 <td className="px-4 py-2.5 text-right">
-                                                    <span className={`font-semibold tabular-nums ${gradeColor(nota.nota)}`}>
-                                                        {nota.nota ?? '—'}
-                                                    </span>
+                                                    <span className={`font-semibold tabular-nums ${gradeColor(nota.nota)}`}>{nota.nota ?? '—'}</span>
                                                     {nota.nota !== null && nota.nota >= 60 ? (
                                                         <span className="ml-1.5 inline-flex items-center rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800">
                                                             Aprobado

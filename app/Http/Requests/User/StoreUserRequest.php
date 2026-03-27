@@ -24,11 +24,11 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:20'],
-            'roles'    => [
+            'roles' => [
                 'required',
                 'array',
                 'min:1',
@@ -50,16 +50,16 @@ class StoreUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'      => 'El nombre es obligatorio.',
-            'email.required'     => 'El correo electrónico es obligatorio.',
-            'email.email'        => 'El correo electrónico debe tener un formato válido.',
-            'email.unique'       => 'Este correo electrónico ya está registrado.',
-            'password.required'  => 'La contraseña es obligatoria.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe tener un formato válido.',
+            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.',
-            'roles.required'     => 'Debe asignar al menos un rol al usuario.',
-            'roles.min'          => 'Debe asignar al menos un rol al usuario.',
-            'roles.*.exists'     => 'Uno o más roles seleccionados no son válidos.',
+            'roles.required' => 'Debe asignar al menos un rol al usuario.',
+            'roles.min' => 'Debe asignar al menos un rol al usuario.',
+            'roles.*.exists' => 'Uno o más roles seleccionados no son válidos.',
         ];
     }
 }

@@ -65,12 +65,7 @@ export function NavMain({ items = [], footerItems = [] }: { items: NavItem[]; fo
                                 {showDivider && <div className="my-2 border-t border-sidebar-border" />}
                                 <SidebarMenuItem>
                                     <SidebarMenuButton asChild isActive={active} tooltip={{ children: item.title }}>
-                                        <Link
-                                            href={item.href ?? '#'}
-                                            onClick={handleLinkClick}
-                                            prefetch
-                                            aria-current={active ? 'page' : undefined}
-                                        >
+                                        <Link href={item.href ?? '#'} onClick={handleLinkClick} prefetch aria-current={active ? 'page' : undefined}>
                                             {item.icon && <item.icon />}
                                             <span>{item.title}</span>
                                         </Link>
@@ -177,12 +172,7 @@ export function NavMain({ items = [], footerItems = [] }: { items: NavItem[]; fo
                             return (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild isActive={active} tooltip={{ children: item.title }}>
-                                        <Link
-                                            href={item.href ?? '#'}
-                                            onClick={handleLinkClick}
-                                            prefetch
-                                            aria-current={active ? 'page' : undefined}
-                                        >
+                                        <Link href={item.href ?? '#'} onClick={handleLinkClick} prefetch aria-current={active ? 'page' : undefined}>
                                             {item.icon && <item.icon />}
                                             <span className="truncate">{item.title}</span>
                                         </Link>

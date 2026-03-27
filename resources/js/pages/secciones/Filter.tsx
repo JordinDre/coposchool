@@ -56,7 +56,11 @@ export default function Filter() {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (search.trim()) { applyFilters(); } else { clearFilters(); }
+            if (search.trim()) {
+                applyFilters();
+            } else {
+                clearFilters();
+            }
         }
     };
 
@@ -74,12 +78,22 @@ export default function Filter() {
                     />
                 </div>
                 <div className="flex gap-2">
-                    <Dialog open={isOpen} onOpenChange={(o) => { setIsOpen(o); if (!o) applyFilters(); }}>
+                    <Dialog
+                        open={isOpen}
+                        onOpenChange={(o) => {
+                            setIsOpen(o);
+                            if (!o) applyFilters();
+                        }}
+                    >
                         <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
                                 <FilterIcon className="mr-2 size-4" />
                                 Filtros
-                                {activeCount > 0 && <Badge variant="secondary" className="ml-1">{activeCount}</Badge>}
+                                {activeCount > 0 && (
+                                    <Badge variant="secondary" className="ml-1">
+                                        {activeCount}
+                                    </Badge>
+                                )}
                             </Button>
                         </DialogTrigger>
                         {activeCount > 0 && (
@@ -96,11 +110,18 @@ export default function Filter() {
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label>Ciclo</Label>
-                                        <Select value={filters.ciclo || ''} onValueChange={(v) => setFilters((p) => ({ ...p, ciclo: v || undefined }))}>
-                                            <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+                                        <Select
+                                            value={filters.ciclo || ''}
+                                            onValueChange={(v) => setFilters((p) => ({ ...p, ciclo: v || undefined }))}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Todos" />
+                                            </SelectTrigger>
                                             <SelectContent>
                                                 {CICLOS.map((c) => (
-                                                    <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                                                    <SelectItem key={c} value={c} className="capitalize">
+                                                        {c}
+                                                    </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
@@ -119,7 +140,12 @@ export default function Filter() {
                                     <Button onClick={clearFilters} color="red" disabled={activeCount === 0}>
                                         <X className="mr-2 size-4" /> Limpiar
                                     </Button>
-                                    <Button onClick={() => { applyFilters(); setIsOpen(false); }}>
+                                    <Button
+                                        onClick={() => {
+                                            applyFilters();
+                                            setIsOpen(false);
+                                        }}
+                                    >
                                         Aplicar Filtros
                                     </Button>
                                 </div>

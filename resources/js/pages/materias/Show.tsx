@@ -32,7 +32,7 @@ export default function Show({ materia }: ShowProps) {
     return (
         <>
             <Head title={materia.nombre} />
-            <div className="p-4 space-y-6">
+            <div className="space-y-6 p-4">
                 <div className="flex items-start justify-between">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -45,13 +45,16 @@ export default function Show({ materia }: ShowProps) {
                     </div>
                     {can('editar materia') && !materia.deleted_at && (
                         <Link href={route('materias.edit', materia.id)}>
-                            <Button variant="outline" size="sm"><Edit className="mr-2 h-4 w-4" />Editar</Button>
+                            <Button variant="outline" size="sm">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                            </Button>
                         </Link>
                     )}
                 </div>
 
                 {materia.secciones && materia.secciones.length > 0 && (
-                    <div className="rounded-lg border bg-card p-4 space-y-3">
+                    <div className="space-y-3 rounded-lg border bg-card p-4">
                         <div className="flex items-center gap-2">
                             <GraduationCap className="h-4 w-4" />
                             <h2 className="font-medium">Secciones donde se imparte ({materia.secciones.length})</h2>
@@ -60,7 +63,9 @@ export default function Show({ materia }: ShowProps) {
                             {materia.secciones.map((s) => (
                                 <div key={s.id} className="rounded-md border p-2">
                                     <div className="text-sm font-medium">{s.nombre}</div>
-                                    <div className="text-xs text-muted-foreground capitalize">{s.ciclo} — {s.ciclo_escolar}</div>
+                                    <div className="text-xs text-muted-foreground capitalize">
+                                        {s.ciclo} — {s.ciclo_escolar}
+                                    </div>
                                 </div>
                             ))}
                         </div>

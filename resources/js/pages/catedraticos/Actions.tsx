@@ -18,19 +18,26 @@ export default function Actions({ id, isDeleted = false }: { id: number; isDelet
             <DropdownMenuContent align="start">
                 {!isDeleted && can('editar usuarios') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('catedraticos.edit', id)}><Edit className="mr-2 h-4 w-4" />Editar</Link>
+                        <Link href={route('catedraticos.edit', id)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {!isDeleted && can('editar usuarios') && (
                     <DropdownMenuItem asChild>
-                        <Link href={`/catedraticos/${id}/asignaciones`}><LayoutList className="mr-2 h-4 w-4" />Asignaciones</Link>
+                        <Link href={`/catedraticos/${id}/asignaciones`}>
+                            <LayoutList className="mr-2 h-4 w-4" />
+                            Asignaciones
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {isDeleted && can('editar usuarios') && (
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.post(route('catedraticos.restore', id))}>
-                            <RotateCcw className="mr-2 h-4 w-4" />Reactivar
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Reactivar
                         </DropdownMenuItem>
                     </>
                 )}
@@ -41,7 +48,8 @@ export default function Actions({ id, isDeleted = false }: { id: number; isDelet
                             className="text-red-600"
                             onClick={() => confirm('¿Desactivar este catedrático?') && router.delete(route('catedraticos.destroy', id))}
                         >
-                            <UserX className="mr-2 h-4 w-4 text-red-600" />Desactivar
+                            <UserX className="mr-2 h-4 w-4 text-red-600" />
+                            Desactivar
                         </DropdownMenuItem>
                     </>
                 )}

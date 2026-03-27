@@ -8,7 +8,12 @@ import { Head, useForm } from '@inertiajs/react';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 
-interface Seccion { id: number; nombre: string; ciclo: string; ciclo_escolar: number }
+interface Seccion {
+    id: number;
+    nombre: string;
+    ciclo: string;
+    ciclo_escolar: number;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Estudiantes', href: '/estudiantes' },
@@ -18,7 +23,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 Create.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
 export default function Create({ secciones }: { secciones: Seccion[] }) {
-    const { data, setData, post, processing, errors: fieldErrors } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors: fieldErrors,
+    } = useForm({
         name: '',
         telefono: '',
         seccion_id: '' as string | number,
@@ -28,8 +39,13 @@ export default function Create({ secciones }: { secciones: Seccion[] }) {
         <>
             <Head title="Crear Estudiante" />
             <div className="p-4">
-                <form onSubmit={(e) => { e.preventDefault(); post(route('estudiantes.store')); }} className="space-y-6">
-
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        post(route('estudiantes.store'));
+                    }}
+                    className="space-y-6"
+                >
                     {(fieldErrors as Record<string, string>).error && (
                         <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400">
                             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -47,7 +63,12 @@ export default function Create({ secciones }: { secciones: Seccion[] }) {
                                 placeholder="Nombre completo"
                                 className={fieldErrors.name ? 'border-red-500' : ''}
                             />
-                            {fieldErrors.name && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{fieldErrors.name}</p>}
+                            {fieldErrors.name && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {fieldErrors.name}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="telefono">Teléfono</Label>
@@ -75,7 +96,12 @@ export default function Create({ secciones }: { secciones: Seccion[] }) {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {fieldErrors.seccion_id && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{fieldErrors.seccion_id}</p>}
+                            {fieldErrors.seccion_id && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {fieldErrors.seccion_id}
+                                </p>
+                            )}
                         </div>
                     </div>
 

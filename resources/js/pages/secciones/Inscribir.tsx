@@ -32,19 +32,27 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Debounced server-side search
-    const handleSearch = useCallback((value: string) => {
-        setSearch(value);
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => {
-            router.get(
-                `/secciones/${seccion.id}/inscribir`,
-                value ? { search: value } : {},
-                { preserveState: true, preserveScroll: true, replace: true }
-            );
-        }, 350);
-    }, [seccion.id]);
+    const handleSearch = useCallback(
+        (value: string) => {
+            setSearch(value);
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(() => {
+                router.get(`/secciones/${seccion.id}/inscribir`, value ? { search: value } : {}, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true,
+                });
+            }, 350);
+        },
+        [seccion.id],
+    );
 
-    useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
+    useEffect(
+        () => () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        },
+        [],
+    );
 
     const toggle = (id: number) => {
         if (toggling.has(id)) return;
@@ -56,8 +64,13 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                 preserveScroll: true,
                 preserveState: true,
                 only: ['estudiantes', 'totalInscritos'],
-                onFinish: () => setToggling((prev) => { const next = new Set(prev); next.delete(id); return next; }),
-            }
+                onFinish: () =>
+                    setToggling((prev) => {
+                        const next = new Set(prev);
+                        next.delete(id);
+                        return next;
+                    }),
+            },
         );
     };
 
@@ -65,7 +78,7 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
         <>
             <Head title={`Inscribir — ${seccion.nombre}`} />
 
-            <div className="p-4 space-y-5">
+            <div className="space-y-5 p-4">
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -82,7 +95,7 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
 
                 {/* Buscador */}
                 <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         value={search}
                         onChange={(e) => handleSearch(e.target.value)}
@@ -94,7 +107,7 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                         <button
                             type="button"
                             onClick={() => handleSearch('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -107,7 +120,7 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                         {search ? 'No se encontraron estudiantes' : 'No hay estudiantes disponibles'}
                     </div>
                 ) : (
-                    <div className="divide-y rounded-lg border overflow-hidden">
+                    <div className="divide-y overflow-hidden rounded-lg border">
                         {estudiantes.map((est) => {
                             const loading = toggling.has(est.id);
                             return (
@@ -119,23 +132,21 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                                     className={[
                                         'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
                                         est.inscrito ? 'bg-primary/5 hover:bg-primary/8' : 'bg-background hover:bg-muted/40',
-                                        loading ? 'opacity-60 cursor-wait' : '',
+                                        loading ? 'cursor-wait opacity-60' : '',
                                     ].join(' ')}
                                 >
                                     {/* Checkbox visual */}
-                                    <span className={[
-                                        'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
-                                        est.inscrito
-                                            ? 'border-primary bg-primary text-primary-foreground'
-                                            : 'border-muted-foreground/30',
-                                    ].join(' ')}>
-                                        {loading
-                                            ? <Loader2 className="h-3 w-3 animate-spin" />
-                                            : est.inscrito && <Check className="h-3 w-3" />}
+                                    <span
+                                        className={[
+                                            'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
+                                            est.inscrito ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground/30',
+                                        ].join(' ')}
+                                    >
+                                        {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : est.inscrito && <Check className="h-3 w-3" />}
                                     </span>
 
                                     {/* Avatar inicial */}
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase text-muted-foreground">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground uppercase">
                                         {est.name.charAt(0)}
                                     </span>
 

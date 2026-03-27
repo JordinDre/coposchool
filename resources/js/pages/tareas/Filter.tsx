@@ -70,7 +70,8 @@ export default function Filter({ secciones, materias, unidades, filtros }: Filte
                     <SelectItem value="all">Todas las materias</SelectItem>
                     {materias.map((m) => (
                         <SelectItem key={m.id} value={String(m.id)}>
-                            {m.codigo ? `${m.codigo} - ` : ''}{m.nombre}
+                            {m.codigo ? `${m.codigo} - ` : ''}
+                            {m.nombre}
                         </SelectItem>
                     ))}
                 </SelectContent>

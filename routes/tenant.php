@@ -93,7 +93,6 @@ Route::middleware([
         Route::get('bitacora/exportar', [BitacoraController::class, 'exportar'])->name('bitacora.exportar');
         Route::resource('bitacora', BitacoraController::class)->names('bitacora');
 
-
         // ===== ROLES Y PERMISOS =====
         Route::resource('roles-permisos', RolesPermisosController::class)
             ->names('roles-permisos')

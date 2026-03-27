@@ -14,7 +14,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -61,9 +60,9 @@ class EstudianteController extends Controller
 
         if (! empty($filters['status'])) {
             match ($filters['status']) {
-                'active'   => $query->whereNull('deleted_at'),
+                'active' => $query->whereNull('deleted_at'),
                 'inactive' => $query->whereNotNull('deleted_at'),
-                default    => null,
+                default => null,
             };
         }
 
@@ -79,12 +78,12 @@ class EstudianteController extends Controller
 
         return Inertia::render('estudiantes/Index', [
             'estudiantes' => $estudiantes,
-            'secciones'   => $secciones,
-            'filters'     => [
-                'search'         => $filters['search'] ?? '',
-                'seccion_id'     => $filters['seccion_id'] ?? '',
-                'status'         => $filters['status'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'secciones' => $secciones,
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'seccion_id' => $filters['seccion_id'] ?? '',
+                'status' => $filters['status'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -117,16 +116,15 @@ class EstudianteController extends Controller
             ->whereHas('roles', fn ($q) => $q->where('name', 'estudiante'))
             ->with(['secciones' => function ($q) {
                 $q->select('secciones.id', 'secciones.nombre', 'secciones.ciclo', 'secciones.ciclo_escolar')
-                  ->with(['materias' => function ($mq) {
-                      $mq->whereNull('materias.deleted_at')
-                         ->select('materias.id', 'materias.nombre', 'materias.codigo');
-                  }]);
+                    ->with(['materias' => function ($mq) {
+                        $mq->whereNull('materias.deleted_at')
+                            ->select('materias.id', 'materias.nombre', 'materias.codigo');
+                    }]);
             }]);
 
         // Catedrático solo ve estudiantes de sus secciones
         if ($user->hasRole('catedratico')) {
-            $query->whereHas('secciones', fn ($q) => $q->whereHas('materias', fn ($q2) =>
-                $q2->where('materia_seccion.catedratico_id', $user->id)
+            $query->whereHas('secciones', fn ($q) => $q->whereHas('materias', fn ($q2) => $q2->where('materia_seccion.catedratico_id', $user->id)
             ));
         }
 
@@ -145,9 +143,9 @@ class EstudianteController extends Controller
 
         if (! empty($filters['status'])) {
             match ($filters['status']) {
-                'active'   => $query->whereNull('deleted_at'),
+                'active' => $query->whereNull('deleted_at'),
                 'inactive' => $query->whereNotNull('deleted_at'),
-                default    => null,
+                default => null,
             };
         }
 
@@ -202,27 +200,27 @@ class EstudianteController extends Controller
                 ->get(['id', 'estudiante_id', 'materia_id', 'unidad_id', 'nota', 'observaciones'])
                 ->groupBy('estudiante_id')
                 ->map(fn ($notas) => $notas->map(fn ($n) => [
-                    'id'            => $n->id,
-                    'materia_id'    => $n->materia_id,
-                    'unidad_id'     => $n->unidad_id,
-                    'nota'          => $n->nota,
+                    'id' => $n->id,
+                    'materia_id' => $n->materia_id,
+                    'unidad_id' => $n->unidad_id,
+                    'nota' => $n->nota,
                     'observaciones' => $n->observaciones,
                 ])->values())
                 ->toArray();
         }
 
         return Inertia::render('notas/Index', [
-            'estudiantes'     => $estudiantes,
-            'secciones'       => $secciones,
+            'estudiantes' => $estudiantes,
+            'secciones' => $secciones,
             'misAsignaciones' => $misAsignaciones,
-            'unidades'        => $unidades,
-            'notasGrid'       => $notasGrid,
-            'esCatedratico'   => $user->hasRole('catedratico'),
-            'filters'         => [
-                'search'         => $filters['search'] ?? '',
-                'seccion_id'     => $filters['seccion_id'] ?? '',
-                'status'         => $filters['status'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'unidades' => $unidades,
+            'notasGrid' => $notasGrid,
+            'esCatedratico' => $user->hasRole('catedratico'),
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'seccion_id' => $filters['seccion_id'] ?? '',
+                'status' => $filters['status'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -233,9 +231,9 @@ class EstudianteController extends Controller
         $estudiante = User::withTrashed()->findOrFail($estudianteId);
         $this->authorize('create', Nota::class);
 
-        $user         = Auth::user();
+        $user = Auth::user();
         $esCatedratico = $user->hasRole('catedratico');
-        $unidadActual  = Unidad::actual();
+        $unidadActual = Unidad::actual();
 
         if ($esCatedratico) {
             // All seccion+materia combinations where this catedrático teaches this student
@@ -244,7 +242,7 @@ class EstudianteController extends Controller
                 ->join('materias', 'materia_seccion.materia_id', '=', 'materias.id')
                 ->join('seccion_user', function ($join) use ($estudianteId) {
                     $join->on('seccion_user.seccion_id', '=', 'materia_seccion.seccion_id')
-                         ->where('seccion_user.user_id', '=', $estudianteId);
+                        ->where('seccion_user.user_id', '=', $estudianteId);
                 })
                 ->where('materia_seccion.catedratico_id', $user->id)
                 ->whereNull('secciones.deleted_at')
@@ -264,7 +262,7 @@ class EstudianteController extends Controller
 
             $seccionId = $request->get('seccion_id', $defaultSeccion);
             $materiaId = $request->get('materia_id', $defaultMateria);
-            $unidadId  = $unidadActual ? (string) $unidadActual->id : '';
+            $unidadId = $unidadActual ? (string) $unidadActual->id : '';
 
             $notaActual = null;
             if ($seccionId && $materiaId && $unidadId) {
@@ -281,19 +279,19 @@ class EstudianteController extends Controller
                 ->get();
 
             return Inertia::render('estudiantes/Notas', [
-                'estudiante'    => $estudiante->only(['id', 'name', 'email']),
-                'asignaciones'  => $asignaciones,
-                'secciones'     => [],
-                'materias'      => [],
-                'unidades'      => [],
-                'unidadActual'  => $unidadActual ? $unidadActual->only(['id', 'nombre', 'orden', 'fecha_inicio', 'fecha_fin']) : null,
+                'estudiante' => $estudiante->only(['id', 'name', 'email']),
+                'asignaciones' => $asignaciones,
+                'secciones' => [],
+                'materias' => [],
+                'unidades' => [],
+                'unidadActual' => $unidadActual ? $unidadActual->only(['id', 'nombre', 'orden', 'fecha_inicio', 'fecha_fin']) : null,
                 'esCatedratico' => true,
-                'notaActual'    => $notaActual,
-                'historial'     => $historial,
-                'filtros'       => [
+                'notaActual' => $notaActual,
+                'historial' => $historial,
+                'filtros' => [
                     'seccion_id' => $seccionId,
                     'materia_id' => $materiaId,
-                    'unidad_id'  => $unidadId,
+                    'unidad_id' => $unidadId,
                 ],
             ]);
         }
@@ -301,7 +299,7 @@ class EstudianteController extends Controller
         // Admin / director: full selectors
         $seccionId = $request->get('seccion_id', '');
         $materiaId = $request->get('materia_id', '');
-        $unidadId  = $request->get('unidad_id', $unidadActual ? (string) $unidadActual->id : '');
+        $unidadId = $request->get('unidad_id', $unidadActual ? (string) $unidadActual->id : '');
 
         $secciones = $estudiante->secciones()
             ->whereNull('secciones.deleted_at')
@@ -310,7 +308,7 @@ class EstudianteController extends Controller
         $materias = [];
         if ($seccionId) {
             $seccionObj = Seccion::find($seccionId);
-            $materias   = $seccionObj?->materias()
+            $materias = $seccionObj?->materias()
                 ->whereNull('materias.deleted_at')
                 ->get(['materias.id', 'materias.nombre', 'materias.codigo']) ?? collect();
         }
@@ -335,19 +333,19 @@ class EstudianteController extends Controller
             ->get();
 
         return Inertia::render('estudiantes/Notas', [
-            'estudiante'    => $estudiante->only(['id', 'name', 'email']),
-            'asignaciones'  => null,
-            'secciones'     => $secciones,
-            'materias'      => $materias,
-            'unidades'      => $unidades,
-            'unidadActual'  => $unidadActual ? $unidadActual->only(['id', 'nombre', 'orden', 'fecha_inicio', 'fecha_fin']) : null,
+            'estudiante' => $estudiante->only(['id', 'name', 'email']),
+            'asignaciones' => null,
+            'secciones' => $secciones,
+            'materias' => $materias,
+            'unidades' => $unidades,
+            'unidadActual' => $unidadActual ? $unidadActual->only(['id', 'nombre', 'orden', 'fecha_inicio', 'fecha_fin']) : null,
             'esCatedratico' => false,
-            'notaActual'    => $notaActual,
-            'historial'     => $historial,
-            'filtros'       => [
+            'notaActual' => $notaActual,
+            'historial' => $historial,
+            'filtros' => [
                 'seccion_id' => $seccionId,
                 'materia_id' => $materiaId,
-                'unidad_id'  => $unidadId,
+                'unidad_id' => $unidadId,
             ],
         ]);
     }
@@ -371,9 +369,9 @@ class EstudianteController extends Controller
 
         try {
             $estudiante = User::create([
-                'name'            => $request->name,
-                'telefono'        => $request->telefono,
-                'creado_por'      => Auth::id(),
+                'name' => $request->name,
+                'telefono' => $request->telefono,
+                'creado_por' => Auth::id(),
                 'actualizado_por' => Auth::id(),
             ]);
 
@@ -408,8 +406,8 @@ class EstudianteController extends Controller
             ->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
 
         return Inertia::render('estudiantes/Edit', [
-            'estudiante'        => $user,
-            'secciones'         => $secciones,
+            'estudiante' => $user,
+            'secciones' => $secciones,
             'seccionesInscritas' => $user->secciones->pluck('id')->toArray(),
         ]);
     }
@@ -424,8 +422,8 @@ class EstudianteController extends Controller
 
         try {
             $user->fill([
-                'name'            => $request->name,
-                'telefono'        => $request->telefono,
+                'name' => $request->name,
+                'telefono' => $request->telefono,
                 'actualizado_por' => Auth::id(),
             ]);
 

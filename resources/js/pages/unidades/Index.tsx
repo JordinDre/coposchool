@@ -41,9 +41,7 @@ const columns: ExtendedColumnDef<UnidadRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: UnidadRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />
-        ),
+        cell: ({ row }: { row: { original: UnidadRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -52,7 +50,9 @@ const columns: ExtendedColumnDef<UnidadRow>[] = [
         header: '#',
         accessorKey: 'orden',
         cell: ({ row }: { row: { original: UnidadRow } }) => (
-            <Badge variant="outline" className="font-mono">{row.original.orden}</Badge>
+            <Badge variant="outline" className="font-mono">
+                {row.original.orden}
+            </Badge>
         ),
     },
     {
@@ -64,7 +64,11 @@ const columns: ExtendedColumnDef<UnidadRow>[] = [
                 <CalendarRange className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div>
                     <span className="font-medium">{row.original.nombre}</span>
-                    {row.original.deleted_at && <Badge variant="destructive" className="ml-1.5 text-xs">Inactiva</Badge>}
+                    {row.original.deleted_at && (
+                        <Badge variant="destructive" className="ml-1.5 text-xs">
+                            Inactiva
+                        </Badge>
+                    )}
                 </div>
             </div>
         ),
@@ -81,7 +85,8 @@ const columns: ExtendedColumnDef<UnidadRow>[] = [
         cell: ({ row }: { row: { original: UnidadRow } }) => {
             const { fecha_inicio, fecha_fin } = row.original;
             if (!fecha_inicio && !fecha_fin) return <span className="text-xs text-muted-foreground">—</span>;
-            const fmt = (d: string) => new Date(d.slice(0, 10) + 'T12:00:00').toLocaleDateString('es-GT', { day: 'numeric', month: 'short', year: 'numeric' });
+            const fmt = (d: string) =>
+                new Date(d.slice(0, 10) + 'T12:00:00').toLocaleDateString('es-GT', { day: 'numeric', month: 'short', year: 'numeric' });
             return (
                 <span className="text-xs text-muted-foreground">
                     {fecha_inicio ? fmt(fecha_inicio) : '?'} – {fecha_fin ? fmt(fecha_fin) : '?'}
@@ -119,10 +124,12 @@ export default function Index({ unidades }: UnidadesIndexProps) {
             <div className="p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between md:gap-3">
                     <Filter />
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex shrink-0 gap-2">
                         {can('crear unidad') && (
                             <Link href={route('unidades.create')}>
-                                <Button size="sm" color="blue">Crear Unidad</Button>
+                                <Button size="sm" color="blue">
+                                    Crear Unidad
+                                </Button>
                             </Link>
                         )}
                     </div>

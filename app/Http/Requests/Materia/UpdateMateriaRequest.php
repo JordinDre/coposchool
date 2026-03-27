@@ -17,8 +17,8 @@ class UpdateMateriaRequest extends FormRequest
         $materia = $this->route('materia');
 
         return [
-            'nombre'      => ['required', 'string', 'max:100'],
-            'codigo'      => ['nullable', 'string', 'max:20', Rule::unique('materias', 'codigo')->ignore($materia)],
+            'nombre' => ['required', 'string', 'max:100'],
+            'codigo' => ['nullable', 'string', 'max:20', Rule::unique('materias', 'codigo')->ignore($materia)],
             'descripcion' => ['nullable', 'string', 'max:500'],
         ];
     }
@@ -27,7 +27,7 @@ class UpdateMateriaRequest extends FormRequest
     {
         return [
             'nombre.required' => 'El nombre de la materia es obligatorio.',
-            'codigo.unique'   => 'Este código ya está en uso.',
+            'codigo.unique' => 'Este código ya está en uso.',
         ];
     }
 }

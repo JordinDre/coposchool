@@ -42,19 +42,27 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
     const totalAsignadas = materias.filter((m) => m.asignada).length;
 
     // Debounced server-side search
-    const handleSearch = useCallback((value: string) => {
-        setSearch(value);
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => {
-            router.get(
-                `/secciones/${seccion.id}/materias`,
-                value ? { search: value } : {},
-                { preserveState: true, preserveScroll: true, replace: true }
-            );
-        }, 350);
-    }, [seccion.id]);
+    const handleSearch = useCallback(
+        (value: string) => {
+            setSearch(value);
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(() => {
+                router.get(`/secciones/${seccion.id}/materias`, value ? { search: value } : {}, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true,
+                });
+            }, 350);
+        },
+        [seccion.id],
+    );
 
-    useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
+    useEffect(
+        () => () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        },
+        [],
+    );
 
     const toggle = (materia: Materia) => {
         if (toggling.has(materia.id)) return;
@@ -66,8 +74,13 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                 preserveScroll: true,
                 preserveState: true,
                 only: ['materias'],
-                onFinish: () => setToggling((prev) => { const next = new Set(prev); next.delete(materia.id); return next; }),
-            }
+                onFinish: () =>
+                    setToggling((prev) => {
+                        const next = new Set(prev);
+                        next.delete(materia.id);
+                        return next;
+                    }),
+            },
         );
     };
 
@@ -81,8 +94,13 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                 preserveScroll: true,
                 preserveState: true,
                 only: ['materias'],
-                onFinish: () => setUpdatingCat((prev) => { const next = new Set(prev); next.delete(materiaId); return next; }),
-            }
+                onFinish: () =>
+                    setUpdatingCat((prev) => {
+                        const next = new Set(prev);
+                        next.delete(materiaId);
+                        return next;
+                    }),
+            },
         );
     };
 
@@ -90,7 +108,7 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
         <>
             <Head title={`Materias — ${seccion.nombre}`} />
 
-            <div className="p-4 space-y-5">
+            <div className="space-y-5 p-4">
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -107,7 +125,7 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
 
                 {/* Buscador */}
                 <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         value={search}
                         onChange={(e) => handleSearch(e.target.value)}
@@ -119,7 +137,7 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                         <button
                             type="button"
                             onClick={() => handleSearch('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -132,17 +150,14 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                         {search ? 'No se encontraron materias' : 'No hay materias disponibles'}
                     </div>
                 ) : (
-                    <div className="divide-y rounded-lg border overflow-hidden">
+                    <div className="divide-y overflow-hidden rounded-lg border">
                         {materias.map((materia) => {
                             const loading = toggling.has(materia.id);
                             const loadingCat = updatingCat.has(materia.id);
                             return (
                                 <div
                                     key={materia.id}
-                                    className={[
-                                        'transition-colors',
-                                        materia.asignada ? 'bg-primary/5' : 'bg-background',
-                                    ].join(' ')}
+                                    className={['transition-colors', materia.asignada ? 'bg-primary/5' : 'bg-background'].join(' ')}
                                 >
                                     {/* Fila principal */}
                                     <button
@@ -152,24 +167,26 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                                         className={[
                                             'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
                                             materia.asignada ? 'hover:bg-primary/8' : 'hover:bg-muted/40',
-                                            loading ? 'opacity-60 cursor-wait' : '',
+                                            loading ? 'cursor-wait opacity-60' : '',
                                         ].join(' ')}
                                     >
                                         {/* Checkbox visual */}
-                                        <span className={[
-                                            'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
-                                            materia.asignada
-                                                ? 'border-primary bg-primary text-primary-foreground'
-                                                : 'border-muted-foreground/30',
-                                        ].join(' ')}>
-                                            {loading
-                                                ? <Loader2 className="h-3 w-3 animate-spin" />
-                                                : materia.asignada && <Check className="h-3 w-3" />}
+                                        <span
+                                            className={[
+                                                'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
+                                                materia.asignada ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground/30',
+                                            ].join(' ')}
+                                        >
+                                            {loading ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                            ) : (
+                                                materia.asignada && <Check className="h-3 w-3" />
+                                            )}
                                         </span>
 
                                         {/* Código badge */}
                                         {materia.codigo && (
-                                            <span className="flex h-8 w-12 shrink-0 items-center justify-center rounded bg-muted text-xs font-mono font-semibold text-muted-foreground">
+                                            <span className="flex h-8 w-12 shrink-0 items-center justify-center rounded bg-muted font-mono text-xs font-semibold text-muted-foreground">
                                                 {materia.codigo}
                                             </span>
                                         )}
@@ -187,21 +204,20 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
 
                                     {/* Selector de catedrático */}
                                     {materia.asignada && (
-                                        <div
-                                            className="px-4 pb-3 pl-[3.25rem]"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
+                                        <div className="px-4 pb-3 pl-[3.25rem]" onClick={(e) => e.stopPropagation()}>
                                             <Select
                                                 value={materia.catedratico_id?.toString() ?? 'none'}
-                                                onValueChange={(v) =>
-                                                    updateCatedratico(materia.id, v === 'none' ? null : parseInt(v))
-                                                }
+                                                onValueChange={(v) => updateCatedratico(materia.id, v === 'none' ? null : parseInt(v))}
                                                 disabled={loadingCat}
                                             >
-                                                <SelectTrigger className="h-8 text-xs max-w-xs">
-                                                    {loadingCat
-                                                        ? <span className="flex items-center gap-1 text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin" /> Guardando...</span>
-                                                        : <SelectValue placeholder="Asignar catedrático..." />}
+                                                <SelectTrigger className="h-8 max-w-xs text-xs">
+                                                    {loadingCat ? (
+                                                        <span className="flex items-center gap-1 text-muted-foreground">
+                                                            <Loader2 className="h-3 w-3 animate-spin" /> Guardando...
+                                                        </span>
+                                                    ) : (
+                                                        <SelectValue placeholder="Asignar catedrático..." />
+                                                    )}
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="none">Sin asignar</SelectItem>

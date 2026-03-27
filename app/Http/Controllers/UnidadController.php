@@ -47,10 +47,10 @@ class UnidadController extends Controller
 
         return Inertia::render('unidades/Index', [
             'unidades' => $unidades,
-            'filters'  => [
-                'search'         => $filters['search'] ?? '',
-                'ciclo_escolar'  => $filters['ciclo_escolar'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'ciclo_escolar' => $filters['ciclo_escolar'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);

@@ -35,10 +35,10 @@ class Unidad extends Model
     protected function casts(): array
     {
         return [
-            'orden'         => 'integer',
+            'orden' => 'integer',
             'ciclo_escolar' => 'integer',
-            'fecha_inicio'  => 'date',
-            'fecha_fin'     => 'date',
+            'fecha_inicio' => 'date',
+            'fecha_fin' => 'date',
         ];
     }
 

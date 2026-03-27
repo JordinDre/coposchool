@@ -60,9 +60,9 @@ class CatedraticoController extends Controller
 
         if (! empty($filters['status'])) {
             match ($filters['status']) {
-                'active'   => $query->whereNull('deleted_at'),
+                'active' => $query->whereNull('deleted_at'),
                 'inactive' => $query->whereNotNull('deleted_at'),
-                default    => null,
+                default => null,
             };
         }
 
@@ -73,18 +73,18 @@ class CatedraticoController extends Controller
         $catedraticos = $query->paginate($persisted['perPage'])->withQueryString();
 
         $secciones = Seccion::whereNull('deleted_at')->orderBy('nombre')->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
-        $materias  = Materia::whereNull('deleted_at')->orderBy('nombre')->get(['id', 'nombre', 'codigo']);
+        $materias = Materia::whereNull('deleted_at')->orderBy('nombre')->get(['id', 'nombre', 'codigo']);
 
         return Inertia::render('catedraticos/Index', [
             'catedraticos' => $catedraticos,
-            'secciones'    => $secciones,
-            'materias'     => $materias,
-            'filters'      => [
-                'search'         => $filters['search'] ?? '',
-                'seccion_id'     => $filters['seccion_id'] ?? '',
-                'materia_id'     => $filters['materia_id'] ?? '',
-                'status'         => $filters['status'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'secciones' => $secciones,
+            'materias' => $materias,
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'seccion_id' => $filters['seccion_id'] ?? '',
+                'materia_id' => $filters['materia_id'] ?? '',
+                'status' => $filters['status'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -105,11 +105,11 @@ class CatedraticoController extends Controller
 
         try {
             $catedratico = User::create([
-                'name'            => $request->name,
-                'email'           => $request->email,
-                'password'        => Hash::make($request->password),
-                'telefono'        => $request->telefono,
-                'creado_por'      => Auth::id(),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'telefono' => $request->telefono,
+                'creado_por' => Auth::id(),
                 'actualizado_por' => Auth::id(),
             ]);
 
@@ -147,9 +147,9 @@ class CatedraticoController extends Controller
         $this->authorize('update', $user);
 
         $user->fill([
-            'name'            => $request->name,
-            'email'           => $request->email,
-            'telefono'        => $request->telefono,
+            'name' => $request->name,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
             'actualizado_por' => Auth::id(),
         ]);
 
@@ -188,18 +188,18 @@ class CatedraticoController extends Controller
                 }
 
                 $materias = $materiasQuery->get()->map(fn ($m) => [
-                    'id'       => $m->id,
-                    'nombre'   => $m->nombre,
-                    'codigo'   => $m->codigo,
+                    'id' => $m->id,
+                    'nombre' => $m->nombre,
+                    'codigo' => $m->codigo,
                     'asignada' => (int) $m->pivot->catedratico_id === $user->id,
                 ]);
 
                 return [
-                    'id'            => $seccion->id,
-                    'nombre'        => $seccion->nombre,
-                    'ciclo'         => $seccion->ciclo,
+                    'id' => $seccion->id,
+                    'nombre' => $seccion->nombre,
+                    'ciclo' => $seccion->ciclo,
                     'ciclo_escolar' => $seccion->ciclo_escolar,
-                    'materias'      => $materias->values(),
+                    'materias' => $materias->values(),
                 ];
             })
             ->filter(fn ($s) => count($s['materias']) > 0)
@@ -207,8 +207,8 @@ class CatedraticoController extends Controller
 
         return Inertia::render('catedraticos/Asignaciones', [
             'catedratico' => ['id' => $user->id, 'name' => $user->name],
-            'secciones'   => $secciones,
-            'search'      => $search,
+            'secciones' => $secciones,
+            'search' => $search,
         ]);
     }
 

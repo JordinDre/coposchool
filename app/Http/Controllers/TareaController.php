@@ -29,7 +29,7 @@ class TareaController extends Controller
 
         $seccion_id = $request->get('seccion_id');
         $materia_id = $request->get('materia_id');
-        $unidad_id  = $request->get('unidad_id');
+        $unidad_id = $request->get('unidad_id');
 
         // Opciones de selección
         if ($user->hasRole('catedratico')) {
@@ -42,7 +42,7 @@ class TareaController extends Controller
 
         $materias = [];
         $unidades = Unidad::whereNull('deleted_at')->orderBy('orden')->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
-        $tareas   = [];
+        $tareas = [];
         $contexto = null;
         $estudiantes = collect();
         $notasGrid = [];
@@ -61,22 +61,22 @@ class TareaController extends Controller
         if ($seccion_id && $materia_id && $unidad_id) {
             $seccionObj = Seccion::find($seccion_id);
             $materiaObj = Materia::find($materia_id);
-            $unidadObj  = Unidad::find($unidad_id);
+            $unidadObj = Unidad::find($unidad_id);
 
             if ($seccionObj && $materiaObj && $unidadObj) {
                 $contexto = [
                     'seccion' => $seccionObj->only(['id', 'nombre', 'ciclo', 'ciclo_escolar']),
                     'materia' => $materiaObj->only(['id', 'nombre', 'codigo']),
-                    'unidad'  => $unidadObj->only(['id', 'nombre', 'orden']),
+                    'unidad' => $unidadObj->only(['id', 'nombre', 'orden']),
                 ];
 
                 $tareas = Tarea::where('seccion_id', $seccion_id)
                     ->where('materia_id', $materia_id)
                     ->where('unidad_id', $unidad_id)
                     ->get();
-                    
+
                 $estudiantes = $seccionObj->estudiantes()->select('users.id', 'users.name', 'users.email')->get();
-                
+
                 if ($tareas->isNotEmpty()) {
                     $tareaIds = $tareas->pluck('id');
                     $notas = TareaNota::whereIn('tarea_id', $tareaIds)->get();
@@ -91,17 +91,17 @@ class TareaController extends Controller
         }
 
         return Inertia::render('tareas/Index', [
-            'secciones'   => $secciones,
-            'materias'    => $materias,
-            'unidades'    => $unidades,
-            'tareas'      => $tareas,
-            'contexto'    => $contexto,
+            'secciones' => $secciones,
+            'materias' => $materias,
+            'unidades' => $unidades,
+            'tareas' => $tareas,
+            'contexto' => $contexto,
             'estudiantes' => $estudiantes,
-            'notasGrid'   => $notasGrid,
-            'filtros'     => [
+            'notasGrid' => $notasGrid,
+            'filtros' => [
                 'seccion_id' => $seccion_id,
                 'materia_id' => $materia_id,
-                'unidad_id'  => $unidad_id,
+                'unidad_id' => $unidad_id,
             ],
         ]);
     }
@@ -114,12 +114,12 @@ class TareaController extends Controller
         $this->authorize('crear tareas');
 
         $data = $request->validate([
-            'seccion_id'  => ['required', 'exists:secciones,id'],
-            'materia_id'  => ['required', 'exists:materias,id'],
-            'unidad_id'   => ['required', 'exists:unidades,id'],
-            'nombre'      => ['required', 'string', 'max:255'],
+            'seccion_id' => ['required', 'exists:secciones,id'],
+            'materia_id' => ['required', 'exists:materias,id'],
+            'unidad_id' => ['required', 'exists:unidades,id'],
+            'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
-            'valor'       => ['required', 'numeric', 'min:0.01', 'max:100'],
+            'valor' => ['required', 'numeric', 'min:0.01', 'max:100'],
         ]);
 
         $this->validateCatedraticoPermissions($request);
@@ -140,15 +140,15 @@ class TareaController extends Controller
         $this->authorize('editar tareas');
 
         $data = $request->validate([
-            'nombre'      => ['required', 'string', 'max:255'],
+            'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
-            'valor'       => ['required', 'numeric', 'min:0.01', 'max:100'],
+            'valor' => ['required', 'numeric', 'min:0.01', 'max:100'],
         ]);
 
         $this->validateSumaValores($tarea->seccion_id, $tarea->materia_id, $tarea->unidad_id, $data['valor'], $tarea->id);
 
         $tarea->update($data);
-        
+
         // Recalcular notas finales si cambió el valor de la tarea
         // Opcional: Podríamos recalcular todo aquí si el valor baja y las notas exceden el nuevo valor,
         // pero por simplicidad solo se recalculan al guardar notas o destruir tareas.
@@ -163,13 +163,13 @@ class TareaController extends Controller
     public function destroy(Tarea $tarea)
     {
         $this->authorize('eliminar tareas');
-        
+
         $seccion_id = $tarea->seccion_id;
         $materia_id = $tarea->materia_id;
         $unidad_id = $tarea->unidad_id;
 
         $tarea->delete();
-        
+
         $this->recalcularNotasFinales($seccion_id, $materia_id, $unidad_id);
 
         return back()->with('success', 'Tarea eliminada exitosamente.');
@@ -183,10 +183,10 @@ class TareaController extends Controller
         $this->authorize('calificar tareas');
 
         $request->validate([
-            'tarea_id'           => ['required', 'exists:tareas,id'],
-            'notas'              => ['required', 'array'],
+            'tarea_id' => ['required', 'exists:tareas,id'],
+            'notas' => ['required', 'array'],
             'notas.*.estudiante_id' => ['required', 'exists:users,id'],
-            'notas.*.nota'       => ['nullable', 'numeric', 'min:0'],
+            'notas.*.nota' => ['nullable', 'numeric', 'min:0'],
             'notas.*.observaciones' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -202,11 +202,11 @@ class TareaController extends Controller
         foreach ($request->notas as $item) {
             TareaNota::updateOrCreate(
                 [
-                    'tarea_id'      => $tarea->id,
+                    'tarea_id' => $tarea->id,
                     'estudiante_id' => $item['estudiante_id'],
                 ],
                 [
-                    'nota'          => $item['nota'] ?? null,
+                    'nota' => $item['nota'] ?? null,
                     'observaciones' => $item['observaciones'] ?? null,
                 ]
             );
@@ -275,7 +275,7 @@ class TareaController extends Controller
         }
 
         $tareaIds = $tareas->pluck('id');
-        
+
         $estudiantesSuma = TareaNota::whereIn('tarea_id', $tareaIds)
             ->select('estudiante_id', DB::raw('SUM(nota) as total_nota'))
             ->groupBy('estudiante_id')
@@ -285,13 +285,13 @@ class TareaController extends Controller
             Nota::updateOrCreate(
                 [
                     'estudiante_id' => $row->estudiante_id,
-                    'materia_id'    => $materia_id,
-                    'unidad_id'     => $unidad_id,
-                    'seccion_id'    => $seccion_id,
+                    'materia_id' => $materia_id,
+                    'unidad_id' => $unidad_id,
+                    'seccion_id' => $seccion_id,
                 ],
                 [
                     'catedratico_id' => Auth::id(), // O el catedrático que hizo la ultima accion
-                    'nota'           => $row->total_nota,
+                    'nota' => $row->total_nota,
                     // Si el profesor quiere poner observaciones en la nota final, no lo sobreescribimos aquí si no hay,
                     // pero está bien dejarlo así o null.
                 ]

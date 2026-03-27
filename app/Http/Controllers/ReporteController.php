@@ -33,8 +33,8 @@ class ReporteController extends Controller
             ->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
 
         return Inertia::render('reportes/Index', [
-            'secciones'          => $secciones,
-            'canGenerarSeccion'  => $user->can('generar boleta seccion'),
+            'secciones' => $secciones,
+            'canGenerarSeccion' => $user->can('generar boleta seccion'),
             'canGenerarIndividual' => $user->can('generar boleta individual'),
         ]);
     }
@@ -61,7 +61,7 @@ class ReporteController extends Controller
             ->orderBy('orden')
             ->get();
 
-        $pdf      = Pdf::loadView('pdf.ficha_estudiante', compact('estudiante', 'notas', 'unidades'))
+        $pdf = Pdf::loadView('pdf.ficha_estudiante', compact('estudiante', 'notas', 'unidades'))
             ->setPaper('letter', 'portrait');
         $filename = 'ficha-'.str($estudiante->name)->slug().'.pdf';
 
@@ -87,7 +87,7 @@ class ReporteController extends Controller
             ->get(['id', 'name', 'email', 'telefono', 'deleted_at']);
 
         $estudianteIds = $estudiantes->pluck('id');
-        $notas         = Nota::whereIn('estudiante_id', $estudianteIds)
+        $notas = Nota::whereIn('estudiante_id', $estudianteIds)
             ->get()
             ->groupBy('estudiante_id');
 
@@ -96,7 +96,7 @@ class ReporteController extends Controller
             ->orderBy('orden')
             ->get();
 
-        $pdf      = Pdf::loadView('pdf.fichas_seccion', compact('seccion', 'estudiantes', 'notas', 'unidades'))
+        $pdf = Pdf::loadView('pdf.fichas_seccion', compact('seccion', 'estudiantes', 'notas', 'unidades'))
             ->setPaper('letter', 'portrait');
         $filename = 'fichas-'.str($seccion->nombre)->slug().'-'.$seccion->ciclo_escolar.'.pdf';
 
@@ -138,16 +138,16 @@ class ReporteController extends Controller
                 ->pluck('nota')
                 ->map(fn ($n) => (float) $n);
 
-            $total     = $todas->count();
-            $promedio  = $total > 0 ? round($todas->avg(), 1) : null;
+            $total = $todas->count();
+            $promedio = $total > 0 ? round($todas->avg(), 1) : null;
             $aprobados = $todas->filter(fn ($n) => $n >= 60)->count();
 
             return [
-                'materia'       => ['id' => $materia->id, 'nombre' => $materia->nombre, 'codigo' => $materia->codigo],
-                'por_unidad'    => $porUnidad,
-                'promedio'      => $promedio,
+                'materia' => ['id' => $materia->id, 'nombre' => $materia->nombre, 'codigo' => $materia->codigo],
+                'por_unidad' => $porUnidad,
+                'promedio' => $promedio,
                 'pct_aprobados' => $total > 0 ? (int) round($aprobados / $total * 100) : null,
-                'registradas'   => $total,
+                'registradas' => $total,
             ];
         });
 
@@ -187,7 +187,7 @@ class ReporteController extends Controller
     private function agregarHeadersIframe(Response $response): Response
     {
         return $response->withHeaders([
-            'X-Frame-Options'         => 'SAMEORIGIN',
+            'X-Frame-Options' => 'SAMEORIGIN',
             'Content-Security-Policy' => "frame-ancestors 'self'",
         ]);
     }

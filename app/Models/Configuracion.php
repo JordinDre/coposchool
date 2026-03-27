@@ -18,6 +18,7 @@ class Configuracion extends Model
             ->setDescriptionForEvent(fn (string $eventName) => "Configuración {$eventName}")
             ->dontSubmitEmptyLogs();
     }
+
     protected $table = 'configuraciones';
 
     protected $fillable = [

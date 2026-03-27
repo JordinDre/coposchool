@@ -7,7 +7,6 @@ use App\Models\Materia;
 use App\Models\Nota;
 use App\Models\Seccion;
 use App\Models\Unidad;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +30,7 @@ class NotaController extends Controller
         // Selector de contexto (sección + materia + unidad)
         $seccion_id = $request->get('seccion_id');
         $materia_id = $request->get('materia_id');
-        $unidad_id  = $request->get('unidad_id');
+        $unidad_id = $request->get('unidad_id');
 
         // Si el usuario es catedrático, limitar a sus secciones/materias
         if ($user->hasRole('catedratico')) {
@@ -51,19 +50,19 @@ class NotaController extends Controller
 
             return Inertia::render('notas/Index', [
                 'esEstudiante' => true,
-                'misNotas'     => $misNotas,
-                'secciones'    => [],
-                'materias'     => [],
-                'unidades'     => [],
-                'grilla'       => null,
-                'contexto'     => null,
+                'misNotas' => $misNotas,
+                'secciones' => [],
+                'materias' => [],
+                'unidades' => [],
+                'grilla' => null,
+                'contexto' => null,
             ]);
         }
 
         // Para catedrático/admin: construir grilla si hay contexto
         $materias = [];
         $unidades = [];
-        $grilla   = null;
+        $grilla = null;
         $contexto = null;
         $tiene_tareas = false;
 
@@ -84,13 +83,13 @@ class NotaController extends Controller
         if ($seccion_id && $materia_id && $unidad_id) {
             $seccionObj = Seccion::find($seccion_id);
             $materiaObj = Materia::find($materia_id);
-            $unidadObj  = Unidad::find($unidad_id);
+            $unidadObj = Unidad::find($unidad_id);
 
             if ($seccionObj && $materiaObj && $unidadObj) {
                 $contexto = [
                     'seccion' => $seccionObj->only(['id', 'nombre', 'ciclo', 'ciclo_escolar']),
                     'materia' => $materiaObj->only(['id', 'nombre', 'codigo']),
-                    'unidad'  => $unidadObj->only(['id', 'nombre', 'orden']),
+                    'unidad' => $unidadObj->only(['id', 'nombre', 'orden']),
                 ];
 
                 // Obtener todos los estudiantes de la sección
@@ -107,11 +106,11 @@ class NotaController extends Controller
                     $nota = $notasExistentes->get($estudiante->id);
 
                     return [
-                        'estudiante_id'   => $estudiante->id,
+                        'estudiante_id' => $estudiante->id,
                         'estudiante_name' => $estudiante->name,
-                        'nota_id'         => $nota?->id,
-                        'nota'            => $nota?->nota,
-                        'observaciones'   => $nota?->observaciones,
+                        'nota_id' => $nota?->id,
+                        'nota' => $nota?->nota,
+                        'observaciones' => $nota?->observaciones,
                     ];
                 })->values();
 
@@ -124,17 +123,17 @@ class NotaController extends Controller
 
         return Inertia::render('notas/Index', [
             'esEstudiante' => false,
-            'misNotas'     => [],
-            'secciones'    => $secciones,
-            'materias'     => $materias,
-            'unidades'     => $unidades,
-            'grilla'       => $grilla,
-            'contexto'     => $contexto,
+            'misNotas' => [],
+            'secciones' => $secciones,
+            'materias' => $materias,
+            'unidades' => $unidades,
+            'grilla' => $grilla,
+            'contexto' => $contexto,
             'tiene_tareas' => $tiene_tareas,
-            'filtros'      => [
+            'filtros' => [
                 'seccion_id' => $seccion_id,
                 'materia_id' => $materia_id,
-                'unidad_id'  => $unidad_id,
+                'unidad_id' => $unidad_id,
             ],
         ]);
     }
@@ -147,12 +146,12 @@ class NotaController extends Controller
         $this->authorize('create', Nota::class);
 
         $request->validate([
-            'seccion_id'         => ['required', 'exists:secciones,id'],
-            'materia_id'         => ['required', 'exists:materias,id'],
-            'unidad_id'          => ['required', 'exists:unidades,id'],
-            'notas'              => ['required', 'array'],
+            'seccion_id' => ['required', 'exists:secciones,id'],
+            'materia_id' => ['required', 'exists:materias,id'],
+            'unidad_id' => ['required', 'exists:unidades,id'],
+            'notas' => ['required', 'array'],
             'notas.*.estudiante_id' => ['required', 'exists:users,id'],
-            'notas.*.nota'       => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'notas.*.nota' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'notas.*.observaciones' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -181,14 +180,14 @@ class NotaController extends Controller
             Nota::updateOrCreate(
                 [
                     'estudiante_id' => $item['estudiante_id'],
-                    'materia_id'    => $request->materia_id,
-                    'unidad_id'     => $request->unidad_id,
-                    'seccion_id'    => $request->seccion_id,
+                    'materia_id' => $request->materia_id,
+                    'unidad_id' => $request->unidad_id,
+                    'seccion_id' => $request->seccion_id,
                 ],
                 [
                     'catedratico_id' => $user->id,
-                    'nota'           => $item['nota'] ?? null,
-                    'observaciones'  => $item['observaciones'] ?? null,
+                    'nota' => $item['nota'] ?? null,
+                    'observaciones' => $item['observaciones'] ?? null,
                 ]
             );
         }
@@ -202,6 +201,7 @@ class NotaController extends Controller
     public function historial(Nota $nota)
     {
         $this->authorize('create', Nota::class); // Reusing standard permission
+
         return response()->json(
             $nota->activities()->with('causer:id,name')->latest()->get()
         );

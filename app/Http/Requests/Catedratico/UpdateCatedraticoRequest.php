@@ -20,8 +20,8 @@ class UpdateCatedraticoRequest extends FormRequest
         $userId = $this->route('catedratico');
 
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', "unique:users,email,{$userId}"],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', "unique:users,email,{$userId}"],
             'telefono' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ];

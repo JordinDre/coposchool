@@ -11,7 +11,12 @@ import React from 'react';
 import Actions from './Actions';
 import Filter from './Filter';
 
-interface Seccion { id: number; nombre: string; ciclo: string; ciclo_escolar: number }
+interface Seccion {
+    id: number;
+    nombre: string;
+    ciclo: string;
+    ciclo_escolar: number;
+}
 
 interface EstudianteRow {
     id: number;
@@ -43,9 +48,7 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: EstudianteRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />
-        ),
+        cell: ({ row }: { row: { original: EstudianteRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -60,7 +63,9 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
                     <div className="font-medium">{row.original.name}</div>
                     <div className="text-xs text-muted-foreground">{row.original.email}</div>
                     {row.original.deleted_at && (
-                        <Badge variant="destructive" className="mt-0.5 text-xs">Inactivo</Badge>
+                        <Badge variant="destructive" className="mt-0.5 text-xs">
+                            Inactivo
+                        </Badge>
                     )}
                 </div>
             </div>
@@ -81,7 +86,9 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
                         </Badge>
                     ))}
                     {secs.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">+{secs.length - 3}</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                            +{secs.length - 3}
+                        </Badge>
                     )}
                 </div>
             );
@@ -92,9 +99,7 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
         id: 'telefono',
         header: 'Teléfono',
         accessorKey: 'telefono',
-        cell: ({ row }: { row: { original: EstudianteRow } }) => (
-            <span className="text-sm">{row.original.telefono || '—'}</span>
-        ),
+        cell: ({ row }: { row: { original: EstudianteRow } }) => <span className="text-sm">{row.original.telefono || '—'}</span>,
     },
     {
         id: 'created_at',
@@ -128,7 +133,9 @@ export default function Index({ estudiantes, secciones }: IndexProps) {
                     <Filter secciones={secciones} />
                     {can('crear usuarios') && (
                         <Link href={route('estudiantes.create')} className="shrink-0">
-                            <Button size="sm" color="blue">Crear Estudiante</Button>
+                            <Button size="sm" color="blue">
+                                Crear Estudiante
+                            </Button>
                         </Link>
                     )}
                 </div>

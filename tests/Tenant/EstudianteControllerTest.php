@@ -92,8 +92,8 @@ test('update replaces the estudiante seccion via HTTP', function () {
 
     $this->actingAs($admin)
         ->tenantPut("/estudiantes/{$estudiante->id}", [
-            'name'       => $estudiante->name,
-            'email'      => $estudiante->email,
+            'name' => $estudiante->name,
+            'email' => $estudiante->email,
             'seccion_id' => $seccionB->id,
         ])
         ->assertRedirect(route('estudiantes.index'));
@@ -114,8 +114,8 @@ test('update with null seccion_id removes all enrollments via HTTP', function ()
 
     $this->actingAs($admin)
         ->tenantPut("/estudiantes/{$estudiante->id}", [
-            'name'       => $estudiante->name,
-            'email'      => $estudiante->email,
+            'name' => $estudiante->name,
+            'email' => $estudiante->email,
             'seccion_id' => null,
         ])
         ->assertRedirect(route('estudiantes.index'));
@@ -139,8 +139,8 @@ test('UpdateEstudianteRequest requires nullable integer seccion_id that exists i
     $request = new UpdateEstudianteRequest;
     $request->merge(['seccion_id' => null]);
 
-    $rules    = $request->rules();
-    $ruleStr  = implode(',', $rules['seccion_id']);
+    $rules = $request->rules();
+    $ruleStr = implode(',', $rules['seccion_id']);
 
     expect($ruleStr)
         ->toContain('nullable')

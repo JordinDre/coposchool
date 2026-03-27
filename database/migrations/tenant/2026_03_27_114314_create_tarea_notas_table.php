@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->unique(['tarea_id', 'estudiante_id']);
         });
     }

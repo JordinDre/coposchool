@@ -10,14 +10,40 @@ import React, { useState } from 'react';
 import AgregarNotaDialog from '../estudiantes/AgregarNotaDialog';
 import Filter from './Filter';
 
-interface Materia { id: number; nombre: string; codigo?: string }
-interface Seccion { id: number; nombre: string; ciclo: string; ciclo_escolar: number; materias?: Materia[] }
-interface Asignacion {
-    seccion_id: number; seccion_nombre: string;
-    materia_id: number; materia_nombre: string; materia_codigo?: string;
+interface Materia {
+    id: number;
+    nombre: string;
+    codigo?: string;
 }
-interface Unidad { id: number; nombre: string; orden: number; ciclo_escolar: number; fecha_inicio?: string; fecha_fin?: string }
-interface NotaEntry { id: number; materia_id: number; unidad_id: number; nota: number | null; observaciones?: string; }
+interface Seccion {
+    id: number;
+    nombre: string;
+    ciclo: string;
+    ciclo_escolar: number;
+    materias?: Materia[];
+}
+interface Asignacion {
+    seccion_id: number;
+    seccion_nombre: string;
+    materia_id: number;
+    materia_nombre: string;
+    materia_codigo?: string;
+}
+interface Unidad {
+    id: number;
+    nombre: string;
+    orden: number;
+    ciclo_escolar: number;
+    fecha_inicio?: string;
+    fecha_fin?: string;
+}
+interface NotaEntry {
+    id: number;
+    materia_id: number;
+    unidad_id: number;
+    nota: number | null;
+    observaciones?: string;
+}
 
 interface EstudianteRow {
     id: number;
@@ -64,9 +90,7 @@ function fmt(d?: string) {
 
 function initials(name: string) {
     const parts = name.trim().split(' ');
-    return parts.length >= 2
-        ? (parts[0][0] + parts[1][0]).toUpperCase()
-        : name.slice(0, 2).toUpperCase();
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
 }
 
 function getMaterias(
@@ -83,14 +107,10 @@ function getMaterias(
             .map((a) => ({ id: a.materia_id, nombre: a.materia_nombre, codigo: a.materia_codigo }));
     }
     const seen = new Set<number>();
-    return (student.secciones ?? [])
-        .flatMap((s) => s.materias ?? [])
-        .filter((m) => !seen.has(m.id) && seen.add(m.id));
+    return (student.secciones ?? []).flatMap((s) => s.materias ?? []).filter((m) => !seen.has(m.id) && seen.add(m.id));
 }
 
-export default function Index({
-    estudiantes, secciones, misAsignaciones, unidades, notasGrid, esCatedratico,
-}: IndexProps) {
+export default function Index({ estudiantes, secciones, misAsignaciones, unidades, notasGrid, esCatedratico }: IndexProps) {
     const { can } = useCan();
     const { unidadActual } = usePage().props as unknown as { unidadActual: Unidad | null };
     const { generatePdfUrl } = usePdf();
@@ -100,20 +120,13 @@ export default function Index({
 
     const { data, from, to, total, current_page, last_page } = estudiantes;
 
-    const goToPage = (page: number) =>
-        router.get(route('notas.index'), { page }, { preserveState: true, preserveScroll: false });
+    const goToPage = (page: number) => router.get(route('notas.index'), { page }, { preserveState: true, preserveScroll: false });
 
     const gridCols =
-        unidades.length <= 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' :
-        unidades.length <= 6 ? 'grid-cols-1 sm:grid-cols-2' :
-        'grid-cols-1';
+        unidades.length <= 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : unidades.length <= 6 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1';
 
-    const fichaPdfUrl = fichaStudent
-        ? generatePdfUrl(`reportes/ficha/${fichaStudent.id}`)
-        : '';
-    const fichaFileName = fichaStudent
-        ? `ficha-${fichaStudent.name.toLowerCase().replace(/\s+/g, '-')}.pdf`
-        : 'ficha.pdf';
+    const fichaPdfUrl = fichaStudent ? generatePdfUrl(`reportes/ficha/${fichaStudent.id}`) : '';
+    const fichaFileName = fichaStudent ? `ficha-${fichaStudent.name.toLowerCase().replace(/\s+/g, '-')}.pdf` : 'ficha.pdf';
 
     return (
         <>
@@ -144,30 +157,29 @@ export default function Index({
                             return (
                                 <div
                                     key={estudiante.id}
-                                    className={[
-                                        'flex flex-col rounded-lg border transition-colors',
-                                        isInactive ? 'opacity-55' : '',
-                                    ].join(' ')}
+                                    className={['flex flex-col rounded-lg border transition-colors', isInactive ? 'opacity-55' : ''].join(' ')}
                                 >
                                     {/* Card body */}
                                     <div className="flex gap-3 px-4 pt-3 pb-2">
-                                        <div className={[
-                                            'mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                                            isInactive ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary',
-                                        ].join(' ')}>
+                                        <div
+                                            className={[
+                                                'mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
+                                                isInactive ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary',
+                                            ].join(' ')}
+                                        >
                                             {initials(estudiante.name)}
                                         </div>
 
                                         <div className="min-w-0 flex-1 space-y-2">
                                             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                                <span className="font-medium leading-tight">{estudiante.name}</span>
+                                                <span className="leading-tight font-medium">{estudiante.name}</span>
                                                 {isInactive && (
                                                     <span className="inline-flex items-center rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
                                                         Inactivo
                                                     </span>
                                                 )}
                                             </div>
-                                            <p className="text-xs text-muted-foreground leading-tight">{estudiante.email}</p>
+                                            <p className="text-xs leading-tight text-muted-foreground">{estudiante.email}</p>
 
                                             {(estudiante.secciones ?? []).length > 0 && (
                                                 <div className="flex flex-wrap gap-1">
@@ -187,12 +199,14 @@ export default function Index({
                                                     <table className="border-collapse text-xs">
                                                         <thead>
                                                             <tr>
-                                                                <th className="w-20 pb-1 pr-3 text-left font-normal text-muted-foreground/60" />
+                                                                <th className="w-20 pr-3 pb-1 text-left font-normal text-muted-foreground/60" />
                                                                 {unidades.map((u) => (
                                                                     <th
                                                                         key={u.id}
-                                                                        className="w-16 pb-1 px-1 text-center font-medium text-muted-foreground"
-                                                                        title={u.fecha_inicio ? fmt(u.fecha_inicio) + '–' + fmt(u.fecha_fin) : undefined}
+                                                                        className="w-16 px-1 pb-1 text-center font-medium text-muted-foreground"
+                                                                        title={
+                                                                            u.fecha_inicio ? fmt(u.fecha_inicio) + '–' + fmt(u.fecha_fin) : undefined
+                                                                        }
                                                                     >
                                                                         <div className="text-[10px] leading-tight">{u.nombre}</div>
                                                                     </th>
@@ -202,10 +216,17 @@ export default function Index({
                                                         <tbody>
                                                             {materias.map((m) => (
                                                                 <tr key={m.id}>
-                                                                    <td className="pr-3 py-0.5 text-left text-muted-foreground whitespace-nowrap">
-                                                                        {m.codigo
-                                                                            ? <><span className="text-[9px] text-muted-foreground/60 mr-1">{m.codigo}</span>{m.nombre}</>
-                                                                            : m.nombre}
+                                                                    <td className="py-0.5 pr-3 text-left whitespace-nowrap text-muted-foreground">
+                                                                        {m.codigo ? (
+                                                                            <>
+                                                                                <span className="mr-1 text-[9px] text-muted-foreground/60">
+                                                                                    {m.codigo}
+                                                                                </span>
+                                                                                {m.nombre}
+                                                                            </>
+                                                                        ) : (
+                                                                            m.nombre
+                                                                        )}
                                                                     </td>
                                                                     {unidades.map((u) => {
                                                                         const nota = lookup[m.id]?.[u.id] ?? null;
@@ -266,7 +287,9 @@ export default function Index({
 
                 {total > 0 && (
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{from}–{to} de {total} estudiantes</span>
+                        <span>
+                            {from}–{to} de {total} estudiantes
+                        </span>
                         <div className="flex items-center gap-1">
                             <Button
                                 variant="outline"
@@ -277,7 +300,9 @@ export default function Index({
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="px-2 tabular-nums">{current_page} / {last_page}</span>
+                            <span className="px-2 tabular-nums">
+                                {current_page} / {last_page}
+                            </span>
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -302,7 +327,9 @@ export default function Index({
 
             <PdfSheet
                 open={fichaStudent !== null}
-                onOpenChange={(open) => { if (!open) setFichaStudent(null); }}
+                onOpenChange={(open) => {
+                    if (!open) setFichaStudent(null);
+                }}
                 title={fichaStudent ? `Ficha — ${fichaStudent.name}` : 'Ficha académica'}
                 description="Vista previa de la ficha académica del estudiante"
                 pdfUrl={fichaPdfUrl}

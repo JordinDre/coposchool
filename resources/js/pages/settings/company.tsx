@@ -28,26 +28,24 @@ interface Configuracion {
     pie_impresion: string | null;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Configuración de escuela', href: '/settings/company' },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Configuración de escuela', href: '/settings/company' }];
 
 Company.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
 export default function Company({ configuracion }: { configuracion: Configuracion }) {
     const { data, setData, patch, processing, recentlySuccessful, errors } = useForm({
-        nombre_empresa:         configuracion.nombre_empresa ?? '',
-        email:                  configuracion.email ?? '',
-        telefono:               configuracion.telefono ?? '',
-        direccion:              configuracion.direccion ?? '',
-        logo_url:               configuracion.logo_url ?? '',
-        favicon_url:            configuracion.favicon_url ?? '',
+        nombre_empresa: configuracion.nombre_empresa ?? '',
+        email: configuracion.email ?? '',
+        telefono: configuracion.telefono ?? '',
+        direccion: configuracion.direccion ?? '',
+        logo_url: configuracion.logo_url ?? '',
+        favicon_url: configuracion.favicon_url ?? '',
         codigo_establecimiento: configuracion.codigo_establecimiento ?? '',
-        nivel_educativo:        configuracion.nivel_educativo ?? '',
-        director_nombre:        configuracion.director_nombre ?? '',
-        firma_cargo:            configuracion.firma_cargo ?? '',
-        encabezado_impresion:   configuracion.encabezado_impresion ?? '',
-        pie_impresion:          configuracion.pie_impresion ?? '',
+        nivel_educativo: configuracion.nivel_educativo ?? '',
+        director_nombre: configuracion.director_nombre ?? '',
+        firma_cargo: configuracion.firma_cargo ?? '',
+        encabezado_impresion: configuracion.encabezado_impresion ?? '',
+        pie_impresion: configuracion.pie_impresion ?? '',
     });
 
     const submit = (e: React.FormEvent) => {
@@ -94,10 +92,7 @@ export default function Company({ configuracion }: { configuracion: Configuracio
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="nivel_educativo">Nivel educativo</Label>
-                                    <Select
-                                        value={data.nivel_educativo}
-                                        onValueChange={(v) => setData('nivel_educativo', v)}
-                                    >
+                                    <Select value={data.nivel_educativo} onValueChange={(v) => setData('nivel_educativo', v)}>
                                         <SelectTrigger id="nivel_educativo">
                                             <SelectValue placeholder="Seleccionar nivel" />
                                         </SelectTrigger>
@@ -142,10 +137,7 @@ export default function Company({ configuracion }: { configuracion: Configuracio
 
                     {/* ── Contacto ── */}
                     <div className="space-y-5">
-                        <HeadingSmall
-                            title="Contacto"
-                            description="Datos de contacto visibles en documentos e información institucional"
-                        />
+                        <HeadingSmall title="Contacto" description="Datos de contacto visibles en documentos e información institucional" />
 
                         <div className="grid gap-4">
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -245,7 +237,9 @@ export default function Company({ configuracion }: { configuracion: Configuracio
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Button type="submit" disabled={processing}>Guardar</Button>
+                        <Button type="submit" disabled={processing}>
+                            Guardar
+                        </Button>
 
                         <Transition
                             show={recentlySuccessful}

@@ -6,8 +6,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/react';
-import { CalendarDays } from 'lucide-react';
-import { RefreshCw } from 'lucide-react';
+import { CalendarDays, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 
 function fmt(dateStr?: string) {
@@ -23,7 +22,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
     const handleRefresh = () => {
         setIsRefreshing(true);
-        setTimeout(() => { window.location.reload(); }, 300);
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
     };
 
     return (
@@ -36,13 +37,17 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 {unidadActual && (
                     <div className="hidden items-center gap-1.5 rounded-md border bg-primary/5 px-2.5 py-1 sm:flex">
                         <CalendarDays className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-xs font-medium">{unidadActual.orden}. {unidadActual.nombre}</span>
+                        <span className="text-xs font-medium">
+                            {unidadActual.orden}. {unidadActual.nombre}
+                        </span>
                         {(unidadActual.fecha_inicio || unidadActual.fecha_fin) && (
                             <span className="text-xs text-muted-foreground">
                                 {fmt(unidadActual.fecha_inicio)}–{fmt(unidadActual.fecha_fin)}
                             </span>
                         )}
-                        <Badge variant="default" className="h-4 px-1.5 text-[10px]">Activa</Badge>
+                        <Badge variant="default" className="h-4 px-1.5 text-[10px]">
+                            Activa
+                        </Badge>
                     </div>
                 )}
                 <Button

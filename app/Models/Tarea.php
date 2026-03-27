@@ -34,7 +34,7 @@ class Tarea extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) => "Tarea {$eventName}")
+            ->setDescriptionForEvent(fn (string $eventName) => "Tarea {$eventName}")
             ->dontSubmitEmptyLogs();
     }
 

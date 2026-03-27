@@ -24,19 +24,26 @@ export default function Actions({ id, isDeleted = false, align = 'end' }: Action
             <DropdownMenuContent align={align}>
                 {can('ver unidad') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('unidades.show', id)}><Eye className="mr-2 h-4 w-4" />Ver</Link>
+                        <Link href={route('unidades.show', id)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Ver
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {!isDeleted && can('editar unidad') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('unidades.edit', id)}><Edit className="mr-2 h-4 w-4" />Editar</Link>
+                        <Link href={route('unidades.edit', id)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {isDeleted && can('editar unidad') && (
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.post(route('unidades.restore', id))}>
-                            <RotateCcw className="mr-2 h-4 w-4" />Reactivar
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Reactivar
                         </DropdownMenuItem>
                     </>
                 )}
@@ -47,7 +54,8 @@ export default function Actions({ id, isDeleted = false, align = 'end' }: Action
                             className="text-red-600"
                             onClick={() => confirm('¿Desactivar esta unidad?') && router.delete(route('unidades.destroy', id))}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-600" />Desactivar
+                            <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                            Desactivar
                         </DropdownMenuItem>
                     </>
                 )}

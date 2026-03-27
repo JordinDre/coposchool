@@ -64,13 +64,13 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'ver actividad']);
 
         // ===== ROLES =====
-        $superAdmin   = Role::firstOrCreate(['name' => 'super-admin']);
+        $superAdmin = Role::firstOrCreate(['name' => 'super-admin']);
         $administrador = Role::firstOrCreate(['name' => 'administrador']);
-        $director     = Role::firstOrCreate(['name' => 'director']);
-        $subdirector  = Role::firstOrCreate(['name' => 'subdirector']);
-        $secretario   = Role::firstOrCreate(['name' => 'secretario']);
-        $catedratico  = Role::firstOrCreate(['name' => 'catedratico']);
-        $estudiante   = Role::firstOrCreate(['name' => 'estudiante']);
+        $director = Role::firstOrCreate(['name' => 'director']);
+        $subdirector = Role::firstOrCreate(['name' => 'subdirector']);
+        $secretario = Role::firstOrCreate(['name' => 'secretario']);
+        $catedratico = Role::firstOrCreate(['name' => 'catedratico']);
+        $estudiante = Role::firstOrCreate(['name' => 'estudiante']);
 
         // super-admin y administrador tienen todos los permisos
         $superAdmin->givePermissionTo(Permission::all());

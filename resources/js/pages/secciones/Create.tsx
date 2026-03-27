@@ -21,7 +21,7 @@ Create.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         nombre: '',
-        ciclo: '' as typeof CICLOS[number] | '',
+        ciclo: '' as (typeof CICLOS)[number] | '',
         ciclo_escolar: new Date().getFullYear().toString(),
         descripcion: '',
     });
@@ -46,22 +46,34 @@ export default function Create() {
                                 placeholder="Ej: 1ro Bachillerato A"
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="ciclo">Ciclo *</Label>
-                            <Select value={data.ciclo} onValueChange={(v) => setData('ciclo', v as typeof CICLOS[number])}>
+                            <Select value={data.ciclo} onValueChange={(v) => setData('ciclo', v as (typeof CICLOS)[number])}>
                                 <SelectTrigger className={errors.ciclo ? 'border-red-500' : ''}>
                                     <SelectValue placeholder="Seleccionar ciclo" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {CICLOS.map((c) => (
-                                        <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                                        <SelectItem key={c} value={c} className="capitalize">
+                                            {c}
+                                        </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {errors.ciclo && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.ciclo}</p>}
+                            {errors.ciclo && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.ciclo}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -74,7 +86,12 @@ export default function Create() {
                                 placeholder="Ej: 2024"
                                 className={errors.ciclo_escolar ? 'border-red-500' : ''}
                             />
-                            {errors.ciclo_escolar && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.ciclo_escolar}</p>}
+                            {errors.ciclo_escolar && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.ciclo_escolar}
+                                </p>
+                            )}
                         </div>
                     </div>
 

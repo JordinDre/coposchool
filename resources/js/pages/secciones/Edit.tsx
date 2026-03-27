@@ -24,10 +24,10 @@ Edit.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{p
 
 export default function Edit({ seccion }: EditProps) {
     const { data, setData, put, processing, errors } = useForm({
-        nombre:        seccion.nombre ?? '',
-        ciclo:         (seccion.ciclo ?? 'basico') as typeof CICLOS[number],
+        nombre: seccion.nombre ?? '',
+        ciclo: (seccion.ciclo ?? 'basico') as (typeof CICLOS)[number],
         ciclo_escolar: (seccion.ciclo_escolar ?? new Date().getFullYear()).toString(),
-        descripcion:   seccion.descripcion ?? '',
+        descripcion: seccion.descripcion ?? '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -50,18 +50,25 @@ export default function Edit({ seccion }: EditProps) {
                                 onChange={(e) => setData('nombre', e.target.value)}
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
                             <Label>Ciclo *</Label>
-                            <Select value={data.ciclo} onValueChange={(v) => setData('ciclo', v as typeof CICLOS[number])}>
+                            <Select value={data.ciclo} onValueChange={(v) => setData('ciclo', v as (typeof CICLOS)[number])}>
                                 <SelectTrigger className={errors.ciclo ? 'border-red-500' : ''}>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {CICLOS.map((c) => (
-                                        <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                                        <SelectItem key={c} value={c} className="capitalize">
+                                            {c}
+                                        </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -79,12 +86,7 @@ export default function Edit({ seccion }: EditProps) {
 
                         <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="descripcion">Descripción</Label>
-                            <Textarea
-                                id="descripcion"
-                                value={data.descripcion}
-                                onChange={(e) => setData('descripcion', e.target.value)}
-                                rows={2}
-                            />
+                            <Textarea id="descripcion" value={data.descripcion} onChange={(e) => setData('descripcion', e.target.value)} rows={2} />
                         </div>
                     </div>
 
@@ -93,10 +95,14 @@ export default function Edit({ seccion }: EditProps) {
                             {processing ? 'Guardando...' : 'Guardar Cambios'}
                         </Button>
                         <Link href={`/secciones/${seccion.id}/materias`}>
-                            <Button type="button" variant="outline">Asignar materias</Button>
+                            <Button type="button" variant="outline">
+                                Asignar materias
+                            </Button>
                         </Link>
                         <Link href={`/secciones/${seccion.id}/inscribir`}>
-                            <Button type="button" variant="outline">Inscribir estudiantes</Button>
+                            <Button type="button" variant="outline">
+                                Inscribir estudiantes
+                            </Button>
                         </Link>
                         <Button type="button" variant="outline" onClick={() => history.back()}>
                             Cancelar

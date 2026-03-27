@@ -37,15 +37,15 @@ class InitializeTenantData implements ShouldQueue
             $userBase = User::first();
             if (! $userBase) {
                 $userBase = User::create([
-                    'name'            => 'System',
-                    'email'           => 'system@temp.com',
-                    'password'        => Hash::make('temp'),
-                    'telefono'        => null,
-                    'creado_por'      => 1,
+                    'name' => 'System',
+                    'email' => 'system@temp.com',
+                    'password' => Hash::make('temp'),
+                    'telefono' => null,
+                    'creado_por' => 1,
                     'actualizado_por' => 1,
                 ]);
                 $userBase->update([
-                    'creado_por'      => $userBase->id,
+                    'creado_por' => $userBase->id,
                     'actualizado_por' => $userBase->id,
                 ]);
             }
@@ -54,12 +54,12 @@ class InitializeTenantData implements ShouldQueue
             $userAdmin = User::firstOrCreate(
                 ['email' => 'admin@gmail.com'],
                 [
-                    'name'            => 'Administrador',
-                    'password'        => Hash::make('Pass1234.'),
-                    'telefono'        => null,
-                    'creado_por'      => $userBase->id,
+                    'name' => 'Administrador',
+                    'password' => Hash::make('Pass1234.'),
+                    'telefono' => null,
+                    'creado_por' => $userBase->id,
                     'actualizado_por' => $userBase->id,
-                    'eliminado_por'   => null,
+                    'eliminado_por' => null,
                 ]
             );
 
@@ -73,12 +73,12 @@ class InitializeTenantData implements ShouldQueue
             $userSuperAdmin = User::firstOrCreate(
                 ['email' => 'jordindredev@gmail.com'],
                 [
-                    'name'            => 'Super Admin',
-                    'password'        => Hash::make('Pass1234.'),
-                    'telefono'        => null,
-                    'creado_por'      => $userBase->id,
+                    'name' => 'Super Admin',
+                    'password' => Hash::make('Pass1234.'),
+                    'telefono' => null,
+                    'creado_por' => $userBase->id,
                     'actualizado_por' => $userBase->id,
-                    'eliminado_por'   => null,
+                    'eliminado_por' => null,
                 ]
             );
             if (! $userSuperAdmin->hasRole('super-admin')) {
