@@ -26,7 +26,6 @@ export default function Edit({ seccion }: EditProps) {
     const { data, setData, put, processing, errors } = useForm({
         nombre: seccion.nombre ?? '',
         ciclo: (seccion.ciclo ?? 'basico') as (typeof CICLOS)[number],
-        ciclo_escolar: (seccion.ciclo_escolar ?? new Date().getFullYear()).toString(),
         descripcion: seccion.descripcion ?? '',
     });
 
@@ -72,16 +71,6 @@ export default function Edit({ seccion }: EditProps) {
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="ciclo_escolar">Ciclo Escolar *</Label>
-                            <Input
-                                id="ciclo_escolar"
-                                type="number"
-                                value={data.ciclo_escolar}
-                                onChange={(e) => setData('ciclo_escolar', e.target.value)}
-                            />
                         </div>
 
                         <div className="space-y-2 sm:col-span-2">

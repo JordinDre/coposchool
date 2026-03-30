@@ -134,9 +134,7 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
                                     <div className="flex items-center justify-between bg-muted/40 px-4 py-2.5">
                                         <div>
                                             <span className="text-sm font-medium">{seccion.nombre}</span>
-                                            <span className="ml-2 text-xs text-muted-foreground capitalize">
-                                                {seccion.ciclo} · {seccion.ciclo_escolar}
-                                            </span>
+                                            <span className="ml-2 text-xs text-muted-foreground capitalize">{seccion.ciclo}</span>
                                         </div>
                                         {asignadasCount > 0 && (
                                             <span className="text-xs font-medium text-primary">

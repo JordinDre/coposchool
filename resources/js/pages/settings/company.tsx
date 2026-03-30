@@ -15,6 +15,11 @@ import { type BreadcrumbItem } from '@/types';
 
 interface Configuracion {
     nombre_empresa: string;
+    nombre_completo: string | null;
+    abreviatura: string | null;
+    ciclo_actual: number | null;
+    descripcion_establecimiento: string | null;
+    descripcion_ciclo: string | null;
     email: string | null;
     telefono: string | null;
     direccion: string | null;
@@ -23,6 +28,9 @@ interface Configuracion {
     codigo_establecimiento: string | null;
     nivel_educativo: string | null;
     director_nombre: string | null;
+    sub_director_nombre: string | null;
+    coordinador_nombre: string | null;
+    eslogan: string | null;
     firma_cargo: string | null;
     encabezado_impresion: string | null;
     pie_impresion: string | null;
@@ -35,6 +43,11 @@ Company.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}
 export default function Company({ configuracion }: { configuracion: Configuracion }) {
     const { data, setData, patch, processing, recentlySuccessful, errors } = useForm({
         nombre_empresa: configuracion.nombre_empresa ?? '',
+        nombre_completo: configuracion.nombre_completo ?? '',
+        abreviatura: configuracion.abreviatura ?? '',
+        ciclo_actual: configuracion.ciclo_actual ?? new Date().getFullYear(),
+        descripcion_establecimiento: configuracion.descripcion_establecimiento ?? '',
+        descripcion_ciclo: configuracion.descripcion_ciclo ?? '',
         email: configuracion.email ?? '',
         telefono: configuracion.telefono ?? '',
         direccion: configuracion.direccion ?? '',
@@ -43,6 +56,9 @@ export default function Company({ configuracion }: { configuracion: Configuracio
         codigo_establecimiento: configuracion.codigo_establecimiento ?? '',
         nivel_educativo: configuracion.nivel_educativo ?? '',
         director_nombre: configuracion.director_nombre ?? '',
+        sub_director_nombre: configuracion.sub_director_nombre ?? '',
+        coordinador_nombre: configuracion.coordinador_nombre ?? '',
+        eslogan: configuracion.eslogan ?? '',
         firma_cargo: configuracion.firma_cargo ?? '',
         encabezado_impresion: configuracion.encabezado_impresion ?? '',
         pie_impresion: configuracion.pie_impresion ?? '',
@@ -80,7 +96,31 @@ export default function Company({ configuracion }: { configuracion: Configuracio
 
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="codigo_establecimiento">Código de establecimiento</Label>
+                                    <Label htmlFor="nombre_completo">Nombre completo (para reportes)</Label>
+                                    <Input
+                                        id="nombre_completo"
+                                        value={data.nombre_completo}
+                                        onChange={(e) => setData('nombre_completo', e.target.value)}
+                                        placeholder="Ej. Instituto Nacional de Educación Básica J.M."
+                                    />
+                                    <InputError message={errors.nombre_completo} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="abreviatura">Abreviatura / Nombre corto</Label>
+                                    <Input
+                                        id="abreviatura"
+                                        value={data.abreviatura}
+                                        onChange={(e) => setData('abreviatura', e.target.value)}
+                                        placeholder="Ej. INEB J.M."
+                                    />
+                                    <InputError message={errors.abreviatura} />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-3">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="codigo_establecimiento">Código</Label>
                                     <Input
                                         id="codigo_establecimiento"
                                         value={data.codigo_establecimiento}
@@ -88,6 +128,18 @@ export default function Company({ configuracion }: { configuracion: Configuracio
                                         placeholder="Ej. 01-01-0001"
                                     />
                                     <InputError message={errors.codigo_establecimiento} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="ciclo_actual">Ciclo Escolar Actual</Label>
+                                    <Input
+                                        id="ciclo_actual"
+                                        type="number"
+                                        value={data.ciclo_actual}
+                                        onChange={(e) => setData('ciclo_actual', parseInt(e.target.value))}
+                                        placeholder="2025"
+                                    />
+                                    <InputError message={errors.ciclo_actual} />
                                 </div>
 
                                 <div className="grid gap-2">
@@ -104,6 +156,30 @@ export default function Company({ configuracion }: { configuracion: Configuracio
                                         </SelectContent>
                                     </Select>
                                     <InputError message={errors.nivel_educativo} />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="descripcion_establecimiento">Sub-título de cabecera (Línea 2)</Label>
+                                    <Input
+                                        id="descripcion_establecimiento"
+                                        value={data.descripcion_establecimiento}
+                                        onChange={(e) => setData('descripcion_establecimiento', e.target.value)}
+                                        placeholder="Ej. PROF. JOSÉ VICENTE LÓPEZ Y LÓPEZ"
+                                    />
+                                    <InputError message={errors.descripcion_establecimiento} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="descripcion_ciclo">Descripción de ciclo (Línea 5)</Label>
+                                    <Input
+                                        id="descripcion_ciclo"
+                                        value={data.descripcion_ciclo}
+                                        onChange={(e) => setData('descripcion_ciclo', e.target.value)}
+                                        placeholder="Ej. Ciclo Básico de Estudios"
+                                    />
+                                    <InputError message={errors.descripcion_ciclo} />
                                 </div>
                             </div>
 
@@ -186,28 +262,61 @@ export default function Company({ configuracion }: { configuracion: Configuracio
                         />
 
                         <div className="grid gap-4">
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="director_nombre">Nombre del director(a)</Label>
+                                    <Label htmlFor="director_nombre">Nombre del Director(a)</Label>
                                     <Input
                                         id="director_nombre"
                                         value={data.director_nombre}
                                         onChange={(e) => setData('director_nombre', e.target.value)}
-                                        placeholder="Ej. Lic. Juan Pérez"
+                                        placeholder="Ej. Lic. Oscar Abigail Rojas Rodríguez"
                                     />
                                     <InputError message={errors.director_nombre} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="firma_cargo">Cargo en firma</Label>
+                                    <Label htmlFor="sub_director_nombre">Nombre del Sub-Director(a)</Label>
                                     <Input
-                                        id="firma_cargo"
-                                        value={data.firma_cargo}
-                                        onChange={(e) => setData('firma_cargo', e.target.value)}
-                                        placeholder="Ej. Director(a)"
+                                        id="sub_director_nombre"
+                                        value={data.sub_director_nombre}
+                                        onChange={(e) => setData('sub_director_nombre', e.target.value)}
+                                        placeholder="Ej. Licda. María López"
                                     />
-                                    <InputError message={errors.firma_cargo} />
+                                    <InputError message={errors.sub_director_nombre} />
                                 </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="coordinador_nombre">Nombre del Coordinador(a)</Label>
+                                    <Input
+                                        id="coordinador_nombre"
+                                        value={data.coordinador_nombre}
+                                        onChange={(e) => setData('coordinador_nombre', e.target.value)}
+                                        placeholder="Ej. Lic. Rubén Levi de León Arévalo"
+                                    />
+                                    <InputError message={errors.coordinador_nombre} />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="firma_cargo">Cargo principal en firma</Label>
+                                <Input
+                                    id="firma_cargo"
+                                    value={data.firma_cargo}
+                                    onChange={(e) => setData('firma_cargo', e.target.value)}
+                                    placeholder="Ej. Director"
+                                />
+                                <InputError message={errors.firma_cargo} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="eslogan">Eslogan (al final de la ficha)</Label>
+                                <Input
+                                    id="eslogan"
+                                    value={data.eslogan}
+                                    onChange={(e) => setData('eslogan', e.target.value)}
+                                    placeholder="Ej. ¡Y si hay país que se engrandezca, Guatemala habrá de ser!"
+                                />
+                                <InputError message={errors.eslogan} />
                             </div>
 
                             <div className="grid gap-2">

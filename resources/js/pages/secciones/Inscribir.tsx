@@ -10,6 +10,7 @@ interface Estudiante {
     name: string;
     email: string;
     inscrito: boolean;
+    seccion_actual?: string;
 }
 
 interface Props {
@@ -83,9 +84,7 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h2 className="text-lg font-semibold">{seccion.nombre}</h2>
-                        <p className="text-sm text-muted-foreground capitalize">
-                            {seccion.ciclo} · {seccion.ciclo_escolar}
-                        </p>
+                        <p className="text-sm text-muted-foreground capitalize">{seccion.ciclo}</p>
                     </div>
                     <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-1.5">
                         <Users className="h-4 w-4 text-muted-foreground" />
@@ -150,10 +149,14 @@ export default function Inscribir({ seccion, estudiantes, totalInscritos, search
                                         {est.name.charAt(0)}
                                     </span>
 
-                                    {/* Nombre + email */}
+                                    {/* Nombre + sección actual */}
                                     <span className="min-w-0 flex-1">
                                         <span className="block truncate text-sm font-medium">{est.name}</span>
-                                        <span className="block truncate text-xs text-muted-foreground">{est.email}</span>
+                                        {!est.inscrito && est.seccion_actual && (
+                                            <span className="block truncate text-xs text-amber-600 dark:text-amber-400">
+                                                En: {est.seccion_actual} · se moverá a esta sección
+                                            </span>
+                                        )}
                                     </span>
 
                                     {/* Badge estado */}

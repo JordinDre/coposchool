@@ -101,7 +101,7 @@ export default function Edit({ estudiante, secciones, seccionesInscritas }: Edit
                                 <SelectContent>
                                     {secciones.map((s) => (
                                         <SelectItem key={s.id} value={String(s.id)}>
-                                            {s.nombre} · {s.ciclo} {s.ciclo_escolar}
+                                            {s.nombre}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

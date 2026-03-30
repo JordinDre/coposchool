@@ -22,7 +22,6 @@ export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         nombre: '',
         ciclo: '' as (typeof CICLOS)[number] | '',
-        ciclo_escolar: new Date().getFullYear().toString(),
         descripcion: '',
     });
 
@@ -72,24 +71,6 @@ export default function Create() {
                                 <p className="flex items-center gap-1 text-sm text-red-500">
                                     <AlertCircle className="h-3 w-3" />
                                     {errors.ciclo}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="ciclo_escolar">Ciclo Escolar *</Label>
-                            <Input
-                                id="ciclo_escolar"
-                                type="number"
-                                value={data.ciclo_escolar}
-                                onChange={(e) => setData('ciclo_escolar', e.target.value)}
-                                placeholder="Ej: 2024"
-                                className={errors.ciclo_escolar ? 'border-red-500' : ''}
-                            />
-                            {errors.ciclo_escolar && (
-                                <p className="flex items-center gap-1 text-sm text-red-500">
-                                    <AlertCircle className="h-3 w-3" />
-                                    {errors.ciclo_escolar}
                                 </p>
                             )}
                         </div>

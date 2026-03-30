@@ -111,7 +111,7 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ secciones }: SeccionesIndexProps) {
+export default function Index({ secciones, filters }: SeccionesIndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -121,6 +121,8 @@ export default function Index({ secciones }: SeccionesIndexProps) {
         lastPage: secciones.last_page ?? 1,
         from: secciones.from ?? 1,
         to: secciones.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: filters.sort_direction ?? undefined,
     };
 
     return (

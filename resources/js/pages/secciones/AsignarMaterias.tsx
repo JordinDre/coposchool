@@ -1,5 +1,4 @@
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -11,18 +10,11 @@ interface Materia {
     nombre: string;
     codigo?: string;
     asignada: boolean;
-    catedratico_id: number | null;
-}
-
-interface Catedratico {
-    id: number;
-    name: string;
 }
 
 interface Props {
     seccion: { id: number; nombre: string; ciclo: string; ciclo_escolar: number };
     materias: Materia[];
-    catedraticos: Catedratico[];
     search: string;
 }
 
@@ -33,10 +25,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 AsignarMaterias.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function AsignarMaterias({ seccion, materias, catedraticos, search: initialSearch }: Props) {
+export default function AsignarMaterias({ seccion, materias, search: initialSearch }: Props) {
     const [search, setSearch] = useState(initialSearch ?? '');
     const [toggling, setToggling] = useState<Set<number>>(new Set());
-    const [updatingCat, setUpdatingCat] = useState<Set<number>>(new Set());
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const totalAsignadas = materias.filter((m) => m.asignada).length;
@@ -84,26 +75,6 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
         );
     };
 
-    const updateCatedratico = (materiaId: number, catedraticoId: number | null) => {
-        if (updatingCat.has(materiaId)) return;
-        setUpdatingCat((prev) => new Set(prev).add(materiaId));
-        router.post(
-            `/secciones/${seccion.id}/materias/catedratico`,
-            { materia_id: materiaId, catedratico_id: catedraticoId },
-            {
-                preserveScroll: true,
-                preserveState: true,
-                only: ['materias'],
-                onFinish: () =>
-                    setUpdatingCat((prev) => {
-                        const next = new Set(prev);
-                        next.delete(materiaId);
-                        return next;
-                    }),
-            },
-        );
-    };
-
     return (
         <>
             <Head title={`Materias — ${seccion.nombre}`} />
@@ -113,9 +84,7 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h2 className="text-lg font-semibold">{seccion.nombre}</h2>
-                        <p className="text-sm text-muted-foreground capitalize">
-                            {seccion.ciclo} · {seccion.ciclo_escolar}
-                        </p>
+                        <p className="text-sm text-muted-foreground capitalize">{seccion.ciclo}</p>
                     </div>
                     <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-1.5">
                         <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -153,7 +122,6 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                     <div className="divide-y overflow-hidden rounded-lg border">
                         {materias.map((materia) => {
                             const loading = toggling.has(materia.id);
-                            const loadingCat = updatingCat.has(materia.id);
                             return (
                                 <div
                                     key={materia.id}
@@ -201,35 +169,6 @@ export default function AsignarMaterias({ seccion, materias, catedraticos, searc
                                             </span>
                                         )}
                                     </button>
-
-                                    {/* Selector de catedrático */}
-                                    {materia.asignada && (
-                                        <div className="px-4 pb-3 pl-[3.25rem]" onClick={(e) => e.stopPropagation()}>
-                                            <Select
-                                                value={materia.catedratico_id?.toString() ?? 'none'}
-                                                onValueChange={(v) => updateCatedratico(materia.id, v === 'none' ? null : parseInt(v))}
-                                                disabled={loadingCat}
-                                            >
-                                                <SelectTrigger className="h-8 max-w-xs text-xs">
-                                                    {loadingCat ? (
-                                                        <span className="flex items-center gap-1 text-muted-foreground">
-                                                            <Loader2 className="h-3 w-3 animate-spin" /> Guardando...
-                                                        </span>
-                                                    ) : (
-                                                        <SelectValue placeholder="Asignar catedrático..." />
-                                                    )}
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="none">Sin asignar</SelectItem>
-                                                    {catedraticos.map((c) => (
-                                                        <SelectItem key={c.id} value={c.id.toString()}>
-                                                            {c.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    )}
                                 </div>
                             );
                         })}

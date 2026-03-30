@@ -13,8 +13,6 @@ interface EditProps {
         id: number;
         nombre: string;
         descripcion?: string | null;
-        orden: number | null;
-        ciclo_escolar: number | null;
         fecha_inicio?: string | null;
         fecha_fin?: string | null;
     };
@@ -31,8 +29,6 @@ export default function Edit({ unidad }: EditProps) {
     const { data, setData, put, processing, errors } = useForm({
         nombre: unidad.nombre ?? '',
         descripcion: unidad.descripcion ?? '',
-        orden: (unidad.orden ?? 1).toString(),
-        ciclo_escolar: (unidad.ciclo_escolar ?? new Date().getFullYear()).toString(),
         fecha_inicio: unidad.fecha_inicio ?? '',
         fecha_fin: unidad.fecha_fin ?? '',
     });
@@ -62,19 +58,6 @@ export default function Edit({ unidad }: EditProps) {
                                     {errors.nombre}
                                 </p>
                             )}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="orden">Orden *</Label>
-                            <Input id="orden" type="number" min="1" max="20" value={data.orden} onChange={(e) => setData('orden', e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="ciclo_escolar">Ciclo Escolar *</Label>
-                            <Input
-                                id="ciclo_escolar"
-                                type="number"
-                                value={data.ciclo_escolar}
-                                onChange={(e) => setData('ciclo_escolar', e.target.value)}
-                            />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_inicio">Fecha inicio</Label>

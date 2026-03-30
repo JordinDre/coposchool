@@ -63,9 +63,7 @@ export default function Show({ materia }: ShowProps) {
                             {materia.secciones.map((s) => (
                                 <div key={s.id} className="rounded-md border p-2">
                                     <div className="text-sm font-medium">{s.nombre}</div>
-                                    <div className="text-xs text-muted-foreground capitalize">
-                                        {s.ciclo} — {s.ciclo_escolar}
-                                    </div>
+                                    <div className="text-xs text-muted-foreground capitalize">{s.ciclo}</div>
                                 </div>
                             ))}
                         </div>

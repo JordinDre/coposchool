@@ -94,6 +94,7 @@ class HandleInertiaRequests extends Middleware
                     'id' => $u->id,
                     'nombre' => $u->nombre,
                     'orden' => $u->orden,
+                    'ciclo_escolar' => $u->ciclo_escolar,
                     'fecha_inicio' => $u->fecha_inicio?->format('Y-m-d'),
                     'fecha_fin' => $u->fecha_fin?->format('Y-m-d'),
                 ] : null;

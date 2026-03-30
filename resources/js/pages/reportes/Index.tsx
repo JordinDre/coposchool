@@ -4,8 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { usePdf } from '@/hooks/usePdf';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { BarChart2, FileText, Users } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { FileSpreadsheet, FileText } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface Seccion {
@@ -14,6 +14,7 @@ interface Seccion {
     ciclo: string;
     ciclo_escolar: number;
 }
+
 
 interface Props {
     secciones: Seccion[];
@@ -28,30 +29,27 @@ interface ReportCardProps {
     icon: React.ReactNode;
     title: string;
     description: string;
-    selector: React.ReactNode;
+    selectors: React.ReactNode;
     onGenerate: () => void;
     disabled: boolean;
     label: string;
 }
 
-function ReportCard({ icon, title, description, selector, onGenerate, disabled, label }: ReportCardProps) {
+function ReportCard({ icon, title, description, selectors, onGenerate, disabled, label }: ReportCardProps) {
     return (
         <div className="flex flex-col rounded-lg border bg-card">
             {/* Icon strip */}
             <div className="flex items-start gap-3 border-b px-5 py-4">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">{icon}</div>
                 <div className="min-w-0">
-                    <h2 className="text-sm leading-tight font-semibold">{title}</h2>
+                    <h2 className="text-sm font-semibold selection:leading-tight">{title}</h2>
                     <p className="mt-1 text-xs leading-snug text-muted-foreground">{description}</p>
                 </div>
             </div>
 
-            {/* Selector + action */}
+            {/* Selectors + action */}
             <div className="flex flex-1 flex-col justify-between gap-4 px-5 py-4">
-                <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">Sección</label>
-                    {selector}
-                </div>
+                <div className="space-y-3">{selectors}</div>
                 <Button size="sm" disabled={disabled} onClick={onGenerate} className="w-full">
                     {label}
                 </Button>
@@ -62,18 +60,21 @@ function ReportCard({ icon, title, description, selector, onGenerate, disabled, 
 
 function SeccionSelect({ secciones, value, onChange }: { secciones: Seccion[]; value: string; onChange: (v: string) => void }) {
     return (
-        <Select value={value} onValueChange={onChange}>
-            <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleccionar sección…" />
-            </SelectTrigger>
-            <SelectContent>
-                {secciones.map((s) => (
-                    <SelectItem key={s.id} value={String(s.id)}>
-                        {s.nombre} · {s.ciclo_escolar}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+        <div className="space-y-1.5">
+            <label className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">Sección</label>
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar sección…" />
+                </SelectTrigger>
+                <SelectContent>
+                    {secciones.map((s) => (
+                        <SelectItem key={s.id} value={String(s.id)}>
+                            {s.nombre}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
     );
 }
 
@@ -84,25 +85,21 @@ export default function Index({ secciones, canGenerarSeccion }: Props) {
     const [fichasId, setFichasId] = useState('');
     const [showFichas, setShowFichas] = useState(false);
 
-    // Resumen de rendimiento
-    const [resumenId, setResumenId] = useState('');
-    const [showResumen, setShowResumen] = useState(false);
-
-    // Lista de inscritos
-    const [listaId, setListaId] = useState('');
-    const [showLista, setShowLista] = useState(false);
-
     const seccionFor = (id: string) => secciones.find((s) => String(s.id) === id) ?? null;
 
     const fichasUrl = fichasId ? generatePdfUrl(`reportes/fichas-seccion?seccion_id=${fichasId}`) : '';
-    const resumenUrl = resumenId ? generatePdfUrl(`reportes/resumen-rendimiento?seccion_id=${resumenId}`) : '';
-    const listaUrl = listaId ? generatePdfUrl(`reportes/lista-inscritos?seccion_id=${listaId}`) : '';
 
     const fichasSec = seccionFor(fichasId);
-    const resumenSec = seccionFor(resumenId);
-    const listaSec = seccionFor(listaId);
 
     const seccionLabel = (sec: Seccion | null) => (sec ? `${sec.nombre} · ${sec.ciclo_escolar}` : '');
+
+    const handleVerConsolidado = () => {
+        router.visit(route('reportes.consolidado-view'));
+    };
+
+    const handleVerConsolidadoMaterias = () => {
+        router.visit(route('reportes.consolidado-materias'));
+    };
 
     return (
         <>
@@ -119,38 +116,38 @@ export default function Index({ secciones, canGenerarSeccion }: Props) {
                     <>
                         <div>
                             <h2 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">Reportes por sección</h2>
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-4 sm:grid-cols-2">
                                 {/* Fichas por sección */}
                                 <ReportCard
                                     icon={<FileText className="h-4 w-4 text-muted-foreground" />}
                                     title="Fichas académicas"
                                     description="Ficha individual de cada estudiante con sus calificaciones por unidad."
-                                    selector={<SeccionSelect secciones={secciones} value={fichasId} onChange={setFichasId} />}
+                                    selectors={<SeccionSelect secciones={secciones} value={fichasId} onChange={setFichasId} />}
                                     disabled={!fichasId}
                                     label="Ver fichas"
                                     onGenerate={() => setShowFichas(true)}
                                 />
 
-                                {/* Resumen de rendimiento */}
+                                {/* Consolidado */}
                                 <ReportCard
-                                    icon={<BarChart2 className="h-4 w-4 text-muted-foreground" />}
-                                    title="Resumen de rendimiento"
-                                    description="Promedio por materia y unidad, con porcentaje de aprobados por sección."
-                                    selector={<SeccionSelect secciones={secciones} value={resumenId} onChange={setResumenId} />}
-                                    disabled={!resumenId}
-                                    label="Ver resumen"
-                                    onGenerate={() => setShowResumen(true)}
+                                    icon={<FileSpreadsheet className="h-4 w-4 text-muted-foreground" />}
+                                    title="Consolidado de notas"
+                                    description="Visualiza en el navegador y exporta a Excel el consolidado de notas por sección y unidad."
+                                    selectors={null}
+                                    disabled={false}
+                                    label="Ver Consolidado"
+                                    onGenerate={handleVerConsolidado}
                                 />
 
-                                {/* Lista de inscritos */}
+                                {/* Consolidado por Materia */}
                                 <ReportCard
-                                    icon={<Users className="h-4 w-4 text-muted-foreground" />}
-                                    title="Lista de inscritos"
-                                    description="Nómina de estudiantes inscritos con correo y contacto."
-                                    selector={<SeccionSelect secciones={secciones} value={listaId} onChange={setListaId} />}
-                                    disabled={!listaId}
-                                    label="Ver lista"
-                                    onGenerate={() => setShowLista(true)}
+                                    icon={<FileSpreadsheet className="h-4 w-4 text-muted-foreground" />}
+                                    title="Consolidado por materia"
+                                    description="Matriz completa de notas: todas las materias × todos los bimestres con promedios finales por estudiante."
+                                    selectors={null}
+                                    disabled={false}
+                                    label="Ver Consolidado por Materia"
+                                    onGenerate={handleVerConsolidadoMaterias}
                                 />
                             </div>
                         </div>
@@ -174,36 +171,6 @@ export default function Index({ secciones, canGenerarSeccion }: Props) {
                 description={fichasSec ? seccionLabel(fichasSec) : undefined}
                 pdfUrl={fichasUrl}
                 fileName={fichasSec ? `fichas-${fichasSec.nombre.toLowerCase().replace(/\s+/g, '-')}-${fichasSec.ciclo_escolar}.pdf` : 'fichas.pdf'}
-            >
-                {null}
-            </PdfSheet>
-
-            <PdfSheet
-                open={showResumen}
-                onOpenChange={(open) => {
-                    if (!open) setShowResumen(false);
-                }}
-                title={resumenSec ? `Rendimiento — ${resumenSec.nombre} ${resumenSec.ciclo_escolar}` : 'Resumen de rendimiento'}
-                description={resumenSec ? seccionLabel(resumenSec) : undefined}
-                pdfUrl={resumenUrl}
-                fileName={
-                    resumenSec ? `resumen-${resumenSec.nombre.toLowerCase().replace(/\s+/g, '-')}-${resumenSec.ciclo_escolar}.pdf` : 'resumen.pdf'
-                }
-            >
-                {null}
-            </PdfSheet>
-
-            <PdfSheet
-                open={showLista}
-                onOpenChange={(open) => {
-                    if (!open) setShowLista(false);
-                }}
-                title={listaSec ? `Inscritos — ${listaSec.nombre} ${listaSec.ciclo_escolar}` : 'Lista de inscritos'}
-                description={listaSec ? seccionLabel(listaSec) : undefined}
-                pdfUrl={listaUrl}
-                fileName={
-                    listaSec ? `inscritos-${listaSec.nombre.toLowerCase().replace(/\s+/g, '-')}-${listaSec.ciclo_escolar}.pdf` : 'inscritos.pdf'
-                }
             >
                 {null}
             </PdfSheet>

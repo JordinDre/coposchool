@@ -59,6 +59,13 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'generar boleta seccion']);
         Permission::firstOrCreate(['name' => 'exportar notas']);
 
+        // ========== TAREAS ==========
+        Permission::firstOrCreate(['name' => 'ver tareas']);
+        Permission::firstOrCreate(['name' => 'crear tareas']);
+        Permission::firstOrCreate(['name' => 'calificar tareas']);
+        Permission::firstOrCreate(['name' => 'editar tareas']);
+        Permission::firstOrCreate(['name' => 'eliminar tareas']);
+
         // ========== ACTIVIDAD ==========
         Permission::firstOrCreate(['name' => 'listar actividad']);
         Permission::firstOrCreate(['name' => 'ver actividad']);
@@ -114,6 +121,7 @@ class RolePermissionSeeder extends Seeder
             'listar unidades', 'ver unidad',
             'listar notas', 'ver nota', 'crear nota', 'editar nota',
             'generar boleta individual', 'generar boleta seccion',
+            'ver tareas', 'crear tareas', 'calificar tareas', 'editar tareas', 'eliminar tareas',
         ]);
 
         // Estudiante — solo ver sus propias notas

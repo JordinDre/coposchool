@@ -74,7 +74,12 @@ class SeccionController extends Controller
     {
         $this->authorize('create', Seccion::class);
 
-        Seccion::create($request->validated());
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? date('Y');
+        }
+
+        Seccion::create($data);
 
         return redirect()->route('secciones.index')->with('success', 'Sección creada exitosamente.');
     }
@@ -135,7 +140,12 @@ class SeccionController extends Controller
     {
         $this->authorize('update', $seccion);
 
-        $seccion->update($request->only(['nombre', 'ciclo', 'ciclo_escolar', 'descripcion']));
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? $seccion->ciclo_escolar;
+        }
+
+        $seccion->update($data);
 
         return redirect()->route('secciones.index')->with('success', 'Sección actualizada exitosamente.');
     }
@@ -164,6 +174,7 @@ class SeccionController extends Controller
         $query = User::select('id', 'name', 'email')
             ->whereHas('roles', fn ($q) => $q->where('name', 'estudiante'))
             ->whereNull('deleted_at')
+            ->with(['secciones' => fn ($q) => $q->select('secciones.id', 'secciones.nombre')->limit(1)])
             ->orderBy('name');
 
         if ($search) {
@@ -174,10 +185,11 @@ class SeccionController extends Controller
         }
 
         $estudiantes = $query->get()->map(fn ($u) => [
-            'id' => $u->id,
-            'name' => $u->name,
-            'email' => $u->email,
-            'inscrito' => in_array($u->id, $inscritos),
+            'id'             => $u->id,
+            'name'           => $u->name,
+            'email'          => $u->email,
+            'inscrito'       => in_array($u->id, $inscritos),
+            'seccion_actual' => $u->secciones->first()?->nombre,
         ]);
 
         return Inertia::render('secciones/Inscribir', [
@@ -199,12 +211,16 @@ class SeccionController extends Controller
 
         $request->validate(['estudiante_id' => ['required', 'integer', 'exists:users,id']]);
 
-        $inscrito = $seccion->estudiantes()->where('users.id', $request->estudiante_id)->exists();
+        $estudianteId = $request->estudiante_id;
+        $inscrito     = $seccion->estudiantes()->where('users.id', $estudianteId)->exists();
 
         if ($inscrito) {
-            $seccion->estudiantes()->detach($request->estudiante_id);
+            $seccion->estudiantes()->detach($estudianteId);
         } else {
-            $seccion->estudiantes()->attach($request->estudiante_id);
+            // Remover de cualquier otra sección antes de inscribir
+            $estudiante = \App\Models\User::findOrFail($estudianteId);
+            $estudiante->secciones()->detach();
+            $seccion->estudiantes()->attach($estudianteId);
         }
 
         return back();
@@ -240,11 +256,6 @@ class SeccionController extends Controller
             'catedratico_id' => $asignadasMap->get($m->id),
         ]);
 
-        $catedraticos = User::select('id', 'name', 'email')
-            ->whereHas('roles', fn ($q) => $q->where('name', 'catedratico'))
-            ->orderBy('name')
-            ->get();
-
         return Inertia::render('secciones/AsignarMaterias', [
             'seccion' => [
                 'id' => $seccion->id,
@@ -253,7 +264,6 @@ class SeccionController extends Controller
                 'ciclo_escolar' => $seccion->ciclo_escolar,
             ],
             'materias' => $materias,
-            'catedraticos' => $catedraticos,
             'search' => $search,
         ]);
     }
@@ -285,9 +295,22 @@ class SeccionController extends Controller
         $this->authorize('update', $seccion);
 
         $request->validate([
-            'materia_id' => ['required', 'integer', 'exists:materias,id'],
+            'materia_id'     => ['required', 'integer', 'exists:materias,id'],
             'catedratico_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
+
+        // Verificar que el catedrático a asignar no esté ya asignado a esta misma
+        // sección+materia por otro catedrático diferente
+        if ($request->catedratico_id) {
+            $existente = $seccion->materias()
+                ->where('materias.id', $request->materia_id)
+                ->first();
+
+            if ($existente && $existente->pivot->catedratico_id &&
+                $existente->pivot->catedratico_id !== (int) $request->catedratico_id) {
+                return back()->withErrors(['catedratico_id' => 'Esta materia ya tiene un catedrático asignado en esta sección.']);
+            }
+        }
 
         $seccion->materias()->updateExistingPivot($request->materia_id, [
             'catedratico_id' => $request->catedratico_id,

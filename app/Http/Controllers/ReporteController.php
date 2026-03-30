@@ -32,8 +32,15 @@ class ReporteController extends Controller
             ->orderBy('nombre')
             ->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
 
+        $config = \App\Models\Configuracion::cached();
+        $unidades = Unidad::whereNull('deleted_at')
+            ->orderBy('ciclo_escolar', 'desc')
+            ->orderBy('orden')
+            ->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
+
         return Inertia::render('reportes/Index', [
             'secciones' => $secciones,
+            'unidades' => $unidades,
             'canGenerarSeccion' => $user->can('generar boleta seccion'),
             'canGenerarIndividual' => $user->can('generar boleta individual'),
         ]);
@@ -61,7 +68,8 @@ class ReporteController extends Controller
             ->orderBy('orden')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.ficha_estudiante', compact('estudiante', 'notas', 'unidades'))
+        $configuracion = \App\Models\Configuracion::cached();
+        $pdf = Pdf::loadView('pdf.ficha_estudiante', compact('estudiante', 'notas', 'unidades', 'configuracion'))
             ->setPaper('letter', 'portrait');
         $filename = 'ficha-'.str($estudiante->name)->slug().'.pdf';
 
@@ -96,7 +104,8 @@ class ReporteController extends Controller
             ->orderBy('orden')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.fichas_seccion', compact('seccion', 'estudiantes', 'notas', 'unidades'))
+        $configuracion = \App\Models\Configuracion::cached();
+        $pdf = Pdf::loadView('pdf.fichas_seccion', compact('seccion', 'estudiantes', 'notas', 'unidades', 'configuracion'))
             ->setPaper('letter', 'portrait');
         $filename = 'fichas-'.str($seccion->nombre)->slug().'-'.$seccion->ciclo_escolar.'.pdf';
 
@@ -104,81 +113,180 @@ class ReporteController extends Controller
     }
 
     /**
-     * Resumen de rendimiento por materia para una sección — landscape PDF.
+     * View consolidated report in browser.
      */
-    public function resumenRendimiento(Request $request): Response
+    public function consolidadoView(Request $request): \Inertia\Response
     {
         Gate::authorize('generar boleta seccion');
 
-        $request->validate(['seccion_id' => 'required|integer|exists:secciones,id']);
+        $seccionId = $request->query('seccion_id');
+        $unidadId  = $request->query('unidad_id');
+
+        $configuracion = \App\Models\Configuracion::cached();
+
+        // All available sections for the filter
+        $secciones = Seccion::whereNull('deleted_at')
+            ->orderBy('ciclo_escolar', 'desc')
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'ciclo_escolar']);
+
+        // All available units for the filter
+        $unidades = Unidad::whereNull('deleted_at')
+            ->orderBy('ciclo_escolar', 'desc')
+            ->orderBy('orden')
+            ->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
+
+        // Default to latest if not provided
+        if (!$seccionId && $secciones->count() > 0) {
+            $seccionId = $secciones->first()->id;
+        }
+
+        if (!$unidadId && $unidades->count() > 0) {
+            // Find a unit for the current cycle if possible, otherwise just the first one
+            $unidadId = $unidades->where('ciclo_escolar', $configuracion->ciclo_actual)->first()?->id 
+                        ?? $unidades->first()?->id;
+        }
+
+        // If still no IDs (empty DB), handle gracefully
+        if (!$seccionId || !$unidadId) {
+            return Inertia::render('reportes/Consolidado', [
+                'secciones' => $secciones,
+                'unidades' => $unidades,
+                'seccion' => null,
+                'unidad' => null,
+                'materias' => [],
+                'estudiantes' => [],
+                'notas' => [],
+                'configuracion' => $configuracion,
+            ]);
+        }
+
+        $seccion = Seccion::with(['materias' => function ($q) {
+            $q->whereNull('materias.deleted_at')->orderBy('materias.nombre');
+        }])->findOrFail($seccionId);
+
+        $unidad = Unidad::findOrFail($unidadId);
+
+        $estudiantes = User::withTrashed()
+            ->whereHas('secciones', fn ($q) => $q->where('secciones.id', $seccion->id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'deleted_at']);
+
+        $estudianteIds = $estudiantes->pluck('id');
+        
+        $notas = Nota::whereIn('estudiante_id', $estudianteIds)
+            ->where('seccion_id', $seccion->id)
+            ->where('unidad_id', $unidad->id)
+            ->get(['estudiante_id', 'materia_id', 'nota']);
+
+        $configuracion = \App\Models\Configuracion::cached();
+
+        return Inertia::render('reportes/Consolidado', [
+            'secciones' => $secciones,
+            'unidades' => $unidades,
+            'seccion' => $seccion,
+            'unidad' => $unidad,
+            'materias' => $seccion->materias ?? [],
+            'estudiantes' => $estudiantes,
+            'notas' => $notas,
+            'configuracion' => $configuracion,
+        ]);
+    }
+
+    /**
+     * Consolidado completo: todas las materias × todos los bimestres de la sección + FINALES.
+     */
+    public function consolidadoMaterias(Request $request): \Inertia\Response
+    {
+        Gate::authorize('generar boleta seccion');
+
+        $seccionId = $request->query('seccion_id');
+
+        $secciones = Seccion::whereNull('deleted_at')
+            ->orderBy('ciclo_escolar', 'desc')
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'ciclo_escolar']);
+
+        if (! $seccionId && $secciones->count() > 0) {
+            $seccionId = $secciones->first()->id;
+        }
+
+        if (! $seccionId) {
+            return Inertia::render('reportes/ConsolidadoMaterias', [
+                'secciones' => $secciones,
+                'seccion'   => null,
+                'materias'  => [],
+                'unidades'  => [],
+                'estudiantes' => [],
+                'notas'     => [],
+            ]);
+        }
+
+        $seccion = Seccion::with(['materias' => function ($q) {
+            $q->whereNull('materias.deleted_at')->orderBy('materias.nombre');
+        }])->findOrFail($seccionId);
+
+        $unidades = Unidad::whereNull('deleted_at')
+            ->where('ciclo_escolar', $seccion->ciclo_escolar)
+            ->orderBy('orden')
+            ->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
+
+        $estudiantes = User::withTrashed()
+            ->whereHas('secciones', fn ($q) => $q->where('secciones.id', $seccion->id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'deleted_at']);
+
+        $notas = Nota::whereIn('estudiante_id', $estudiantes->pluck('id'))
+            ->where('seccion_id', $seccion->id)
+            ->whereIn('materia_id', $seccion->materias->pluck('id'))
+            ->get(['estudiante_id', 'materia_id', 'unidad_id', 'nota']);
+
+        return Inertia::render('reportes/ConsolidadoMaterias', [
+            'secciones'   => $secciones,
+            'seccion'     => $seccion ? $seccion->only(['id', 'nombre', 'ciclo_escolar']) : null,
+            'materias'    => $seccion->materias->map->only(['id', 'nombre']),
+            'unidades'    => $unidades,
+            'estudiantes' => $estudiantes,
+            'notas'       => $notas,
+        ]);
+    }
+
+    /**
+     * Consolidado de notas — Excel con todos los estudiantes × materias de la UNIDAD seleccionada.
+     */
+    public function consolidado(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        Gate::authorize('generar boleta seccion');
+
+        $request->validate([
+            'seccion_id' => 'required|integer|exists:secciones,id',
+            'unidad_id'  => 'required|integer|exists:unidades,id',
+        ]);
 
         $seccion = Seccion::with(['materias' => function ($q) {
             $q->whereNull('materias.deleted_at')->orderBy('materias.nombre');
         }])->findOrFail($request->seccion_id);
 
-        $unidades = Unidad::whereNull('deleted_at')
-            ->where('ciclo_escolar', $seccion->ciclo_escolar)
-            ->orderBy('orden')
-            ->get();
-
-        $resumen = $seccion->materias->map(function ($materia) use ($seccion, $unidades): array {
-            $porUnidad = [];
-            foreach ($unidades as $unidad) {
-                $avg = Nota::where('seccion_id', $seccion->id)
-                    ->where('materia_id', $materia->id)
-                    ->where('unidad_id', $unidad->id)
-                    ->whereNotNull('nota')
-                    ->avg('nota');
-                $porUnidad[$unidad->id] = $avg !== null ? round((float) $avg, 1) : null;
-            }
-
-            $todas = Nota::where('seccion_id', $seccion->id)
-                ->where('materia_id', $materia->id)
-                ->whereNotNull('nota')
-                ->pluck('nota')
-                ->map(fn ($n) => (float) $n);
-
-            $total = $todas->count();
-            $promedio = $total > 0 ? round($todas->avg(), 1) : null;
-            $aprobados = $todas->filter(fn ($n) => $n >= 60)->count();
-
-            return [
-                'materia' => ['id' => $materia->id, 'nombre' => $materia->nombre, 'codigo' => $materia->codigo],
-                'por_unidad' => $porUnidad,
-                'promedio' => $promedio,
-                'pct_aprobados' => $total > 0 ? (int) round($aprobados / $total * 100) : null,
-                'registradas' => $total,
-            ];
-        });
-
-        $pdf = Pdf::loadView('pdf.resumen_rendimiento', compact('seccion', 'unidades', 'resumen'))
-            ->setPaper('letter', 'landscape');
-        $filename = 'resumen-rendimiento-'.str($seccion->nombre)->slug().'-'.$seccion->ciclo_escolar.'.pdf';
-
-        return $this->agregarHeadersIframe($pdf->stream($filename));
-    }
-
-    /**
-     * Lista de estudiantes inscritos en una sección — portrait PDF.
-     */
-    public function listaInscritos(Request $request): Response
-    {
-        Gate::authorize('generar boleta seccion');
-
-        $request->validate(['seccion_id' => 'required|integer|exists:secciones,id']);
-
-        $seccion = Seccion::findOrFail($request->seccion_id);
+        $unidad = Unidad::findOrFail($request->unidad_id);
 
         $estudiantes = User::withTrashed()
             ->whereHas('secciones', fn ($q) => $q->where('secciones.id', $seccion->id))
             ->orderBy('name')
-            ->get(['id', 'name', 'email', 'telefono', 'deleted_at']);
+            ->get(['id', 'name', 'deleted_at']);
 
-        $pdf = Pdf::loadView('pdf.lista_inscritos', compact('seccion', 'estudiantes'))
-            ->setPaper('letter', 'portrait');
-        $filename = 'inscritos-'.str($seccion->nombre)->slug().'-'.$seccion->ciclo_escolar.'.pdf';
+        $estudianteIds = $estudiantes->pluck('id');
+        $notas = Nota::whereIn('estudiante_id', $estudianteIds)
+            ->where('seccion_id', $seccion->id)
+            ->where('unidad_id', $unidad->id)
+            ->get()
+            ->groupBy('estudiante_id');
 
-        return $this->agregarHeadersIframe($pdf->stream($filename));
+        $filename = 'consolidado-'.str($seccion->nombre)->slug().'-'.str($unidad->nombre)->slug().'.xlsx';
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ConsolidadoExport($seccion, $unidad, $seccion->materias, $estudiantes, $notas),
+            $filename,
+        );
     }
 
     /**

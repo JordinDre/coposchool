@@ -112,6 +112,8 @@ export default function Index({ users, roles }: UsuariosIndexProps) {
         lastPage: users.last_page ?? 1,
         from: users.from ?? 1,
         to: users.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: filters.sort_direction ?? undefined,
     };
 
     return (

@@ -121,7 +121,7 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ catedraticos, secciones, materias }: IndexProps) {
+export default function Index({ catedraticos, secciones, materias, filters }: IndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -131,6 +131,8 @@ export default function Index({ catedraticos, secciones, materias }: IndexProps)
         lastPage: catedraticos.last_page ?? 1,
         from: catedraticos.from ?? 1,
         to: catedraticos.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: filters.sort_direction ?? undefined,
     };
 
     return (

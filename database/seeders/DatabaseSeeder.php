@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RolePermissionSeeder::class,
+            DataEscuelaSeeder::class,
         ]);
 
         // Asignar rol super-admin solo si no lo tiene

@@ -43,16 +43,29 @@ class Unidad extends Model
     }
 
     /**
-     * La unidad actualmente activa (hoy entre fecha_inicio y fecha_fin).
+     * La unidad actualmente activa.
+     * Primero busca la unidad cuyo rango de fechas incluye hoy.
+     * Si estamos en una brecha entre bimestres, devuelve el más recientemente iniciado.
      */
     public static function actual(): ?self
     {
-        return static::whereNull('deleted_at')
+        $exacta = static::whereNull('deleted_at')
             ->whereNotNull('fecha_inicio')
             ->whereNotNull('fecha_fin')
             ->whereDate('fecha_inicio', '<=', today())
             ->whereDate('fecha_fin', '>=', today())
             ->orderBy('orden')
+            ->first();
+
+        if ($exacta) {
+            return $exacta;
+        }
+
+        // Brecha entre bimestres: devuelve la más recientemente iniciada antes de hoy.
+        return static::whereNull('deleted_at')
+            ->whereNotNull('fecha_inicio')
+            ->whereDate('fecha_inicio', '<=', today())
+            ->orderBy('fecha_inicio', 'desc')
             ->first();
     }
 

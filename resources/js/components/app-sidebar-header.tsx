@@ -17,7 +17,7 @@ function fmt(dateStr?: string) {
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const { unidadActual } = usePage().props as {
-        unidadActual?: { id: number; nombre: string; orden: number; fecha_inicio?: string; fecha_fin?: string } | null;
+        unidadActual?: { id: number; nombre: string; orden: number; ciclo_escolar?: number; fecha_inicio?: string; fecha_fin?: string } | null;
     };
 
     const handleRefresh = () => {
@@ -38,6 +38,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     <div className="hidden items-center gap-1.5 rounded-md border bg-primary/5 px-2.5 py-1 sm:flex">
                         <CalendarDays className="h-3.5 w-3.5 text-primary" />
                         <span className="text-xs font-medium">
+                            {unidadActual.ciclo_escolar && <span className="text-muted-foreground">{unidadActual.ciclo_escolar} · </span>}
                             {unidadActual.orden}. {unidadActual.nombre}
                         </span>
                         {(unidadActual.fecha_inicio || unidadActual.fecha_fin) && (

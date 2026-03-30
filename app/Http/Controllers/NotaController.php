@@ -2,139 +2,110 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Concerns\PersistsFilters;
+use App\Exports\NotasExport;
 use App\Models\Materia;
 use App\Models\Nota;
 use App\Models\Seccion;
 use App\Models\Unidad;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NotaController extends Controller
 {
-    use PersistsFilters;
 
     /**
-     * Vista principal de notas.
-     * Catedráticos ven un selector de sección/materia/unidad y luego la grilla.
-     * Admins/directores pueden ver notas con filtros.
+     * Grilla de notas — selector de sección+materia, todas las unidades como columnas.
+     * Solo la unidad activa es editable.
      */
     public function index(Request $request)
     {
         $this->authorize('viewAny', Nota::class);
 
-        $user = Auth::user();
-
-        // Selector de contexto (sección + materia + unidad)
+        $user       = Auth::user();
         $seccion_id = $request->get('seccion_id');
         $materia_id = $request->get('materia_id');
-        $unidad_id = $request->get('unidad_id');
 
-        // Si el usuario es catedrático, limitar a sus secciones/materias
+        // Secciones disponibles (catedrático: solo las suyas)
         if ($user->hasRole('catedratico')) {
-            $secciones = Seccion::whereHas('materias', function ($q) use ($user) {
-                $q->where('materia_seccion.catedratico_id', $user->id);
-            })->orderBy('nombre')->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
+            $secciones = Seccion::whereHas('materias', fn ($q) => $q->where('materia_seccion.catedratico_id', $user->id))
+                ->whereNull('deleted_at')->orderBy('nombre')->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
         } else {
             $secciones = Seccion::whereNull('deleted_at')->orderBy('nombre')->get(['id', 'nombre', 'ciclo', 'ciclo_escolar']);
         }
 
-        // Si el usuario es estudiante, mostrar solo sus notas
-        if ($user->hasRole('estudiante')) {
-            $misNotas = Nota::where('estudiante_id', $user->id)
-                ->with(['materia:id,nombre,codigo', 'unidad:id,nombre,orden', 'seccion:id,nombre'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+        $seccionObj = $seccion_id ? Seccion::find($seccion_id) : null;
 
-            return Inertia::render('notas/Index', [
-                'esEstudiante' => true,
-                'misNotas' => $misNotas,
-                'secciones' => [],
-                'materias' => [],
-                'unidades' => [],
-                'grilla' => null,
-                'contexto' => null,
-            ]);
-        }
-
-        // Para catedrático/admin: construir grilla si hay contexto
+        // Materias del selector (filtra por catedrático si aplica)
         $materias = [];
-        $unidades = [];
-        $grilla = null;
-        $contexto = null;
-        $tiene_tareas = false;
-
-        if ($seccion_id) {
-            // Materias disponibles en esa sección (filtradas por catedrático si aplica)
-            $seccionObj = Seccion::find($seccion_id);
-            if ($seccionObj) {
-                $materiasQuery = $seccionObj->materias();
-                if ($user->hasRole('catedratico')) {
-                    $materiasQuery->wherePivot('catedratico_id', $user->id);
-                }
-                $materias = $materiasQuery->get(['materias.id', 'materias.nombre', 'materias.codigo']);
+        if ($seccionObj) {
+            $mq = $seccionObj->materias()->whereNull('materias.deleted_at');
+            if ($user->hasRole('catedratico')) {
+                $mq->wherePivot('catedratico_id', $user->id);
             }
+            $materias = $mq->get(['materias.id', 'materias.nombre', 'materias.codigo']);
         }
 
-        $unidades = Unidad::whereNull('deleted_at')->orderBy('orden')->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
+        // Unidades del ciclo_escolar de la sección (columnas de la tabla)
+        $unidades = $seccionObj
+            ? Unidad::whereNull('deleted_at')
+                ->where('ciclo_escolar', $seccionObj->ciclo_escolar)
+                ->orderBy('orden')
+                ->get(['id', 'nombre', 'orden', 'ciclo_escolar'])
+            : collect();
 
-        if ($seccion_id && $materia_id && $unidad_id) {
-            $seccionObj = Seccion::find($seccion_id);
+        // Grilla completa cuando hay sección + materia
+        $grilla  = null;
+        $contexto = null;
+
+        if ($seccionObj && $materia_id) {
             $materiaObj = Materia::find($materia_id);
-            $unidadObj = Unidad::find($unidad_id);
 
-            if ($seccionObj && $materiaObj && $unidadObj) {
+            if ($materiaObj) {
                 $contexto = [
                     'seccion' => $seccionObj->only(['id', 'nombre', 'ciclo', 'ciclo_escolar']),
                     'materia' => $materiaObj->only(['id', 'nombre', 'codigo']),
-                    'unidad' => $unidadObj->only(['id', 'nombre', 'orden']),
                 ];
 
-                // Obtener todos los estudiantes de la sección
-                $estudiantes = $seccionObj->estudiantes()->select('users.id', 'users.name', 'users.email')->get();
+                $estudiantes = $seccionObj->estudiantes()
+                    ->select('users.id', 'users.name')
+                    ->orderBy('users.name')
+                    ->get();
 
-                // Obtener notas existentes
-                $notasExistentes = Nota::where('seccion_id', $seccion_id)
+                $estudianteIds = $estudiantes->pluck('id');
+
+                // Todas las notas de estos estudiantes en esta materia+sección (todas las unidades)
+                $notasMap = Nota::whereIn('estudiante_id', $estudianteIds)
+                    ->where('seccion_id', $seccion_id)
                     ->where('materia_id', $materia_id)
-                    ->where('unidad_id', $unidad_id)
                     ->get()
-                    ->keyBy('estudiante_id');
+                    ->groupBy('estudiante_id')
+                    ->map(fn ($notas) => $notas->keyBy('unidad_id')
+                        ->map(fn ($n) => [
+                            'nota_id'       => $n->id,
+                            'nota'          => $n->nota,
+                            'observaciones' => $n->observaciones,
+                        ])
+                    );
 
-                $grilla = $estudiantes->map(function ($estudiante) use ($notasExistentes) {
-                    $nota = $notasExistentes->get($estudiante->id);
-
-                    return [
-                        'estudiante_id' => $estudiante->id,
-                        'estudiante_name' => $estudiante->name,
-                        'nota_id' => $nota?->id,
-                        'nota' => $nota?->nota,
-                        'observaciones' => $nota?->observaciones,
-                    ];
-                })->values();
-
-                $tiene_tareas = \App\Models\Tarea::where('seccion_id', $seccion_id)
-                    ->where('materia_id', $materia_id)
-                    ->where('unidad_id', $unidad_id)
-                    ->exists();
+                $grilla = $estudiantes->map(fn ($est) => [
+                    'estudiante_id'   => $est->id,
+                    'estudiante_name' => $est->name,
+                    'notas'           => $notasMap->get($est->id, collect())->toArray(),
+                ])->values();
             }
         }
 
         return Inertia::render('notas/Index', [
-            'esEstudiante' => false,
-            'misNotas' => [],
             'secciones' => $secciones,
-            'materias' => $materias,
-            'unidades' => $unidades,
-            'grilla' => $grilla,
-            'contexto' => $contexto,
-            'tiene_tareas' => $tiene_tareas,
-            'filtros' => [
-                'seccion_id' => $seccion_id,
-                'materia_id' => $materia_id,
-                'unidad_id' => $unidad_id,
-            ],
+            'materias'  => $materias,
+            'unidades'  => $unidades,
+            'grilla'    => $grilla,
+            'contexto'  => $contexto,
+            'filtros'   => compact('seccion_id', 'materia_id'),
         ]);
     }
 
@@ -193,6 +164,45 @@ class NotaController extends Controller
         }
 
         return back()->with('success', 'Notas guardadas exitosamente.');
+    }
+
+    /**
+     * Exportar notas de una sección+materia a Excel (todas las unidades).
+     */
+    public function exportar(Request $request): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $this->authorize('viewAny', Nota::class);
+
+        $request->validate([
+            'seccion_id' => ['required', 'exists:secciones,id'],
+            'materia_id' => ['required', 'exists:materias,id'],
+        ]);
+
+        $seccion  = Seccion::findOrFail($request->seccion_id);
+        $materia  = Materia::findOrFail($request->materia_id);
+
+        $unidades = Unidad::whereNull('deleted_at')
+            ->where('ciclo_escolar', $seccion->ciclo_escolar)
+            ->orderBy('orden')
+            ->get();
+
+        $estudiantes = User::withTrashed()
+            ->whereHas('secciones', fn ($q) => $q->where('secciones.id', $seccion->id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'deleted_at']);
+
+        $notas = Nota::whereIn('estudiante_id', $estudiantes->pluck('id'))
+            ->where('seccion_id', $seccion->id)
+            ->where('materia_id', $materia->id)
+            ->get()
+            ->groupBy('estudiante_id');
+
+        $filename = 'notas-' . str($seccion->nombre)->slug() . '-' . str($materia->nombre)->slug() . '.xlsx';
+
+        return Excel::download(
+            new NotasExport($seccion, $materia, $unidades, $estudiantes, $notas),
+            $filename,
+        );
     }
 
     /**

@@ -16,7 +16,7 @@ class StoreSeccionRequest extends FormRequest
         return [
             'nombre' => ['required', 'string', 'max:100'],
             'ciclo' => ['required', 'string', 'in:pre-primaria,kinder,primaria,basico,diversificado'],
-            'ciclo_escolar' => ['required', 'integer', 'min:2000', 'max:2100'],
+            'ciclo_escolar' => ['nullable', 'integer', 'min:2000', 'max:2100'],
             'descripcion' => ['nullable', 'string', 'max:500'],
         ];
     }

@@ -118,7 +118,7 @@ export default function Filter({ secciones }: { secciones: Seccion[] }) {
                                             <SelectContent>
                                                 {secciones.map((s) => (
                                                     <SelectItem key={s.id} value={String(s.id)}>
-                                                        {s.nombre} · {s.ciclo} {s.ciclo_escolar}
+                                                        {s.nombre}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

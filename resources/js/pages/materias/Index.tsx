@@ -31,6 +31,7 @@ interface MateriasIndexProps {
         from: number;
         to: number;
     };
+    filters: Record<string, string>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Materias', href: '/materias' }];
@@ -83,7 +84,7 @@ const columns: ExtendedColumnDef<MateriaRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ materias }: MateriasIndexProps) {
+export default function Index({ materias, filters }: MateriasIndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -93,6 +94,8 @@ export default function Index({ materias }: MateriasIndexProps) {
         lastPage: materias.last_page ?? 1,
         from: materias.from ?? 1,
         to: materias.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: filters.sort_direction ?? undefined,
     };
 
     return (

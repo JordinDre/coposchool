@@ -9,6 +9,7 @@ use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\NotaController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\TareaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RolesPermisosController;
 use App\Http\Controllers\SeccionController;
@@ -75,19 +76,29 @@ Route::middleware([
 
         // ===== UNIDADES =====
         Route::post('unidades/{unidad}/restore', [UnidadController::class, 'restore'])->name('unidades.restore');
-        Route::resource('unidades', UnidadController::class)->names('unidades');
+        Route::resource('unidades', UnidadController::class)
+            ->names('unidades')
+            ->parameters(['unidades' => 'unidad']);
+
+        // ===== TAREAS =====
+        Route::post('tareas/{tarea}/notas', [TareaController::class, 'bulkNotas'])->name('tareas.bulk-notas');
+        Route::resource('tareas', TareaController::class)
+            ->names('tareas')
+            ->only(['index', 'store', 'update', 'destroy']);
 
         // ===== NOTAS =====
         Route::post('notas/bulk', [NotaController::class, 'bulkStore'])->name('notas.bulk-store');
+        Route::get('notas/exportar', [NotaController::class, 'exportar'])->name('notas.exportar');
         Route::get('notas/{nota}/historial', [NotaController::class, 'historial'])->name('notas.historial');
-        Route::get('notas', [EstudianteController::class, 'calificaciones'])->name('notas.index');
+        Route::get('notas', [NotaController::class, 'index'])->name('notas.index');
 
         // ===== REPORTES =====
         Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
         Route::get('reportes/ficha/{estudiante}', [ReporteController::class, 'fichaEstudiante'])->name('reportes.ficha');
         Route::get('reportes/fichas-seccion', [ReporteController::class, 'fichasSeccion'])->name('reportes.fichas-seccion');
-        Route::get('reportes/resumen-rendimiento', [ReporteController::class, 'resumenRendimiento'])->name('reportes.resumen-rendimiento');
-        Route::get('reportes/lista-inscritos', [ReporteController::class, 'listaInscritos'])->name('reportes.lista-inscritos');
+        Route::get('reportes/consolidado', [ReporteController::class, 'consolidado'])->name('reportes.consolidado');
+        Route::get('reportes/consolidado-view', [ReporteController::class, 'consolidadoView'])->name('reportes.consolidado-view');
+        Route::get('reportes/consolidado-materias', [ReporteController::class, 'consolidadoMaterias'])->name('reportes.consolidado-materias');
 
         // ===== BITÁCORA (Sistema) =====
         Route::get('bitacora/exportar', [BitacoraController::class, 'exportar'])->name('bitacora.exportar');

@@ -200,7 +200,7 @@ export default function Notas({ estudiante, secciones, materias, unidades, unida
                                     <SelectContent>
                                         {secciones.map((s) => (
                                             <SelectItem key={s.id} value={s.id.toString()}>
-                                                {s.nombre} · {s.ciclo_escolar}
+                                                {s.nombre}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -240,7 +240,7 @@ export default function Notas({ estudiante, secciones, materias, unidades, unida
                                         <SelectContent>
                                             {unidades.map((u) => (
                                                 <SelectItem key={u.id} value={u.id.toString()}>
-                                                    {u.orden}. {u.nombre} ({u.ciclo_escolar})
+                                                    {u.orden}. {u.nombre}
                                                     {u.fecha_inicio && u.fecha_fin ? ` · ${fmt(u.fecha_inicio)} – ${fmt(u.fecha_fin)}` : ''}
                                                 </SelectItem>
                                             ))}
