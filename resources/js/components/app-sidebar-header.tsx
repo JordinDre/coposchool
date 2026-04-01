@@ -3,10 +3,11 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useSimpleMode } from '@/hooks/use-simple-mode';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/react';
-import { CalendarDays, RefreshCw } from 'lucide-react';
+import { CalendarDays, Gauge, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 
 function fmt(dateStr?: string) {
@@ -16,6 +17,7 @@ function fmt(dateStr?: string) {
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const { simpleMode, toggleSimpleMode } = useSimpleMode();
     const { unidadActual } = usePage().props as {
         unidadActual?: { id: number; nombre: string; orden: number; ciclo_escolar?: number; fecha_inicio?: string; fecha_fin?: string } | null;
     };
@@ -60,6 +62,22 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 >
                     <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
                 </Button>
+
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleSimpleMode}
+                    className={cn(
+                        'h-8 w-8 sm:h-9 sm:w-9 transition-all duration-300',
+                        simpleMode 
+                            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 ring-1 ring-amber-500/20' 
+                            : 'text-muted-foreground hover:text-foreground hover:bg-accent',
+                    )}
+                    title={simpleMode ? 'Desactivar modo simple' : 'Activar modo simple'}
+                >
+                    <Gauge className="h-4 w-4" />
+                </Button>
+
                 <AppearanceToggleTab className="hidden h-8 origin-right scale-90 sm:inline-flex sm:h-9 sm:scale-100" />
             </div>
         </header>

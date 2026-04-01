@@ -4,7 +4,7 @@ import { DataTableServer } from '@/components/ui/data-table-server';
 import { useRoles } from '@/hooks/use-roles';
 import AppLayout from '@/layouts/app-layout';
 import { formatDate } from '@/lib/utils';
-import type { BreadcrumbItem, ExtendedColumnDef, RolesPermisosIndexProps, RolesPermisosRow } from '@/types';
+import type { BreadcrumbItem, ExtendedColumnDef, Role, RolesPermisosIndexProps, RolesPermisosRow } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Shield } from 'lucide-react';
 import React from 'react';
@@ -94,7 +94,7 @@ export default function Index({ roles, permisos, filters }: RolesPermisosIndexPr
     const { isAdminOrSuperAdmin } = useRoles();
 
     // Transformar roles para el DataTableServer
-    const rows: RolesPermisosRow[] = roles.map((role: { id: number; name: string; permissions?: Array<{ id: number }>; users_count?: number }) => ({
+    const rows: RolesPermisosRow[] = roles.map((role: Role) => ({
         id: role.id,
         name: role.name,
         permissions_count: role.permissions?.length || 0,
@@ -117,7 +117,7 @@ export default function Index({ roles, permisos, filters }: RolesPermisosIndexPr
             <Head title="Roles y Permisos" />
             <div className="p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between md:gap-3">
-                    <Filter filters={filters} permissions={permisos.map((p: { name: string }) => p.name)} />
+                    <Filter />
                     <div className="flex flex-col gap-2 sm:flex-row">
                         {isAdminOrSuperAdmin() && (
                             <Link href={route('roles-permisos.create')}>

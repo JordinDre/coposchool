@@ -120,10 +120,8 @@ export default function Index({ estudiantes, secciones, filters }: IndexProps) {
         perPage: estudiantes.per_page ?? 10,
         total: estudiantes.total ?? 0,
         lastPage: estudiantes.last_page ?? 1,
-        from: estudiantes.from ?? 1,
-        to: estudiantes.to ?? 0,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? undefined,
+        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
     };
 
     return (

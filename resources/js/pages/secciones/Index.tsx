@@ -119,10 +119,8 @@ export default function Index({ secciones, filters }: SeccionesIndexProps) {
         perPage: secciones.per_page ?? 10,
         total: secciones.total ?? 0,
         lastPage: secciones.last_page ?? 1,
-        from: secciones.from ?? 1,
-        to: secciones.to ?? 0,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? undefined,
+        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
     };
 
     return (

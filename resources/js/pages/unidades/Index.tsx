@@ -58,10 +58,8 @@ export default function Index({ unidades, filters }: UnidadesIndexProps) {
         perPage: unidades.per_page ?? 10,
         total: unidades.total ?? 0,
         lastPage: unidades.last_page ?? 1,
-        from: unidades.from ?? 1,
-        to: unidades.to ?? 0,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? undefined,
+        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
     };
 
     const columns: ExtendedColumnDef<UnidadRow>[] = [

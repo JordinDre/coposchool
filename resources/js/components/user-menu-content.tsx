@@ -11,9 +11,10 @@ import {
 import { UserInfo } from '@/components/user-info';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+import { useSimpleMode } from '@/hooks/use-simple-mode';
 import { type SharedData, type User } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { ExternalLink, LogOut, Monitor, Moon, Settings, Sun, UserX } from 'lucide-react';
+import { ExternalLink, Gauge, LogOut, Monitor, Moon, Settings, Sun, UserX } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -24,6 +25,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
     const { auth } = usePage<SharedData>().props;
     const { configuracion } = usePage().props as { configuracion?: { catalogoPublico?: boolean; ecommercePublico?: boolean } };
     const { appearance: currentAppearance, updateAppearance } = useAppearance();
+    const { simpleMode, toggleSimpleMode } = useSimpleMode();
     const catalogEnabled = configuracion?.catalogoPublico ?? false;
     const ecommerceEnabled = configuracion?.ecommercePublico ?? false;
     const isEcommerce = ecommerceEnabled;
@@ -130,6 +132,11 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>
+                <DropdownMenuItem onClick={toggleSimpleMode}>
+                    <Gauge className="mr-2 h-4 w-4" />
+                    Modo simple
+                    {simpleMode && <span className="ml-auto text-xs">✓</span>}
+                </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

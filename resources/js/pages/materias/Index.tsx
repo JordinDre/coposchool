@@ -92,10 +92,8 @@ export default function Index({ materias, filters }: MateriasIndexProps) {
         perPage: materias.per_page ?? 10,
         total: materias.total ?? 0,
         lastPage: materias.last_page ?? 1,
-        from: materias.from ?? 1,
-        to: materias.to ?? 0,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? undefined,
+        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
     };
 
     return (

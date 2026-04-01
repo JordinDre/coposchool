@@ -27,6 +27,35 @@ export interface User {
     creador?: User;
     actualizador?: User;
     eliminador?: User;
+    bodegas?: Bodega[];
+}
+
+export interface Marca {
+    id: number;
+    nombre: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Categoria {
+    id: number;
+    nombre: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Presentacion {
+    id: number;
+    nombre: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Atributo {
+    id: number;
+    nombre: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface Cliente extends User {
@@ -96,11 +125,23 @@ export interface Role {
     guard_name: string;
     created_at: string;
     updated_at: string;
+    permissions: Permission[];
+    users_count?: number;
+    permissions_count?: number;
+}
+
+export interface Permission {
+    id: number;
+    name: string;
+    guard_name: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface AuthData {
     user: User | null;
     roles: string[];
+    permissions: string[];
 }
 
 export interface MediaImage {
@@ -182,10 +223,7 @@ export interface CompraDetalle {
 // ===== TIPOS DE PÁGINA =====
 export interface PageProps {
     name: string;
-    auth: {
-        user: User | null;
-        navigation_;
-    };
+    auth: AuthData;
     ziggy: Config & {
         location: string;
     };
@@ -943,7 +981,6 @@ export interface PagoIndexProps {
         sortBy?: string | null;
         sortDir?: 'asc' | 'desc' | null;
     };
-    filters: Record<string, never>;
     filters: {
         bancos: Array<{ id: number; nombre: string }>;
     };
@@ -1575,24 +1612,7 @@ export interface InventarioIndexProps {
 }
 
 // ===== TIPOS DE ROLES Y PERMISOS =====
-export interface Role {
-    id: number;
-    name: string;
-    permissions: Array<{
-        id: number;
-        name: string;
-    }>;
-    users_count?: number;
-    created_at: string;
-    updated_at: string;
-}
-
-export interface Permission {
-    id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
-}
+// Role and Permission are now defined at the top of the file.
 
 export interface RolesPermisosRow {
     id: number;
@@ -1612,32 +1632,20 @@ export interface RolesPermisosIndexProps {
 }
 
 // ===== TIPOS PARA MÓDULO DE USUARIOS =====
-export interface UserRow {
-    id: number;
-    name: string;
-    email: string;
-    telefono?: string;
-    creado_por?: number;
-    actualizado_por?: number;
-    eliminado_por?: number;
-    deleted_at?: string;
-    created_at: string;
-    updated_at: string;
-    roles?: Role[];
-    creador?: User;
-    actualizador?: User;
-    eliminador?: User;
-}
+// UserRow is duplicate of User.
 
 export interface UserIndexProps {
-    users: ServerMeta<UserRow>;
+    users: {
+        data: User[];
+        meta: ServerMeta;
+    };
     roles: Role[];
     filters: {
         search?: string;
         role?: string;
         status?: string;
         sort_by?: string;
-        sort_direction?: string;
+        sort_direction?: 'asc' | 'desc';
     };
 }
 
@@ -1970,12 +1978,15 @@ export interface ClienteRow {
 }
 
 export interface ClienteIndexProps {
-    clientes: ServerMeta<ClienteRow>;
+    clientes: {
+        data: ClienteRow[];
+        meta: ServerMeta;
+    };
     filters: {
         search?: string;
         status?: string;
         sort_by?: string;
-        sort_direction?: string;
+        sort_direction?: 'asc' | 'desc';
     };
 }
 

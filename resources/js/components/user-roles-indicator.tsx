@@ -5,7 +5,7 @@ import { useCaja, useRoles } from '@/hooks/use-can';
 import { Info } from 'lucide-react';
 
 export function UserRolesIndicator() {
-    const roles = useRoles();
+    const { roles } = useRoles();
     const caja = useCaja();
 
     const hasAny = roles.length > 0 || !!caja.activa;

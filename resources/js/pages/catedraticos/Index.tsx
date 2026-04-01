@@ -129,10 +129,8 @@ export default function Index({ catedraticos, secciones, materias, filters }: In
         perPage: catedraticos.per_page ?? 10,
         total: catedraticos.total ?? 0,
         lastPage: catedraticos.last_page ?? 1,
-        from: catedraticos.from ?? 1,
-        to: catedraticos.to ?? 0,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? undefined,
+        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
     };
 
     return (
