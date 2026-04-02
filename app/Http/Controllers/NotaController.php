@@ -16,7 +16,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class NotaController extends Controller
 {
-
     /**
      * Grilla de notas — selector de sección+materia, todas las unidades como columnas.
      * Solo la unidad activa es editable.
@@ -25,7 +24,7 @@ class NotaController extends Controller
     {
         $this->authorize('viewAny', Nota::class);
 
-        $user       = Auth::user();
+        $user = Auth::user();
         $seccion_id = $request->get('seccion_id');
         $materia_id = $request->get('materia_id');
 
@@ -58,7 +57,7 @@ class NotaController extends Controller
             : collect();
 
         // Grilla completa cuando hay sección + materia
-        $grilla  = null;
+        $grilla = null;
         $contexto = null;
 
         if ($seccionObj && $materia_id) {
@@ -85,27 +84,27 @@ class NotaController extends Controller
                     ->groupBy('estudiante_id')
                     ->map(fn ($notas) => $notas->keyBy('unidad_id')
                         ->map(fn ($n) => [
-                            'nota_id'       => $n->id,
-                            'nota'          => $n->nota,
+                            'nota_id' => $n->id,
+                            'nota' => $n->nota,
                             'observaciones' => $n->observaciones,
                         ])
                     );
 
                 $grilla = $estudiantes->map(fn ($est) => [
-                    'estudiante_id'   => $est->id,
+                    'estudiante_id' => $est->id,
                     'estudiante_name' => $est->name,
-                    'notas'           => $notasMap->get($est->id, collect())->toArray(),
+                    'notas' => $notasMap->get($est->id, collect())->toArray(),
                 ])->values();
             }
         }
 
         return Inertia::render('notas/Index', [
             'secciones' => $secciones,
-            'materias'  => $materias,
-            'unidades'  => $unidades,
-            'grilla'    => $grilla,
-            'contexto'  => $contexto,
-            'filtros'   => compact('seccion_id', 'materia_id'),
+            'materias' => $materias,
+            'unidades' => $unidades,
+            'grilla' => $grilla,
+            'contexto' => $contexto,
+            'filtros' => compact('seccion_id', 'materia_id'),
         ]);
     }
 
@@ -178,8 +177,8 @@ class NotaController extends Controller
             'materia_id' => ['required', 'exists:materias,id'],
         ]);
 
-        $seccion  = Seccion::findOrFail($request->seccion_id);
-        $materia  = Materia::findOrFail($request->materia_id);
+        $seccion = Seccion::findOrFail($request->seccion_id);
+        $materia = Materia::findOrFail($request->materia_id);
 
         $unidades = Unidad::whereNull('deleted_at')
             ->where('ciclo_escolar', $seccion->ciclo_escolar)
@@ -197,7 +196,7 @@ class NotaController extends Controller
             ->get()
             ->groupBy('estudiante_id');
 
-        $filename = 'notas-' . str($seccion->nombre)->slug() . '-' . str($materia->nombre)->slug() . '.xlsx';
+        $filename = 'notas-'.str($seccion->nombre)->slug().'-'.str($materia->nombre)->slug().'.xlsx';
 
         return Excel::download(
             new NotasExport($seccion, $materia, $unidades, $estudiantes, $notas),

@@ -39,14 +39,14 @@ class NotasExport implements FromArray, WithColumnWidths, WithEvents
 
             $row = [
                 $idx + 1,
-                $estudiante->name . ($estudiante->deleted_at ? ' (INACTIVO)' : ''),
+                $estudiante->name.($estudiante->deleted_at ? ' (INACTIVO)' : ''),
             ];
 
-            $sum   = 0;
+            $sum = 0;
             $count = 0;
 
             foreach ($this->unidades as $u) {
-                $nota  = $lookup[$u->id] ?? null;
+                $nota = $lookup[$u->id] ?? null;
                 $row[] = $nota ?? '';
                 if ($nota !== null) {
                     $sum += $nota;
@@ -84,36 +84,36 @@ class NotasExport implements FromArray, WithColumnWidths, WithEvents
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $sheet        = $event->sheet->getDelegate();
-                $numUnidades  = $this->unidades->count();
+                $sheet = $event->sheet->getDelegate();
+                $numUnidades = $this->unidades->count();
                 $lastColIndex = 3 + $numUnidades;
-                $lastCol      = Coordinate::stringFromColumnIndex($lastColIndex);
+                $lastCol = Coordinate::stringFromColumnIndex($lastColIndex);
 
                 $sheet->insertNewRowBefore(1, 5);
 
                 // Row 1: school name
-                $nombreFull = trim(($this->config->nombre_completo ?? '') . ' ' . ($this->config->abreviatura ?? ''));
+                $nombreFull = trim(($this->config->nombre_completo ?? '').' '.($this->config->abreviatura ?? ''));
                 $sheet->mergeCells("A1:{$lastCol}1");
                 $sheet->setCellValue('A1', $nombreFull ?: 'COPOSCHOOL');
                 $sheet->getStyle('A1')->applyFromArray([
-                    'font'      => ['bold' => true, 'size' => 12],
+                    'font' => ['bold' => true, 'size' => 12],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 // Row 2: section + materia
                 $sheet->mergeCells("A2:{$lastCol}2");
-                $sheet->setCellValue('A2', strtoupper($this->seccion->nombre) . '  ·  ' . strtoupper($this->materia->nombre));
+                $sheet->setCellValue('A2', strtoupper($this->seccion->nombre).'  ·  '.strtoupper($this->materia->nombre));
                 $sheet->getStyle('A2')->applyFromArray([
-                    'font'      => ['bold' => true, 'size' => 11],
+                    'font' => ['bold' => true, 'size' => 11],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 // Row 3: ciclo escolar
                 $sheet->mergeCells("A3:{$lastCol}3");
-                $sheet->setCellValue('A3', 'Ciclo Escolar ' . $this->seccion->ciclo_escolar);
+                $sheet->setCellValue('A3', 'Ciclo Escolar '.$this->seccion->ciclo_escolar);
                 $sheet->getStyle('A3')->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                    'font'      => ['size' => 10, 'color' => ['rgb' => '666666']],
+                    'font' => ['size' => 10, 'color' => ['rgb' => '666666']],
                 ]);
 
                 // Row 5: column headers
@@ -122,20 +122,20 @@ class NotasExport implements FromArray, WithColumnWidths, WithEvents
 
                 $col = 3;
                 foreach ($this->unidades as $u) {
-                    $cell = Coordinate::stringFromColumnIndex($col) . '5';
+                    $cell = Coordinate::stringFromColumnIndex($col).'5';
                     $sheet->setCellValue($cell, $u->nombre);
                     $col++;
                 }
 
-                $promCell = Coordinate::stringFromColumnIndex($col) . '5';
+                $promCell = Coordinate::stringFromColumnIndex($col).'5';
                 $sheet->setCellValue($promCell, 'PROMEDIO');
 
                 $sheet->getStyle("A5:{$lastCol}5")->applyFromArray([
-                    'font'      => ['bold' => true, 'size' => 10],
-                    'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1E293B']],
-                    'font'      => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 10],
+                    'font' => ['bold' => true, 'size' => 10],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1E293B']],
+                    'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 10],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'FFFFFF']]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'FFFFFF']]],
                 ]);
 
                 $sheet->getRowDimension(5)->setRowHeight(22);
@@ -143,7 +143,7 @@ class NotasExport implements FromArray, WithColumnWidths, WithEvents
                 // Data rows styling
                 $highestRow = $sheet->getHighestRow();
                 $sheet->getStyle("A6:{$lastCol}{$highestRow}")->applyFromArray([
-                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'DDDDDD']]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'DDDDDD']]],
                     'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
@@ -160,8 +160,8 @@ class NotasExport implements FromArray, WithColumnWidths, WithEvents
 
                     // Grade columns
                     for ($c = 3; $c <= $lastColIndex; $c++) {
-                        $cellRef = Coordinate::stringFromColumnIndex($c) . $row;
-                        $val     = $sheet->getCell($cellRef)->getValue();
+                        $cellRef = Coordinate::stringFromColumnIndex($c).$row;
+                        $val = $sheet->getCell($cellRef)->getValue();
 
                         $style = ['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]];
 

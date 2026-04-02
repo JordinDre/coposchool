@@ -74,7 +74,7 @@ export default function Filter({ secciones, materias }: FilterProps) {
         <div className="w-full space-y-2">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div className="relative flex-1">
-                    <Search className="peer-focus:text-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors" />
+                    <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors peer-focus:text-foreground" />
                     <Input
                         placeholder="Buscar catedráticos... (presiona Enter)"
                         value={search}

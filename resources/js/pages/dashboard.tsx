@@ -1,8 +1,9 @@
+import { SchoolStatsCards } from '@/components/dashboard/school-stats-cards';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { AlertTriangle, BookOpen, CalendarDays, CalendarRange, ClipboardList, GraduationCap, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, BookOpen, CalendarDays, CalendarRange } from 'lucide-react';
 import React from 'react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -558,75 +559,6 @@ export default function Dashboard({
     const hasActivity = actividadReciente.length > 0;
 
     // Build stat rows
-    const statCards = [
-        stats.totalEstudiantes !== undefined && {
-            key: 'est',
-            label: 'Estudiantes',
-            value: stats.totalEstudiantes,
-            sub: 'activos',
-            icon: GraduationCap,
-            href: '/estudiantes',
-            accent: 'text-foreground',
-        },
-        stats.totalCatedraticos !== undefined && {
-            key: 'cat',
-            label: 'Catedráticos',
-            value: stats.totalCatedraticos,
-            sub: 'activos',
-            icon: Users,
-            href: '/catedraticos',
-            accent: 'text-foreground',
-        },
-        stats.totalSecciones !== undefined && {
-            key: 'sec',
-            label: 'Secciones',
-            value: stats.totalSecciones,
-            sub: 'en el ciclo',
-            icon: BookOpen,
-            href: '/secciones',
-            accent: 'text-foreground',
-        },
-        stats.notasRegistradas !== undefined && {
-            key: 'not',
-            label: 'Notas reg.',
-            value: stats.notasRegistradas,
-            sub: 'en el ciclo',
-            icon: ClipboardList,
-            href: '/notas',
-            accent: 'text-foreground',
-        },
-        stats.promedioGeneral != null && {
-            key: 'prom',
-            label: 'Promedio',
-            value: stats.promedioGeneral,
-            sub: 'general ciclo',
-            icon: TrendingUp,
-            href: '/notas',
-            accent: promedioColor(stats.promedioGeneral ?? null),
-        },
-        stats.pctAprobados != null && {
-            key: 'pct',
-            label: '% Aprobados',
-            value: `${stats.pctAprobados}%`,
-            sub: 'del ciclo',
-            icon: AlertTriangle,
-            href: '/notas',
-            accent:
-                (stats.pctAprobados ?? 0) >= 70
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : (stats.pctAprobados ?? 0) >= 50
-                      ? 'text-amber-600 dark:text-amber-400'
-                      : 'text-red-600 dark:text-red-400',
-        },
-    ].filter(Boolean) as {
-        key: string;
-        label: string;
-        value: number | string;
-        sub: string;
-        icon: React.ComponentType<{ className?: string }>;
-        href: string;
-        accent: string;
-    }[];
 
     return (
         <>
@@ -693,24 +625,7 @@ export default function Dashboard({
                     })()}
 
                 {/* ── Stat cards ── */}
-                {statCards.length > 0 && (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                        {statCards.map(({ key, label, value, sub, icon: Icon, href, accent }) => (
-                            <Link key={key} href={href}>
-                                <Card className="group transition-colors hover:bg-muted/20">
-                                    <CardContent className="p-4">
-                                        <div className="flex items-start justify-between gap-1">
-                                            <CardLabel>{label}</CardLabel>
-                                            <Icon className="size-3.5 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-muted-foreground" />
-                                        </div>
-                                        <p className={`mt-2 text-2xl font-bold tabular-nums ${accent}`}>{value}</p>
-                                        <p className="mt-0.5 text-[10px] text-muted-foreground/60">{sub}</p>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                <SchoolStatsCards stats={stats} />
 
                 {/* ── Row 1: Distribución (2/3) + Tendencia registro (1/3) ── */}
                 {(hasDistribucion || hasTendencia) && (
@@ -1098,7 +1013,7 @@ export default function Dashboard({
                 )}
 
                 {/* ── Empty state ── */}
-                {statCards.length === 0 && !hasCatedratico && !hasEstudiante && !hasDistribucion && (
+                {!hasAtRisk && !hasRend && !hasCatedratico && !hasEstudiante && !hasDistribucion && (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                             <BookOpen className="mb-3 size-8 text-muted-foreground/40" />

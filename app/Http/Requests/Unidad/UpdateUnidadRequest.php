@@ -15,11 +15,11 @@ class UpdateUnidadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre'        => ['required', 'string', 'max:100'],
-            'descripcion'   => ['nullable', 'string', 'max:500'],
+            'nombre' => ['required', 'string', 'max:100'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
             'ciclo_escolar' => ['nullable', 'integer', 'min:2000', 'max:2100'],
-            'fecha_inicio'  => ['nullable', 'date'],
-            'fecha_fin'     => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
+            'fecha_inicio' => ['nullable', 'date'],
+            'fecha_fin' => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
         ];
     }
 
@@ -32,9 +32,9 @@ class UpdateUnidadRequest extends FormRequest
 
     private function validateDateOverlap($validator): void
     {
-        $inicio  = $this->fecha_inicio;
-        $fin     = $this->fecha_fin;
-        $unidad  = $this->route('unidad');
+        $inicio = $this->fecha_inicio;
+        $fin = $this->fecha_fin;
+        $unidad = $this->route('unidad');
 
         if (! $inicio || ! $fin) {
             return;

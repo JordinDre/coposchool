@@ -88,7 +88,7 @@ export default function Index({ users, roles, filters }: UserIndexProps) {
         total: users.meta.total ?? 0,
         lastPage: users.meta.lastPage ?? 1,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: filters.sort_direction ?? (undefined as "asc" | "desc" | undefined),
+        sortDir: filters.sort_direction ?? (undefined as 'asc' | 'desc' | undefined),
     };
 
     return (

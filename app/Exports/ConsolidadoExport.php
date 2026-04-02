@@ -2,19 +2,19 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithDrawings;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use Illuminate\Support\Str;
 
-class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, WithDrawings
+class ConsolidadoExport implements FromArray, WithColumnWidths, WithDrawings, WithEvents
 {
     private $config;
 
@@ -43,10 +43,10 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
 
             $sum = 0;
             $count = 0;
-            
+
             $row = [
                 $idx + 1,
-                $estudiante->name . ($estudiante->deleted_at ? ' (INACTIVO)' : ''),
+                $estudiante->name.($estudiante->deleted_at ? ' (INACTIVO)' : ''),
             ];
 
             foreach ($this->materias as $m) {
@@ -60,7 +60,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
 
             // Promedio column
             $row[] = $count > 0 ? round($sum / $count, 1) : '';
-            
+
             $rows[] = $row;
         }
 
@@ -79,7 +79,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
             $widths[Coordinate::stringFromColumnIndex($colIndex)] = 4.5;
             $colIndex++;
         }
-        
+
         $widths[Coordinate::stringFromColumnIndex($colIndex)] = 8; // Promedio
 
         return $widths;
@@ -90,23 +90,23 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
         $drawings = [];
 
         if ($this->config->logo_url) {
-            $path = Str::startsWith($this->config->logo_url, 'http') 
-                ? $this->config->logo_url 
+            $path = Str::startsWith($this->config->logo_url, 'http')
+                ? $this->config->logo_url
                 : public_path($this->config->logo_url);
 
             if (file_exists($path)) {
-                $drawing = new Drawing();
+                $drawing = new Drawing;
                 $drawing->setName('Logo');
                 $drawing->setDescription('Logo');
                 $drawing->setPath($path);
                 $drawing->setHeight(75);
-                
+
                 // Position logo at the end of the header
                 $numMaterias = $this->materias->count();
                 $logoColIndex = max(5, 2 + $numMaterias);
                 $logoCol = Coordinate::stringFromColumnIndex($logoColIndex);
-                
-                $drawing->setCoordinates($logoCol . '1');
+
+                $drawing->setCoordinates($logoCol.'1');
                 $drawing->setOffsetX(10);
                 $drawing->setOffsetY(10);
                 $drawings[] = $drawing;
@@ -129,7 +129,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                 $sheet->insertNewRowBefore(1, 8);
 
                 // Row 1: School Name
-                $nombreFull = ($this->config->nombre_completo ?? '') . ' ' . ($this->config->abreviatura ?? '');
+                $nombreFull = ($this->config->nombre_completo ?? '').' '.($this->config->abreviatura ?? '');
                 $sheet->mergeCells("A1:{$lastCol}1");
                 $sheet->setCellValue('A1', $nombreFull ?: 'COPOSCHOOL');
                 $sheet->getStyle('A1')->applyFromArray([
@@ -153,7 +153,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                 ]);
 
                 // Row 5: Subtitle
-                $sheet->mergeCells("A5:G5");
+                $sheet->mergeCells('A5:G5');
                 $sheet->setCellValue('A5', 'CALIFICACIONES DE ÁREAS Y SUBÁREAS');
                 $sheet->getStyle('A5')->applyFromArray([
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
@@ -163,7 +163,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
 
                 // Row 7: Section & Unit (Yellow boxes)
                 // Section box (Left side)
-                $sheet->mergeCells("A7:E7");
+                $sheet->mergeCells('A7:E7');
                 $sheet->setCellValue('A7', strtoupper($this->seccion->nombre));
                 $sheet->getStyle('A7')->applyFromArray([
                     'font' => ['bold' => true],
@@ -177,7 +177,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                 if ($unitStartIdx > 5) {
                     $unitStartCol = Coordinate::stringFromColumnIndex($unitStartIdx);
                     $sheet->mergeCells("{$unitStartCol}7:{$lastCol}7");
-                    $sheet->setCellValue($unitStartCol, strtoupper($this->unidad->nombre . ' ' . $this->seccion->ciclo_escolar));
+                    $sheet->setCellValue($unitStartCol, strtoupper($this->unidad->nombre.' '.$this->seccion->ciclo_escolar));
                     $sheet->getStyle("{$unitStartCol}7:{$lastCol}7")->applyFromArray([
                         'font' => ['bold' => true],
                         'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFF00']],
@@ -189,7 +189,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                 // ── TABLE HEADERS (Row 8) ──
                 $sheet->setCellValue('A8', 'No.');
                 $sheet->setCellValue('B8', 'APELLIDOS Y NOMBRES');
-                
+
                 $sheet->getStyle('A8:B8')->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => [
@@ -201,7 +201,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
 
                 $col = 3;
                 foreach ($this->materias as $m) {
-                    $cell = Coordinate::stringFromColumnIndex($col) . '8';
+                    $cell = Coordinate::stringFromColumnIndex($col).'8';
                     $sheet->setCellValue($cell, $m->nombre);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 9],
@@ -215,7 +215,7 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                     $col++;
                 }
 
-                $promCell = Coordinate::stringFromColumnIndex($col) . '8';
+                $promCell = Coordinate::stringFromColumnIndex($col).'8';
                 $sheet->setCellValue($promCell, 'PROMEDIO');
                 $sheet->getStyle($promCell)->applyFromArray([
                     'font' => ['bold' => true, 'size' => 10],
@@ -240,19 +240,19 @@ class ConsolidadoExport implements FromArray, WithColumnWidths, WithEvents, With
                 for ($row = 9; $row <= $highestRow; $row++) {
                     // No. alignment
                     $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                    
+
                     // Grades conditional formatting (Red if < 60)
                     for ($c = 3; $c <= $lastColIndex; $c++) {
-                        $cellRef = Coordinate::stringFromColumnIndex($c) . $row;
+                        $cellRef = Coordinate::stringFromColumnIndex($c).$row;
                         $val = $sheet->getCell($cellRef)->getValue();
-                        
+
                         $alignment = ['horizontal' => Alignment::HORIZONTAL_CENTER];
                         $font = [];
-                        
+
                         if (is_numeric($val) && $val < 60) {
                             $font['color'] = ['rgb' => 'FF0000'];
                         }
-                        
+
                         if ($c == $lastColIndex) {
                             $font['bold'] = true;
                         }

@@ -327,14 +327,13 @@ export default function Filter({ filters: filterData }: FilterProps) {
                             <SelectItem value="subject_type">Modelo</SelectItem>
                         </SelectContent>
                     </Select>
-                    <div className="relative flex-1">
-                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground" />
+                    <div className="flex-1">
                         <Input
                             placeholder={getPlaceholder(searchField)}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={handleSearchSubmit}
-                            className="pl-10"
+                            leftIcon={Search}
                         />
                     </div>
                 </div>

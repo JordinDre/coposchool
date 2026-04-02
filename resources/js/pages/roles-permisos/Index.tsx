@@ -90,7 +90,7 @@ const columns: ExtendedColumnDef<RolesPermisosRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ roles, permisos, filters }: RolesPermisosIndexProps) {
+export default function Index({ roles }: RolesPermisosIndexProps) {
     const { isAdminOrSuperAdmin } = useRoles();
 
     // Transformar roles para el DataTableServer

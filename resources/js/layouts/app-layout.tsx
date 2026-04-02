@@ -2,8 +2,8 @@ import FlashToaster from '@/components/ui/flash-toaster';
 import { Toaster } from '@/components/ui/sonner';
 import { useCurrencySymbol } from '@/hooks/use-currency-symbol';
 import { useSimpleMode } from '@/hooks/use-simple-mode';
-import AppSimpleLayout from '@/layouts/app/app-simple-layout';
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
+import AppSimpleLayout from '@/layouts/app/app-simple-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode, useEffect } from 'react';
 

@@ -3,17 +3,13 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSimpleMode } from '@/hooks/use-simple-mode';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { CalendarDays, Gauge, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
-
-function fmt(dateStr?: string) {
-    if (!dateStr) return '';
-    return new Date(dateStr + 'T12:00:00').toLocaleDateString('es-GT', { day: 'numeric', month: 'short' });
-}
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -36,23 +32,6 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
             <div className="flex items-center gap-2">
-                {unidadActual && (
-                    <div className="hidden items-center gap-1.5 rounded-md border bg-primary/5 px-2.5 py-1 sm:flex">
-                        <CalendarDays className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-xs font-medium">
-                            {unidadActual.ciclo_escolar && <span className="text-muted-foreground">{unidadActual.ciclo_escolar} · </span>}
-                            {unidadActual.orden}. {unidadActual.nombre}
-                        </span>
-                        {(unidadActual.fecha_inicio || unidadActual.fecha_fin) && (
-                            <span className="text-xs text-muted-foreground">
-                                {fmt(unidadActual.fecha_inicio)}–{fmt(unidadActual.fecha_fin)}
-                            </span>
-                        )}
-                        <Badge variant="default" className="h-4 px-1.5 text-[10px]">
-                            Activa
-                        </Badge>
-                    </div>
-                )}
                 <Button
                     variant="ghost"
                     size="icon"
@@ -63,20 +42,45 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                     <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
                 </Button>
 
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleSimpleMode}
-                    className={cn(
-                        'h-8 w-8 sm:h-9 sm:w-9 transition-all duration-300',
-                        simpleMode 
-                            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 ring-1 ring-amber-500/20' 
-                            : 'text-muted-foreground hover:text-foreground hover:bg-accent',
-                    )}
-                    title={simpleMode ? 'Desactivar modo simple' : 'Activar modo simple'}
-                >
-                    <Gauge className="h-4 w-4" />
-                </Button>
+                <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={toggleSimpleMode}
+                                className={cn(
+                                    'h-8 w-8 transition-colors sm:h-9 sm:w-9',
+                                    simpleMode ? 'bg-primary/10 text-primary hover:bg-primary/20' : 'text-muted-foreground hover:text-foreground',
+                                )}
+                                aria-label="Modo simple"
+                            >
+                                <Gauge className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">{simpleMode ? 'Desactivar modo simple' : 'Activar modo simple'}</TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                {unidadActual && (
+                    <div className="hidden items-center gap-2 sm:flex">
+                        <Badge
+                            variant="outline"
+                            className="h-8 gap-1.5 border-sidebar-border/50 bg-sidebar-accent/50 text-sidebar-foreground shadow-xs"
+                        >
+                            <CalendarDays className="size-3.5 text-muted-foreground" />
+                            <span className="hidden text-muted-foreground lg:inline">Unidad:</span>
+                            <span className="font-semibold">
+                                {unidadActual.orden}. {unidadActual.nombre}
+                            </span>
+                            {unidadActual.ciclo_escolar && (
+                                <span className="ml-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+                                    {unidadActual.ciclo_escolar}
+                                </span>
+                            )}
+                        </Badge>
+                    </div>
+                )}
 
                 <AppearanceToggleTab className="hidden h-8 origin-right scale-90 sm:inline-flex sm:h-9 sm:scale-100" />
             </div>

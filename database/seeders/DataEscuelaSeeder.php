@@ -8,11 +8,11 @@ use App\Models\Nota;
 use App\Models\Seccion;
 use App\Models\Unidad;
 use App\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class DataEscuelaSeeder extends Seeder
 {
@@ -31,9 +31,9 @@ class DataEscuelaSeeder extends Seeder
         Materia::truncate();
         Unidad::truncate();
         Seccion::truncate();
-        
+
         // Delete users with role student or teacher
-        User::role(['estudiante', 'catedratico'])->each(function($user) {
+        User::role(['estudiante', 'catedratico'])->each(function ($user) {
             $user->delete();
         });
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
@@ -42,15 +42,15 @@ class DataEscuelaSeeder extends Seeder
 
         // ── Configuración inicial ─────────────────────────────────────
         Configuracion::firstOrCreate([], [
-            'nombre_empresa'               => 'CopoSchool',
-            'nombre_completo'              => 'Instituto Nacional de Educación Básica',
-            'abreviatura'                  => 'INEB',
-            'ciclo_actual'                 => self::CICLO,
-            'descripcion_establecimiento'  => 'Educación Básica Oficial',
-            'descripcion_ciclo'            => 'Ciclo Escolar ' . self::CICLO,
-            'nivel_educativo'              => 'Básico',
-            'director_nombre'              => 'Director(a) General',
-            'firma_cargo'                  => 'Director(a)',
+            'nombre_empresa' => 'CopoSchool',
+            'nombre_completo' => 'Instituto Nacional de Educación Básica',
+            'abreviatura' => 'INEB',
+            'ciclo_actual' => self::CICLO,
+            'descripcion_establecimiento' => 'Educación Básica Oficial',
+            'descripcion_ciclo' => 'Ciclo Escolar '.self::CICLO,
+            'nivel_educativo' => 'Básico',
+            'director_nombre' => 'Director(a) General',
+            'firma_cargo' => 'Director(a)',
         ]);
         $this->command?->line('  ✓ Configuración inicial creada');
 
@@ -107,10 +107,10 @@ class DataEscuelaSeeder extends Seeder
         // ── Catedráticos ──────────────────────────────────────────────
         $adminId = User::where('email', 'admin@gmail.com')->value('id') ?? 1;
         $catedraticoIds = [];
-        
+
         for ($i = 1; $i <= 20; $i++) {
             $user = User::create([
-                'name' => "Prof. " . $faker->name,
+                'name' => 'Prof. '.$faker->name,
                 'email' => "profe{$i}@escuela.edu.gt",
                 'password' => Hash::make('Pass1234.'),
                 'creado_por' => $adminId,
@@ -123,14 +123,14 @@ class DataEscuelaSeeder extends Seeder
 
         // ── Estudiantes y Asignaciones ────────────────────────────────
         $this->command?->info('Inscribiendo estudiantes y asignando cursos (esto puede demorar)...');
-        
+
         $teacherIndex = 0;
         foreach ($seccionIds as $seccionId) {
             // 20 Estudiantes por sección
             for ($j = 1; $j <= 20; $j++) {
                 $student = User::create([
                     'name' => $faker->name,
-                    'email' => "estudiante_" . Str::random(8) . "@escuela.edu.gt",
+                    'email' => 'estudiante_'.Str::random(8).'@escuela.edu.gt',
                     'password' => Hash::make('Pass1234.'),
                     'creado_por' => $adminId,
                     'actualizado_por' => $adminId,
@@ -150,7 +150,7 @@ class DataEscuelaSeeder extends Seeder
             foreach ($materiaIds as $materiaId) {
                 // Rotate teachers
                 $teacherId = $catedraticoIds[$teacherIndex % 20];
-                
+
                 DB::table('materia_seccion')->insert([
                     'materia_id' => $materiaId,
                     'seccion_id' => $seccionId,
@@ -158,12 +158,12 @@ class DataEscuelaSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                
+
                 $teacherIndex++;
             }
         }
 
         $this->command?->info('✓ Estudiantes (360) y asignaciones de cursos completadas.');
-        $this->command?->info('¡Proceso de siembra finalizado para el ciclo ' . self::CICLO . '!');
+        $this->command?->info('¡Proceso de siembra finalizado para el ciclo '.self::CICLO.'!');
     }
 }

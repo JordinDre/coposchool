@@ -510,27 +510,27 @@
 
 /* ── cursor-pointer en todos los elementos interactivos ─────────────────── */
 button,
-[role="button"],
-[type="button"],
-[type="submit"],
-[type="reset"],
-[type="checkbox"],
-[type="radio"],
+[role='button'],
+[type='button'],
+[type='submit'],
+[type='reset'],
+[type='checkbox'],
+[type='radio'],
 select,
 label[for],
 summary,
-[data-slot="switch"],
-[data-slot="checkbox"],
-[data-slot="tabs-trigger"],
-[data-slot="select-trigger"],
-[data-slot="dropdown-menu-trigger"],
-[data-slot="collapsible-trigger"],
-[data-sidebar="menu-button"],
-[data-sidebar="trigger"],
-[role="menuitem"],
-[role="option"],
-[role="tab"],
-[role="combobox"],
+[data-slot='switch'],
+[data-slot='checkbox'],
+[data-slot='tabs-trigger'],
+[data-slot='select-trigger'],
+[data-slot='dropdown-menu-trigger'],
+[data-slot='collapsible-trigger'],
+[data-sidebar='menu-button'],
+[data-sidebar='trigger'],
+[role='menuitem'],
+[role='option'],
+[role='tab'],
+[role='combobox'],
 [aria-haspopup],
 [aria-expanded] {
     cursor: pointer;
@@ -556,40 +556,42 @@ html.simple-mode {
 }
 
 /* ── Botones ─────────────────────────────────────────────────────────── */
-html.simple-mode [data-slot="button"]:not([data-size="icon"]),
-html.simple-mode button:not([data-size="icon"]):not([role="checkbox"]):not([role="switch"]):not([data-sidebar]) {
+html.simple-mode [data-slot='button']:not([data-size='icon']):not([data-close-button]),
+html.simple-mode button:not([data-size='icon']):not([role='checkbox']):not([role='switch']):not([data-sidebar]):not([data-close-button]) {
     height: 3rem !important;
     min-height: 3rem !important;
     padding-inline: 1.25rem !important;
     white-space: nowrap !important;
     font-size: 0.9375rem !important;
     font-weight: 600 !important;
-    border-radius: 0.75rem !important;
+    border-radius: 0.5rem !important;
     gap: 0.5rem !important;
     letter-spacing: 0.01em !important;
 }
 /* Botones icono */
-html.simple-mode [data-slot="button"][data-size="icon"],
-html.simple-mode [data-slot="button"].size-icon {
+html.simple-mode [data-slot='button'][data-size='icon'],
+html.simple-mode [data-slot='button'].size-icon {
     height: 2.75rem !important;
     width: 2.75rem !important;
     min-height: 2.75rem !important;
     min-width: 2.75rem !important;
     padding: 0 !important;
-    border-radius: 0.75rem !important;
+    border-radius: 0.5rem !important;
 }
-html.simple-mode [data-slot="button"] svg {
+html.simple-mode [data-slot='button'] svg {
     width: 1.125rem !important;
     height: 1.125rem !important;
     flex-shrink: 0;
 }
 
 /* ── Inputs / Textareas ──────────────────────────────────────────────── */
-html.simple-mode input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not(.pl-10):not(.pl-11) {
+html.simple-mode input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']) {
     height: 3rem !important;
     min-height: 3rem !important;
     font-size: 0.9375rem !important;
     border-radius: 0.75rem !important;
+}
+html.simple-mode input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']):not(.pl-10):not(.pl-11) {
     padding-inline: 1rem !important;
 }
 html.simple-mode textarea {
@@ -601,21 +603,21 @@ html.simple-mode textarea {
 }
 
 /* ── Select / Combobox ───────────────────────────────────────────────── */
-html.simple-mode [data-slot="select-trigger"],
-html.simple-mode [role="combobox"] {
+html.simple-mode [data-slot='select-trigger'],
+html.simple-mode [role='combobox'] {
     height: 3rem !important;
     min-height: 3rem !important;
     font-size: 0.9375rem !important;
     font-weight: 500 !important;
     border-radius: 0.75rem !important;
     white-space: nowrap !important;
-    width: 100% !important;
+    width: auto !important;
     min-width: 7rem !important;
     padding-inline: 0.875rem !important;
 }
 /* Opciones del select */
-html.simple-mode [data-slot="select-item"],
-html.simple-mode [role="option"] {
+html.simple-mode [data-slot='select-item'],
+html.simple-mode [role='option'] {
     min-height: 2.75rem !important;
     font-size: 0.9375rem !important;
     padding-inline: 0.875rem !important;
@@ -627,11 +629,11 @@ html.simple-mode label {
     font-weight: 600 !important;
     letter-spacing: 0.01em !important;
 }
-html.simple-mode [data-slot="form-description"] {
+html.simple-mode [data-slot='form-description'] {
     font-size: 0.875rem !important;
     line-height: 1.5 !important;
 }
-html.simple-mode [data-slot="form-message"] {
+html.simple-mode [data-slot='form-message'] {
     font-size: 0.875rem !important;
     font-weight: 500 !important;
 }
@@ -658,26 +660,26 @@ html.simple-mode tbody tr:hover td {
 }
 
 /* ── Cards ───────────────────────────────────────────────────────────── */
-html.simple-mode [data-slot="card"] {
+html.simple-mode [data-slot='card'] {
     border-radius: 1.25rem !important;
 }
-html.simple-mode [data-slot="card-header"] {
+html.simple-mode [data-slot='card-header'] {
     padding: 1.5rem 1.5rem 0.75rem !important;
 }
-html.simple-mode [data-slot="card-content"] {
+html.simple-mode [data-slot='card-content'] {
     padding: 0.75rem 1.5rem 1.5rem !important;
 }
-html.simple-mode [data-slot="card-title"] {
+html.simple-mode [data-slot='card-title'] {
     font-size: 1.1rem !important;
     font-weight: 700 !important;
 }
-html.simple-mode [data-slot="card-description"] {
+html.simple-mode [data-slot='card-description'] {
     font-size: 0.9375rem !important;
     line-height: 1.5 !important;
 }
 
 /* ── Badges ──────────────────────────────────────────────────────────── */
-html.simple-mode [data-slot="badge"] {
+html.simple-mode [data-slot='badge'] {
     font-size: 0.8125rem !important;
     font-weight: 600 !important;
     padding: 0.3rem 0.75rem !important;
@@ -685,42 +687,52 @@ html.simple-mode [data-slot="badge"] {
 }
 
 /* ── Diálogos / Modales ──────────────────────────────────────────────── */
-html.simple-mode [role="dialog"],
-html.simple-mode [role="alertdialog"] {
+html.simple-mode [role='dialog']:not([data-slot='sheet-content']),
+html.simple-mode [role='alertdialog']:not([data-slot='sheet-content']) {
     border-radius: 1.25rem !important;
 }
-html.simple-mode [role="dialog"] [data-slot="dialog-title"],
-html.simple-mode [role="alertdialog"] [data-slot="dialog-title"] {
+/* Sheet/drawer — sin bordes redondeados */
+html.simple-mode [data-slot='sheet-content'] {
+    border-radius: 0 !important;
+}
+/* Selects dentro de diálogos y cards — ancho completo */
+html.simple-mode [role='dialog'] [data-slot='select-trigger'],
+html.simple-mode [role='alertdialog'] [data-slot='select-trigger'],
+html.simple-mode [data-slot='card'] [data-slot='select-trigger'] {
+    width: 100% !important;
+}
+html.simple-mode [role='dialog'] [data-slot='dialog-title'],
+html.simple-mode [role='alertdialog'] [data-slot='dialog-title'] {
     font-size: 1.3rem !important;
     font-weight: 700 !important;
 }
-html.simple-mode [role="dialog"] [data-slot="dialog-description"],
-html.simple-mode [role="alertdialog"] [data-slot="dialog-description"] {
+html.simple-mode [role='dialog'] [data-slot='dialog-description'],
+html.simple-mode [role='alertdialog'] [data-slot='dialog-description'] {
     font-size: 0.9375rem !important;
     line-height: 1.7 !important;
 }
 /* Botón cerrar del diálogo — más grande y fácil de tocar */
-html.simple-mode [data-slot="dialog-close"],
-html.simple-mode [data-slot="sheet-close"] {
+html.simple-mode [data-slot='dialog-close'],
+html.simple-mode [data-slot='sheet-close'] {
     width: 2.5rem !important;
     height: 2.5rem !important;
     border-radius: 0.625rem !important;
     opacity: 0.7 !important;
 }
-html.simple-mode [data-slot="dialog-close"]:hover,
-html.simple-mode [data-slot="sheet-close"]:hover {
+html.simple-mode [data-slot='dialog-close']:hover,
+html.simple-mode [data-slot='sheet-close']:hover {
     opacity: 1 !important;
     background-color: var(--accent) !important;
 }
 
 /* ── Menús desplegables ──────────────────────────────────────────────── */
-html.simple-mode [data-slot="dropdown-menu-content"],
-html.simple-mode [role="menu"] {
+html.simple-mode [data-slot='dropdown-menu-content'],
+html.simple-mode [role='menu'] {
     border-radius: 1rem !important;
     padding: 0.375rem !important;
 }
-html.simple-mode [data-slot="dropdown-menu-item"],
-html.simple-mode [role="menuitem"] {
+html.simple-mode [data-slot='dropdown-menu-item'],
+html.simple-mode [role='menuitem'] {
     min-height: 3rem !important;
     font-size: 0.9375rem !important;
     font-weight: 500 !important;
@@ -729,11 +741,11 @@ html.simple-mode [role="menuitem"] {
 }
 
 /* ── Tabs ────────────────────────────────────────────────────────────── */
-html.simple-mode [data-slot="tabs-list"] {
+html.simple-mode [data-slot='tabs-list'] {
     border-radius: 0.875rem !important;
     padding: 0.25rem !important;
 }
-html.simple-mode [data-slot="tabs-trigger"] {
+html.simple-mode [data-slot='tabs-trigger'] {
     min-height: 2.75rem !important;
     font-size: 0.9375rem !important;
     font-weight: 600 !important;
@@ -742,16 +754,32 @@ html.simple-mode [data-slot="tabs-trigger"] {
 }
 
 /* ── Encabezados ─────────────────────────────────────────────────────── */
-html.simple-mode h1 { font-size: 1.75rem !important; font-weight: 800 !important; line-height: 1.2 !important; }
-html.simple-mode h2 { font-size: 1.4rem  !important; font-weight: 700 !important; line-height: 1.25 !important; }
-html.simple-mode h3 { font-size: 1.15rem !important; font-weight: 700 !important; line-height: 1.35 !important; }
+html.simple-mode h1 {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+}
+html.simple-mode h2 {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+}
+html.simple-mode h3 {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    line-height: 1.35 !important;
+}
 
 /* ── Texto general ───────────────────────────────────────────────────── */
-html.simple-mode p { line-height: 1.75 !important; }
-html.simple-mode li { line-height: 1.8 !important; }
+html.simple-mode p {
+    line-height: 1.75 !important;
+}
+html.simple-mode li {
+    line-height: 1.8 !important;
+}
 
 /* ── Toolbar de páginas: buscador arriba, botones abajo ──────────────── */
-html.simple-mode [class*="sm:items-start"][class*="sm:justify-between"] {
+html.simple-mode [class*='sm:items-start'][class*='sm:justify-between'] {
     flex-direction: column !important;
     align-items: stretch !important;
 }
@@ -765,8 +793,8 @@ html.simple-mode .p-4 {
 }
 
 /* ── Paginación ──────────────────────────────────────────────────────── */
-html.simple-mode [data-slot="pagination-item"] button,
-html.simple-mode nav[aria-label*="agination"] button {
+html.simple-mode [data-slot='pagination-item'] button,
+html.simple-mode nav[aria-label*='agination'] button {
     min-height: 2.75rem !important;
     min-width: 2.75rem !important;
     font-size: 0.9375rem !important;
@@ -774,28 +802,35 @@ html.simple-mode nav[aria-label*="agination"] button {
 }
 
 /* ── Popover / Tooltip content ───────────────────────────────────────── */
-html.simple-mode [data-slot="popover-content"] {
+html.simple-mode [data-slot='popover-content'] {
     border-radius: 1rem !important;
     padding: 1rem !important;
     font-size: 0.9375rem !important;
 }
 
 /* ── Checkbox y Radio ────────────────────────────────────────────────── */
-html.simple-mode [data-slot="checkbox"],
-html.simple-mode input[type="checkbox"],
-html.simple-mode input[type="radio"] {
+html.simple-mode [data-slot='checkbox'],
+html.simple-mode input[type='checkbox'],
+html.simple-mode input[type='radio'] {
     width: 1.25rem !important;
     height: 1.25rem !important;
 }
 
-/* ── Grids en Modo Simple: 1 columna para todo el espacio ────────────── */
-html.simple-mode [class*="grid-cols-2"],
-html.simple-mode [class*="grid-cols-3"],
-html.simple-mode [class*="grid-cols-4"],
-html.simple-mode [class*="sm:grid-cols-2"],
-html.simple-mode [class*="md:grid-cols-3"],
-html.simple-mode [class*="lg:grid-cols-4"] {
-    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+/* ── Logo en modo simple — más grande y con más espacio ──────────────── */
+html.simple-mode header a[href='/dashboard'] {
+    gap: 0.875rem !important;
+}
+html.simple-mode header a[href='/dashboard'] .aspect-square {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+}
+html.simple-mode header a[href='/dashboard'] .aspect-square img {
+    width: 1.375rem !important;
+    height: 1.375rem !important;
+}
+html.simple-mode header a[href='/dashboard'] .grid span {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
 }
 
 /* ── Focus rings más visibles ────────────────────────────────────────── */

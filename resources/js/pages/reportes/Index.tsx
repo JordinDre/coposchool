@@ -15,7 +15,6 @@ interface Seccion {
     ciclo_escolar: number;
 }
 
-
 interface Props {
     secciones: Seccion[];
     canGenerarSeccion: boolean;

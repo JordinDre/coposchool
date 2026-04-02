@@ -100,9 +100,7 @@ export function useRoles() {
     return useMemo(() => {
         const roles = page.props.auth.roles || [];
         const hasRole = (required: string | string[]) =>
-            Array.isArray(required)
-                ? required.some((r) => roles.includes(r.toLowerCase()))
-                : roles.includes(required.toLowerCase());
+            Array.isArray(required) ? required.some((r) => roles.includes(r.toLowerCase())) : roles.includes(required.toLowerCase());
 
         return {
             roles,

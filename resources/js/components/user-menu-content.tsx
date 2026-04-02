@@ -139,9 +139,9 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer text-destructive focus:text-destructive">
                 <button type="button" className="flex w-full items-center" onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4 text-destructive" />
                     Cerrar sesión
                 </button>
             </DropdownMenuItem>

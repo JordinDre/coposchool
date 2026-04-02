@@ -120,7 +120,7 @@ class ReporteController extends Controller
         Gate::authorize('generar boleta seccion');
 
         $seccionId = $request->query('seccion_id');
-        $unidadId  = $request->query('unidad_id');
+        $unidadId = $request->query('unidad_id');
 
         $configuracion = \App\Models\Configuracion::cached();
 
@@ -137,18 +137,18 @@ class ReporteController extends Controller
             ->get(['id', 'nombre', 'orden', 'ciclo_escolar']);
 
         // Default to latest if not provided
-        if (!$seccionId && $secciones->count() > 0) {
+        if (! $seccionId && $secciones->count() > 0) {
             $seccionId = $secciones->first()->id;
         }
 
-        if (!$unidadId && $unidades->count() > 0) {
+        if (! $unidadId && $unidades->count() > 0) {
             // Find a unit for the current cycle if possible, otherwise just the first one
-            $unidadId = $unidades->where('ciclo_escolar', $configuracion->ciclo_actual)->first()?->id 
+            $unidadId = $unidades->where('ciclo_escolar', $configuracion->ciclo_actual)->first()?->id
                         ?? $unidades->first()?->id;
         }
 
         // If still no IDs (empty DB), handle gracefully
-        if (!$seccionId || !$unidadId) {
+        if (! $seccionId || ! $unidadId) {
             return Inertia::render('reportes/Consolidado', [
                 'secciones' => $secciones,
                 'unidades' => $unidades,
@@ -173,7 +173,7 @@ class ReporteController extends Controller
             ->get(['id', 'name', 'deleted_at']);
 
         $estudianteIds = $estudiantes->pluck('id');
-        
+
         $notas = Nota::whereIn('estudiante_id', $estudianteIds)
             ->where('seccion_id', $seccion->id)
             ->where('unidad_id', $unidad->id)
@@ -214,11 +214,11 @@ class ReporteController extends Controller
         if (! $seccionId) {
             return Inertia::render('reportes/ConsolidadoMaterias', [
                 'secciones' => $secciones,
-                'seccion'   => null,
-                'materias'  => [],
-                'unidades'  => [],
+                'seccion' => null,
+                'materias' => [],
+                'unidades' => [],
                 'estudiantes' => [],
-                'notas'     => [],
+                'notas' => [],
             ]);
         }
 
@@ -242,12 +242,12 @@ class ReporteController extends Controller
             ->get(['estudiante_id', 'materia_id', 'unidad_id', 'nota']);
 
         return Inertia::render('reportes/ConsolidadoMaterias', [
-            'secciones'   => $secciones,
-            'seccion'     => $seccion ? $seccion->only(['id', 'nombre', 'ciclo_escolar']) : null,
-            'materias'    => $seccion->materias->map->only(['id', 'nombre']),
-            'unidades'    => $unidades,
+            'secciones' => $secciones,
+            'seccion' => $seccion ? $seccion->only(['id', 'nombre', 'ciclo_escolar']) : null,
+            'materias' => $seccion->materias->map->only(['id', 'nombre']),
+            'unidades' => $unidades,
             'estudiantes' => $estudiantes,
-            'notas'       => $notas,
+            'notas' => $notas,
         ]);
     }
 
@@ -260,7 +260,7 @@ class ReporteController extends Controller
 
         $request->validate([
             'seccion_id' => 'required|integer|exists:secciones,id',
-            'unidad_id'  => 'required|integer|exists:unidades,id',
+            'unidad_id' => 'required|integer|exists:unidades,id',
         ]);
 
         $seccion = Seccion::with(['materias' => function ($q) {

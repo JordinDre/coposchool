@@ -12,17 +12,13 @@ export default function SimpleModeToggle() {
                     <Accessibility className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div className="space-y-0.5">
-                    <p className="text-sm font-medium leading-none focus:outline-none">Modo simple</p>
+                    <p className="text-sm leading-none font-medium focus:outline-none">Modo simple</p>
                     <p className="text-xs text-muted-foreground">
                         Sin barra lateral — navegación con botones grandes y acciones rápidas desde el inicio
                     </p>
                 </div>
             </div>
-            <Switch
-                checked={simpleMode}
-                onCheckedChange={toggleSimpleMode}
-                aria-label="Activar modo simple"
-            />
+            <Switch checked={simpleMode} onCheckedChange={toggleSimpleMode} aria-label="Activar modo simple" />
         </div>
     );
 }

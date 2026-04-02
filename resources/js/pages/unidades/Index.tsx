@@ -59,7 +59,7 @@ export default function Index({ unidades, filters }: UnidadesIndexProps) {
         total: unidades.total ?? 0,
         lastPage: unidades.last_page ?? 1,
         sortBy: filters.sort_by ?? undefined,
-        sortDir: (filters.sort_direction as "asc" | "desc" | undefined) ?? undefined,
+        sortDir: (filters.sort_direction as 'asc' | 'desc' | undefined) ?? undefined,
     };
 
     const columns: ExtendedColumnDef<UnidadRow>[] = [

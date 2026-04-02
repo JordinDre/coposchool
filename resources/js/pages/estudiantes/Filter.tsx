@@ -53,26 +53,27 @@ export default function Filter({ secciones }: { secciones: Seccion[] }) {
         router.get(route('estudiantes.index'), {}, { preserveState: true, replace: true });
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (search.trim()) {
+                applyFilters();
+            } else {
+                clearFilters();
+            }
+        }
+    };
+
     return (
         <div className="w-full space-y-2">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="relative flex-1">
-                    <Search className="peer-focus:text-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors" />
+                <div className="flex-1">
                     <Input
-                        placeholder="Buscar catedráticos... (presiona Enter)"
+                        placeholder="Buscar estudiantes... (presiona Enter)"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                if (search.trim()) {
-                                    applyFilters();
-                                } else {
-                                    clearFilters();
-                                }
-                            }
-                        }}
-                        className="peer pl-10"
+                        onKeyDown={handleKeyDown}
+                        leftIcon={Search}
                     />
                 </div>
                 <div className="flex gap-2">

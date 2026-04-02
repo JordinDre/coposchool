@@ -185,10 +185,10 @@ class SeccionController extends Controller
         }
 
         $estudiantes = $query->get()->map(fn ($u) => [
-            'id'             => $u->id,
-            'name'           => $u->name,
-            'email'          => $u->email,
-            'inscrito'       => in_array($u->id, $inscritos),
+            'id' => $u->id,
+            'name' => $u->name,
+            'email' => $u->email,
+            'inscrito' => in_array($u->id, $inscritos),
             'seccion_actual' => $u->secciones->first()?->nombre,
         ]);
 
@@ -212,7 +212,7 @@ class SeccionController extends Controller
         $request->validate(['estudiante_id' => ['required', 'integer', 'exists:users,id']]);
 
         $estudianteId = $request->estudiante_id;
-        $inscrito     = $seccion->estudiantes()->where('users.id', $estudianteId)->exists();
+        $inscrito = $seccion->estudiantes()->where('users.id', $estudianteId)->exists();
 
         if ($inscrito) {
             $seccion->estudiantes()->detach($estudianteId);
@@ -295,7 +295,7 @@ class SeccionController extends Controller
         $this->authorize('update', $seccion);
 
         $request->validate([
-            'materia_id'     => ['required', 'integer', 'exists:materias,id'],
+            'materia_id' => ['required', 'integer', 'exists:materias,id'],
             'catedratico_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 

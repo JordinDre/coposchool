@@ -267,7 +267,7 @@ export default function Filter() {
                         </SelectContent>
                     </Select>
                     <div className="relative flex-1">
-                        <Search className="peer-focus:text-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors" />
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors peer-focus:text-foreground" />
                         <Input
                             placeholder={getPlaceholder(searchField)}
                             value={search}

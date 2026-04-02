@@ -98,11 +98,11 @@ class UnidadController extends Controller
 
         return Inertia::render('unidades/Edit', [
             'unidad' => [
-                'id'           => $unidad->id,
-                'nombre'       => $unidad->nombre,
-                'descripcion'  => $unidad->descripcion,
+                'id' => $unidad->id,
+                'nombre' => $unidad->nombre,
+                'descripcion' => $unidad->descripcion,
                 'fecha_inicio' => $unidad->fecha_inicio?->format('Y-m-d'),
-                'fecha_fin'    => $unidad->fecha_fin?->format('Y-m-d'),
+                'fecha_fin' => $unidad->fecha_fin?->format('Y-m-d'),
             ],
         ]);
     }
