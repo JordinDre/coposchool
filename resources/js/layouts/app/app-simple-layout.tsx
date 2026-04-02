@@ -203,8 +203,8 @@ export default function AppSimpleLayout({ children, breadcrumbs = [] }: PropsWit
                         </button>
                     </div>
 
-                    {/* Breadcrumbs — absolutamente centrados */}
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-24 sm:px-36">
+                    {/* Breadcrumbs — absolutamente centrados, ocultos en móvil */}
+                    <div className="pointer-events-none absolute inset-0 hidden items-center justify-center px-36 sm:flex sm:px-40">
                         <div className="pointer-events-auto flex min-w-0 items-center gap-2 overflow-hidden">
                             {!isHome ? (
                                 <>

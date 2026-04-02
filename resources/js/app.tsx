@@ -8,6 +8,7 @@ import { initializeSimpleMode } from './hooks/use-simple-mode';
 import { setGlobalSimboloMoneda } from './lib/utils';
 
 import { CartProvider } from './Contexts/CartContext';
+import { PageLoader } from './components/page-loader';
 
 const appName =
     (typeof document !== 'undefined' && document.querySelector('meta[name="application-name"]')?.getAttribute('content')) ||
@@ -26,6 +27,7 @@ createInertiaApp({
 
         root.render(
             <CartProvider>
+                <PageLoader />
                 <App {...props} />
             </CartProvider>,
         );
