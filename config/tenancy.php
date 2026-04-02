@@ -29,13 +29,13 @@ return [
      *
      * To configure their behavior, see the config keys below.
      */
-    'bootstrappers' => [
+    'bootstrappers' => array_filter([
         Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
-        Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class,
-    ],
+        env('TENANCY_BOOTSTRAP_REDIS', true) ? Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class : null,
+    ]),
 
     /**
      * Database tenancy config. Used by DatabaseTenancyBootstrapper.

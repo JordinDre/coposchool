@@ -377,7 +377,7 @@ class EstudianteController extends Controller
 
             $estudiante->assignRole('estudiante');
 
-            $estudiante->secciones()->sync([$request->seccion_id]);
+            $estudiante->secciones()->sync(array_filter([$request->seccion_id]));
 
             DB::commit();
 
@@ -429,7 +429,7 @@ class EstudianteController extends Controller
 
             $user->save();
 
-            $user->secciones()->sync([$request->seccion_id]);
+            $user->secciones()->sync(array_filter([$request->seccion_id]));
 
             DB::commit();
 

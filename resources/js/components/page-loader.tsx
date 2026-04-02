@@ -6,7 +6,11 @@ export function PageLoader() {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        const removeStart = router.on('start', () => {
+        const removeStart = router.on('start', (event) => {
+            const visit = (event as CustomEvent).detail?.visit;
+            // usePoll/router.reload() stays on the same URL with preserveState — skip those
+            const isSameUrl = visit?.url?.href === window.location.href;
+            if (isSameUrl && visit?.preserveState) return;
             // Small delay so fast navigations don't flash the overlay
             timerRef.current = setTimeout(() => setVisible(true), 120);
         });
