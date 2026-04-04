@@ -321,10 +321,10 @@ export default function AppSimpleLayout({ children, breadcrumbs = [] }: PropsWit
                                             href={item.href ?? '#'}
                                             onClick={() => setNavOpen(false)}
                                             className={cn(
-                                                'flex cursor-pointer items-center gap-3 border-l-[3px] py-3 pr-4 text-base transition-colors',
+                                                'mx-2 flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 text-base transition-colors',
                                                 active
-                                                    ? 'border-primary bg-sidebar-accent/50 pl-[calc(1rem-3px)] font-semibold text-sidebar-accent-foreground'
-                                                    : 'border-transparent pl-4 font-medium text-sidebar-foreground hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground',
+                                                    ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                                                    : 'font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                                             )}
                                         >
                                             {item.icon && <item.icon className="h-5 w-5 shrink-0" />}
@@ -341,10 +341,10 @@ export default function AppSimpleLayout({ children, breadcrumbs = [] }: PropsWit
                                     <Collapsible defaultOpen={parentActive} className="group/collapsible">
                                         <CollapsibleTrigger
                                             className={cn(
-                                                'flex w-full cursor-pointer items-center gap-3 border-l-[3px] py-3 pr-4 text-base transition-colors',
+                                                'mx-2 flex w-[calc(100%-1rem)] cursor-pointer items-center gap-3 rounded-md px-3 py-3 text-base transition-colors',
                                                 parentActive
-                                                    ? 'border-primary/50 bg-sidebar-accent/30 pl-[calc(1rem-3px)] font-semibold text-sidebar-accent-foreground'
-                                                    : 'border-transparent pl-4 font-medium text-sidebar-foreground hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground',
+                                                    ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                                                    : 'font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                                             )}
                                         >
                                             {item.icon && <item.icon className="h-5 w-5 shrink-0" />}
@@ -352,7 +352,7 @@ export default function AppSimpleLayout({ children, breadcrumbs = [] }: PropsWit
                                             <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                         </CollapsibleTrigger>
                                         <CollapsibleContent>
-                                            <div className="ml-4 flex flex-col border-l-[3px] border-primary/20">
+                                            <div className="mx-2 flex flex-col pl-4">
                                                 {item.items!.map((child) => {
                                                     const childActive = isNavActive(child.href, true);
                                                     return (
@@ -361,13 +361,13 @@ export default function AppSimpleLayout({ children, breadcrumbs = [] }: PropsWit
                                                             href={child.href ?? '#'}
                                                             onClick={() => setNavOpen(false)}
                                                             className={cn(
-                                                                'flex cursor-pointer items-center gap-2.5 border-l-[2px] py-2.5 pr-4 text-sm transition-colors',
+                                                                'flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 text-base transition-colors',
                                                                 childActive
-                                                                    ? 'border-primary bg-sidebar-accent/50 pl-[calc(0.875rem-2px)] font-semibold text-sidebar-accent-foreground'
-                                                                    : 'border-transparent pl-3.5 font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground',
+                                                                    ? 'bg-sidebar-accent font-medium text-sidebar-accent-foreground'
+                                                                    : 'font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                                                             )}
                                                         >
-                                                            {child.icon && <child.icon className="h-4 w-4 shrink-0" />}
+                                                            {child.icon && <child.icon className="h-5 w-5 shrink-0" />}
                                                             <span>{child.title}</span>
                                                         </Link>
                                                     );
