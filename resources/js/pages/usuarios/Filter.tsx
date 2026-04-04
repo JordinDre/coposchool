@@ -8,7 +8,10 @@ import { router, usePage } from '@inertiajs/react';
 import { Filter as FilterIcon, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-interface Role { id: number; name: string }
+interface Role {
+    id: number;
+    name: string;
+}
 
 interface FilterState {
     search: string;
@@ -55,35 +58,49 @@ export default function Filter({ roles = [] }: FilterProps) {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (search.trim()) { applyFilters(); } else { clearFilters(); }
+            if (search.trim()) {
+                applyFilters();
+            } else {
+                clearFilters();
+            }
         }
     };
 
     return (
         <div className="w-full space-y-2">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="relative flex-1">
-                    <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="flex-1">
                     <Input
                         placeholder="Buscar usuarios... (presiona Enter)"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className="pl-10"
+                        leftIcon={Search}
                     />
                 </div>
                 <div className="flex gap-2">
-                    <Dialog open={isOpen} onOpenChange={(o) => { setIsOpen(o); if (!o) applyFilters(); }}>
+                    <Dialog
+                        open={isOpen}
+                        onOpenChange={(o) => {
+                            setIsOpen(o);
+                            if (!o) applyFilters();
+                        }}
+                    >
                         <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
                                 <FilterIcon className="mr-2 size-4" />
                                 Filtros
-                                {activeCount > 0 && <Badge variant="secondary" className="ml-1">{activeCount}</Badge>}
+                                {activeCount > 0 && (
+                                    <Badge variant="secondary" className="ml-1">
+                                        {activeCount}
+                                    </Badge>
+                                )}
                             </Button>
                         </DialogTrigger>
                         {activeCount > 0 && (
                             <Button size="sm" onClick={clearFilters} color="red">
-                                <X className="mr-2 size-4" />Limpiar
+                                <X className="mr-2 size-4" />
+                                Limpiar
                             </Button>
                         )}
                         <DialogContent>
@@ -95,18 +112,27 @@ export default function Filter({ roles = [] }: FilterProps) {
                                     <div className="grid gap-2">
                                         <Label>Rol</Label>
                                         <Select value={filters.role || ''} onValueChange={(v) => setFilters((p) => ({ ...p, role: v || undefined }))}>
-                                            <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Todos" />
+                                            </SelectTrigger>
                                             <SelectContent>
                                                 {roles.map((r) => (
-                                                    <SelectItem key={r.id} value={r.name} className="capitalize">{r.name}</SelectItem>
+                                                    <SelectItem key={r.id} value={r.name} className="capitalize">
+                                                        {r.name}
+                                                    </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                     <div className="grid gap-2">
                                         <Label>Estado</Label>
-                                        <Select value={filters.status || ''} onValueChange={(v) => setFilters((p) => ({ ...p, status: v || undefined }))}>
-                                            <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+                                        <Select
+                                            value={filters.status || ''}
+                                            onValueChange={(v) => setFilters((p) => ({ ...p, status: v || undefined }))}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Todos" />
+                                            </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="active">Activo</SelectItem>
                                                 <SelectItem value="inactive">Inactivo</SelectItem>
@@ -116,9 +142,15 @@ export default function Filter({ roles = [] }: FilterProps) {
                                 </div>
                                 <div className="flex justify-end gap-2 pt-2">
                                     <Button onClick={clearFilters} color="red" disabled={activeCount === 0}>
-                                        <X className="mr-2 size-4" />Limpiar
+                                        <X className="mr-2 size-4" />
+                                        Limpiar
                                     </Button>
-                                    <Button onClick={() => { applyFilters(); setIsOpen(false); }}>
+                                    <Button
+                                        onClick={() => {
+                                            applyFilters();
+                                            setIsOpen(false);
+                                        }}
+                                    >
                                         Aplicar Filtros
                                     </Button>
                                 </div>

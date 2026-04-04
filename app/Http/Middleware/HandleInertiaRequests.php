@@ -48,19 +48,19 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user() ? [
-                    'id'       => $request->user()->id,
-                    'name'     => $request->user()->name,
-                    'email'    => $request->user()->email,
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
                     'telefono' => $request->user()->telefono,
-                    'avatar'   => $request->user()->avatar ?? null,
+                    'avatar' => $request->user()->avatar ?? null,
                 ] : null,
                 'roles' => $request->user() ? $request->user()->getRoleNames()->toArray() : [],
                 'permissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name')->toArray() : [],
                 'impersonating' => $request->user() && app(ImpersonateManager::class)->isImpersonating(),
                 'impersonator' => $request->user() && app(ImpersonateManager::class)->isImpersonating()
                     ? [
-                        'id'    => app(ImpersonateManager::class)->getImpersonator()->id,
-                        'name'  => app(ImpersonateManager::class)->getImpersonator()->name,
+                        'id' => app(ImpersonateManager::class)->getImpersonator()->id,
+                        'name' => app(ImpersonateManager::class)->getImpersonator()->name,
                         'email' => app(ImpersonateManager::class)->getImpersonator()->email,
                     ]
                     : null,
@@ -70,13 +70,13 @@ class HandleInertiaRequests extends Middleware
                     ? Configuracion::cached()
                     : null;
 
-                $name    = $config?->nombre_empresa ?? config('app.name');
+                $name = $config?->nombre_empresa ?? config('app.name');
                 $favicon = $config?->favicon_url ?? $config?->logo_url ?? '/images/icon.png';
-                $logo    = $config?->logo_url ?? '/images/logo.png';
+                $logo = $config?->logo_url ?? '/images/logo.png';
 
                 return [
-                    'logo'    => ['light' => $logo, 'dark' => $logo],
-                    'icon'    => ['favicon' => $favicon, 'apple_touch' => $favicon, 'logo_svg' => ''],
+                    'logo' => ['light' => $logo, 'dark' => $logo],
+                    'icon' => ['favicon' => $favicon, 'apple_touch' => $favicon, 'logo_svg' => ''],
                     'company' => ['name' => $name],
                 ];
             },
@@ -89,19 +89,21 @@ class HandleInertiaRequests extends Middleware
                     return null;
                 }
                 $u = Unidad::actual();
+
                 return $u ? [
-                    'id'           => $u->id,
-                    'nombre'       => $u->nombre,
-                    'orden'        => $u->orden,
+                    'id' => $u->id,
+                    'nombre' => $u->nombre,
+                    'orden' => $u->orden,
+                    'ciclo_escolar' => $u->ciclo_escolar,
                     'fecha_inicio' => $u->fecha_inicio?->format('Y-m-d'),
-                    'fecha_fin'    => $u->fecha_fin?->format('Y-m-d'),
+                    'fecha_fin' => $u->fecha_fin?->format('Y-m-d'),
                 ] : null;
             },
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
-                'error'   => fn () => $request->session()->get('error'),
-                'info'    => fn () => $request->session()->get('info'),
+                'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
                 'warning' => fn () => $request->session()->get('warning'),
             ],
         ];

@@ -31,6 +31,7 @@ interface MateriasIndexProps {
         from: number;
         to: number;
     };
+    filters: Record<string, string>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Materias', href: '/materias' }];
@@ -39,9 +40,7 @@ const columns: ExtendedColumnDef<MateriaRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: MateriaRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />
-        ),
+        cell: ({ row }: { row: { original: MateriaRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -53,7 +52,11 @@ const columns: ExtendedColumnDef<MateriaRow>[] = [
             <div className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-blue-600" />
                 <span className="font-medium">{row.original.nombre}</span>
-                {row.original.deleted_at && <Badge variant="destructive" className="text-xs">Inactiva</Badge>}
+                {row.original.deleted_at && (
+                    <Badge variant="destructive" className="text-xs">
+                        Inactiva
+                    </Badge>
+                )}
             </div>
         ),
     },
@@ -61,17 +64,13 @@ const columns: ExtendedColumnDef<MateriaRow>[] = [
         id: 'codigo',
         header: 'Código',
         accessorKey: 'codigo',
-        cell: ({ row }: { row: { original: MateriaRow } }) => (
-            <span className="font-mono text-sm">{row.original.codigo || '—'}</span>
-        ),
+        cell: ({ row }: { row: { original: MateriaRow } }) => <span className="font-mono text-sm">{row.original.codigo || '—'}</span>,
     },
     {
         id: 'secciones_count',
         header: 'Secciones',
         accessorKey: 'secciones_count',
-        cell: ({ row }: { row: { original: MateriaRow } }) => (
-            <Badge variant="secondary">{row.original.secciones_count}</Badge>
-        ),
+        cell: ({ row }: { row: { original: MateriaRow } }) => <Badge variant="secondary">{row.original.secciones_count}</Badge>,
     },
     {
         id: 'created_at',
@@ -85,7 +84,7 @@ const columns: ExtendedColumnDef<MateriaRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ materias }: MateriasIndexProps) {
+export default function Index({ materias, filters }: MateriasIndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -93,8 +92,8 @@ export default function Index({ materias }: MateriasIndexProps) {
         perPage: materias.per_page ?? 10,
         total: materias.total ?? 0,
         lastPage: materias.last_page ?? 1,
-        from: materias.from ?? 1,
-        to: materias.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: (filters.sort_direction as 'asc' | 'desc' | undefined) ?? undefined,
     };
 
     return (
@@ -103,10 +102,12 @@ export default function Index({ materias }: MateriasIndexProps) {
             <div className="p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between md:gap-3">
                     <Filter />
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex shrink-0 gap-2">
                         {can('crear materia') && (
                             <Link href={route('materias.create')}>
-                                <Button size="sm" color="blue">Crear Materia</Button>
+                                <Button size="sm" color="blue">
+                                    Crear Materia
+                                </Button>
                             </Link>
                         )}
                     </div>

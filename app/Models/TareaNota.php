@@ -30,7 +30,7 @@ class TareaNota extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) => "Nota de tarea {$eventName}")
+            ->setDescriptionForEvent(fn (string $eventName) => "Nota de tarea {$eventName}")
             ->dontSubmitEmptyLogs();
     }
 

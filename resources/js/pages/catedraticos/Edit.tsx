@@ -34,7 +34,13 @@ export default function Edit({ catedratico }: { catedratico: Catedratico }) {
         <>
             <Head title="Editar Catedrático" />
             <div className="p-4">
-                <form onSubmit={(e) => { e.preventDefault(); put(route('catedraticos.update', catedratico.id)); }} className="space-y-5">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        put(route('catedraticos.update', catedratico.id));
+                    }}
+                    className="space-y-5"
+                >
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         <div className="space-y-2">
                             <Label htmlFor="name">Nombre *</Label>
@@ -44,7 +50,12 @@ export default function Edit({ catedratico }: { catedratico: Catedratico }) {
                                 onChange={(e) => setData('name', e.target.value)}
                                 className={errors.name ? 'border-red-500' : ''}
                             />
-                            {errors.name && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.name}</p>}
+                            {errors.name && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.name}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Correo *</Label>
@@ -55,15 +66,16 @@ export default function Edit({ catedratico }: { catedratico: Catedratico }) {
                                 onChange={(e) => setData('email', e.target.value)}
                                 className={errors.email ? 'border-red-500' : ''}
                             />
-                            {errors.email && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.email}</p>}
+                            {errors.email && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="telefono">Teléfono</Label>
-                            <Input
-                                id="telefono"
-                                value={data.telefono}
-                                onChange={(e) => setData('telefono', e.target.value)}
-                            />
+                            <Input id="telefono" value={data.telefono} onChange={(e) => setData('telefono', e.target.value)} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password">Nueva Contraseña</Label>
@@ -75,7 +87,12 @@ export default function Edit({ catedratico }: { catedratico: Catedratico }) {
                                 placeholder="Dejar en blanco para no cambiar"
                                 className={errors.password ? 'border-red-500' : ''}
                             />
-                            {errors.password && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.password}</p>}
+                            {errors.password && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password_confirmation">Confirmar Contraseña</Label>

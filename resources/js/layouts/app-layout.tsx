@@ -1,8 +1,9 @@
-// resources/js/layouts/app-layout.tsx
 import FlashToaster from '@/components/ui/flash-toaster';
 import { Toaster } from '@/components/ui/sonner';
 import { useCurrencySymbol } from '@/hooks/use-currency-symbol';
-import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
+import { useSimpleMode } from '@/hooks/use-simple-mode';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
+import AppSimpleLayout from '@/layouts/app/app-simple-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode, useEffect } from 'react';
 
@@ -14,6 +15,8 @@ interface AppLayoutProps {
 export default function AppLayout({ children, breadcrumbs, ...props }: AppLayoutProps) {
     // Actualizar el símbolo de moneda global basado en la configuración
     useCurrencySymbol();
+
+    const { simpleMode } = useSimpleMode();
 
     // Prevenir que las páginas se muestren desde el caché del navegador (bfcache)
     // al presionar el botón de "atrás" después de cerrar sesión.
@@ -27,15 +30,17 @@ export default function AppLayout({ children, breadcrumbs, ...props }: AppLayout
         return () => window.removeEventListener('pageshow', handlePageShow);
     }, []);
 
+    const Layout = simpleMode ? AppSimpleLayout : AppSidebarLayout;
+
     return (
         <>
             {/* Toaster global + listener de flashes */}
             <Toaster richColors closeButton position="bottom-right" theme="light" duration={5000} />
             <FlashToaster />
 
-            <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+            <Layout breadcrumbs={breadcrumbs} {...props}>
                 {children}
-            </AppLayoutTemplate>
+            </Layout>
         </>
     );
 }

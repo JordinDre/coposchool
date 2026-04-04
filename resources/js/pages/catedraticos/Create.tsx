@@ -27,7 +27,13 @@ export default function Create() {
         <>
             <Head title="Crear Catedrático" />
             <div className="p-4">
-                <form onSubmit={(e) => { e.preventDefault(); post(route('catedraticos.store')); }} className="space-y-5">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        post(route('catedraticos.store'));
+                    }}
+                    className="space-y-5"
+                >
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         <div className="space-y-2">
                             <Label htmlFor="name">Nombre *</Label>
@@ -38,7 +44,12 @@ export default function Create() {
                                 placeholder="Nombre completo"
                                 className={errors.name ? 'border-red-500' : ''}
                             />
-                            {errors.name && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.name}</p>}
+                            {errors.name && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.name}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Correo *</Label>
@@ -50,7 +61,12 @@ export default function Create() {
                                 placeholder="correo@ejemplo.com"
                                 className={errors.email ? 'border-red-500' : ''}
                             />
-                            {errors.email && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.email}</p>}
+                            {errors.email && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="telefono">Teléfono</Label>
@@ -70,7 +86,12 @@ export default function Create() {
                                 onChange={(e) => setData('password', e.target.value)}
                                 className={errors.password ? 'border-red-500' : ''}
                             />
-                            {errors.password && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.password}</p>}
+                            {errors.password && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password_confirmation">Confirmar Contraseña *</Label>

@@ -29,12 +29,12 @@ class UpdateUserRequest extends FormRequest
         $userId = $usuario instanceof User ? $usuario->id : $usuario;
 
         return [
-            'name'            => ['required', 'string', 'max:255'],
-            'email'           => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
-            'password'        => ['nullable', 'string', 'min:8', 'confirmed'],
-            'telefono'        => ['nullable', 'string', 'max:20'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'telefono' => ['nullable', 'string', 'max:20'],
             'logout_sessions' => ['nullable', 'boolean'],
-            'roles'           => [
+            'roles' => [
                 'required',
                 'array',
                 'min:1',
@@ -60,15 +60,15 @@ class UpdateUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'      => 'El nombre es obligatorio.',
-            'email.required'     => 'El correo electrónico es obligatorio.',
-            'email.email'        => 'El correo electrónico debe tener un formato válido.',
-            'email.unique'       => 'Este correo electrónico ya está registrado.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe tener un formato válido.',
+            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.',
-            'roles.required'     => 'Debe asignar al menos un rol al usuario.',
-            'roles.min'          => 'Debe asignar al menos un rol al usuario.',
-            'roles.*.exists'     => 'Uno o más roles seleccionados no son válidos.',
+            'roles.required' => 'Debe asignar al menos un rol al usuario.',
+            'roles.min' => 'Debe asignar al menos un rol al usuario.',
+            'roles.*.exists' => 'Uno o más roles seleccionados no son válidos.',
         ];
     }
 }

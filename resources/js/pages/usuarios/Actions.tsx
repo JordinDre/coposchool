@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useCan } from '@/hooks/use-can';
-import { Link, router, usePage } from '@inertiajs/react';
-import { Edit, Eye, LogOut, MoreHorizontal, RotateCcw, UserX, UserCog } from 'lucide-react';
 import { useRoles } from '@/hooks/use-roles';
 import type { SharedData } from '@/types';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Edit, Eye, LogOut, MoreHorizontal, RotateCcw, UserCog, UserX } from 'lucide-react';
 
 interface ActionsProps {
     id: number;
@@ -29,24 +29,34 @@ export default function Actions({ id, isDeleted = false, canLogout = false, alig
             <DropdownMenuContent align={align}>
                 {can('ver usuarios') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('usuarios.show', id)}><Eye className="mr-2 h-4 w-4" />Ver</Link>
+                        <Link href={route('usuarios.show', id)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Ver
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {!isDeleted && can('editar usuarios') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('usuarios.edit', id)}><Edit className="mr-2 h-4 w-4" />Editar</Link>
+                        <Link href={route('usuarios.edit', id)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {!isDeleted && isAdminOrSuperAdmin() && auth?.user?.id !== id && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('impersonate', id)}><UserCog className="mr-2 h-4 w-4" />Suplantar</Link>
+                        <Link href={route('impersonate', id)}>
+                            <UserCog className="mr-2 h-4 w-4" />
+                            Suplantar
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {canLogout && can('cerrar sesiones') && (
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.post(route('usuarios.logout', id))}>
-                            <LogOut className="mr-2 h-4 w-4" />Cerrar sesiones
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Cerrar sesiones
                         </DropdownMenuItem>
                     </>
                 )}
@@ -54,7 +64,8 @@ export default function Actions({ id, isDeleted = false, canLogout = false, alig
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.post(route('usuarios.restore', id))}>
-                            <RotateCcw className="mr-2 h-4 w-4" />Reactivar
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Reactivar
                         </DropdownMenuItem>
                     </>
                 )}
@@ -65,7 +76,8 @@ export default function Actions({ id, isDeleted = false, canLogout = false, alig
                             className="text-red-600"
                             onClick={() => confirm('¿Desactivar este usuario?') && router.delete(route('usuarios.destroy', id))}
                         >
-                            <UserX className="mr-2 h-4 w-4 text-red-600" />Desactivar
+                            <UserX className="mr-2 h-4 w-4 text-red-600" />
+                            Desactivar
                         </DropdownMenuItem>
                     </>
                 )}

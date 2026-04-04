@@ -51,8 +51,8 @@ class UserController extends Controller
                         ->orWhere('telefono', 'like', "%{$search}%");
                 } else {
                     match ($searchField) {
-                        'id'    => $q->where('id', is_numeric($search) ? $search : '0'),
-                        'name'  => $q->where('name', 'like', "%{$search}%"),
+                        'id' => $q->where('id', is_numeric($search) ? $search : '0'),
+                        'name' => $q->where('name', 'like', "%{$search}%"),
                         'email' => $q->where('email', 'like', "%{$search}%"),
                         default => $q->where('id', is_numeric($search) ? $search : '0'),
                     };
@@ -66,9 +66,9 @@ class UserController extends Controller
 
         if (! empty($filters['status'])) {
             match ($filters['status']) {
-                'active'   => $query->whereNull('deleted_at'),
+                'active' => $query->whereNull('deleted_at'),
                 'inactive' => $query->whereNotNull('deleted_at'),
-                default    => null,
+                default => null,
             };
         }
 
@@ -86,10 +86,10 @@ class UserController extends Controller
             'users' => $users,
             'roles' => $roles,
             'filters' => [
-                'search'         => $filters['search'] ?? '',
-                'role'           => $filters['role'] ?? '',
-                'status'         => $filters['status'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+                'search' => $filters['search'] ?? '',
+                'role' => $filters['role'] ?? '',
+                'status' => $filters['status'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -122,11 +122,11 @@ class UserController extends Controller
 
         try {
             $user = User::create([
-                'name'            => $request->name,
-                'email'           => $request->email,
-                'password'        => Hash::make($request->password),
-                'telefono'        => $request->telefono,
-                'creado_por'      => Auth::id(),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'telefono' => $request->telefono,
+                'creado_por' => Auth::id(),
                 'actualizado_por' => Auth::id(),
             ]);
 
@@ -183,7 +183,7 @@ class UserController extends Controller
         }
 
         return Inertia::render('usuarios/Edit', [
-            'user'  => $usuario,
+            'user' => $usuario,
             'roles' => $rolesQuery->get(),
         ]);
     }
@@ -199,9 +199,9 @@ class UserController extends Controller
 
         try {
             $data = [
-                'name'            => $request->name,
-                'email'           => $request->email,
-                'telefono'        => $request->telefono,
+                'name' => $request->name,
+                'email' => $request->email,
+                'telefono' => $request->telefono,
                 'actualizado_por' => Auth::id(),
             ];
 

@@ -44,9 +44,9 @@ class MateriaController extends Controller
 
         return Inertia::render('materias/Index', [
             'materias' => $materias,
-            'filters'  => [
-                'search'         => $filters['search'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);

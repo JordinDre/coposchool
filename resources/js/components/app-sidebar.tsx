@@ -8,7 +8,7 @@ import { Link } from '@inertiajs/react';
 import { Activity, BookOpen, CalendarRange, GraduationCap, LayoutGrid, NotebookText, Printer, ShieldCheck, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+export const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
@@ -84,11 +84,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-function filterByPermission(
-    items: NavItem[],
-    can: (r: string | string[]) => boolean,
-    hasRole: (r: string | string[]) => boolean,
-): NavItem[] {
+export function filterByPermission(items: NavItem[], can: (r: string | string[]) => boolean, hasRole: (r: string | string[]) => boolean): NavItem[] {
     return items
         .map((item) => {
             if (!item.required) {

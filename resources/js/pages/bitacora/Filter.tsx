@@ -241,7 +241,7 @@ export default function Filter({ filters: filterData }: FilterProps) {
     // Función para obtener el texto del filtro
     const getFilterText = (key: string, value: string | number) => {
         if (key === 'search') {
-            const fieldLabel = searchField !== 'all' ? getFieldLabel(searchField) : 'Todos los campos';
+            const fieldLabel = searchField !== 'all' ? getFieldLabel(searchField) : 'Todo';
             return `Búsqueda (${fieldLabel}): "${value}"`;
         }
 
@@ -266,7 +266,7 @@ export default function Filter({ filters: filterData }: FilterProps) {
 
     const getFieldLabel = (field: string): string => {
         const fieldLabels: Record<string, string> = {
-            all: 'Todos los campos',
+            all: 'Todo',
             id: 'ID',
             description: 'Descripción',
             causer: 'Usuario',
@@ -277,7 +277,7 @@ export default function Filter({ filters: filterData }: FilterProps) {
 
     const getPlaceholder = (field: string): string => {
         const placeholders: Record<string, string> = {
-            all: 'Buscar en todos los campos... (presiona Enter)',
+            all: 'Buscar en todo... (presiona Enter)',
             id: 'Buscar por ID... (presiona Enter)',
             description: 'Buscar por descripción... (presiona Enter)',
             causer: 'Buscar por usuario... (presiona Enter)',
@@ -320,21 +320,20 @@ export default function Filter({ filters: filterData }: FilterProps) {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Todos los campos</SelectItem>
+                            <SelectItem value="all">Todo</SelectItem>
                             <SelectItem value="id">ID</SelectItem>
                             <SelectItem value="description">Descripción</SelectItem>
                             <SelectItem value="causer">Usuario</SelectItem>
                             <SelectItem value="subject_type">Modelo</SelectItem>
                         </SelectContent>
                     </Select>
-                    <div className="relative flex-1">
-                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground" />
+                    <div className="flex-1">
                         <Input
                             placeholder={getPlaceholder(searchField)}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={handleSearchSubmit}
-                            className="pl-10"
+                            leftIcon={Search}
                         />
                     </div>
                 </div>

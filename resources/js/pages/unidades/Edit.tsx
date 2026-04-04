@@ -9,7 +9,13 @@ import { AlertCircle } from 'lucide-react';
 import React from 'react';
 
 interface EditProps {
-    unidad: { id: number; nombre: string; descripcion?: string | null; orden: number | null; ciclo_escolar: number | null; fecha_inicio?: string | null; fecha_fin?: string | null };
+    unidad: {
+        id: number;
+        nombre: string;
+        descripcion?: string | null;
+        fecha_inicio?: string | null;
+        fecha_fin?: string | null;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -23,8 +29,6 @@ export default function Edit({ unidad }: EditProps) {
     const { data, setData, put, processing, errors } = useForm({
         nombre: unidad.nombre ?? '',
         descripcion: unidad.descripcion ?? '',
-        orden: (unidad.orden ?? 1).toString(),
-        ciclo_escolar: (unidad.ciclo_escolar ?? new Date().getFullYear()).toString(),
         fecha_inicio: unidad.fecha_inicio ?? '',
         fecha_fin: unidad.fecha_fin ?? '',
     });
@@ -48,27 +52,12 @@ export default function Edit({ unidad }: EditProps) {
                                 onChange={(e) => setData('nombre', e.target.value)}
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="orden">Orden *</Label>
-                            <Input
-                                id="orden"
-                                type="number"
-                                min="1"
-                                max="20"
-                                value={data.orden}
-                                onChange={(e) => setData('orden', e.target.value)}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="ciclo_escolar">Ciclo Escolar *</Label>
-                            <Input
-                                id="ciclo_escolar"
-                                type="number"
-                                value={data.ciclo_escolar}
-                                onChange={(e) => setData('ciclo_escolar', e.target.value)}
-                            />
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_inicio">Fecha inicio</Label>
@@ -81,22 +70,12 @@ export default function Edit({ unidad }: EditProps) {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_fin">Fecha fin</Label>
-                            <Input
-                                id="fecha_fin"
-                                type="date"
-                                value={data.fecha_fin}
-                                onChange={(e) => setData('fecha_fin', e.target.value)}
-                            />
+                            <Input id="fecha_fin" type="date" value={data.fecha_fin} onChange={(e) => setData('fecha_fin', e.target.value)} />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="descripcion">Descripción</Label>
-                        <Textarea
-                            id="descripcion"
-                            value={data.descripcion}
-                            onChange={(e) => setData('descripcion', e.target.value)}
-                            rows={3}
-                        />
+                        <Textarea id="descripcion" value={data.descripcion} onChange={(e) => setData('descripcion', e.target.value)} rows={3} />
                     </div>
                     <div className="flex gap-3">
                         <Button type="submit" disabled={processing} color="green">

@@ -6,9 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { router, usePage } from '@inertiajs/react';
-import { AlertCircle, CalendarDays, Save, Activity } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Activity, AlertCircle, CalendarDays, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Asignacion {
     seccion_id: number;
@@ -58,7 +58,7 @@ interface HistoryActivity {
     description: string;
     event: string;
     causer?: { name: string };
-    properties?: { attributes?: { nota?: number, observaciones?: string }};
+    properties?: { attributes?: { nota?: number; observaciones?: string } };
 }
 
 interface Props {
@@ -79,11 +79,7 @@ function fmt(d?: string) {
  * For catedrático: filtered to their assignments.
  * For admin: from student's enrolled sections' materias.
  */
-function resolveOpciones(
-    student: EstudianteRow,
-    esCatedratico: boolean,
-    misAsignaciones: Asignacion[],
-): Asignacion[] {
+function resolveOpciones(student: EstudianteRow, esCatedratico: boolean, misAsignaciones: Asignacion[]): Asignacion[] {
     const studentSeccionIds = student.secciones?.map((s) => s.id) ?? [];
 
     if (esCatedratico) {
@@ -120,7 +116,8 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
 
     const noActiveUnit = !unidadActual;
     const selected = opciones.find((o) => `${o.seccion_id}-${o.materia_id}` === asignacionKey) ?? null;
-    const currentNoteObj = selected && unidadActual ? notas.find((n: NotaEntry) => n.materia_id === selected.materia_id && n.unidad_id === unidadActual.id) : null;
+    const currentNoteObj =
+        selected && unidadActual ? notas.find((n: NotaEntry) => n.materia_id === selected.materia_id && n.unidad_id === unidadActual.id) : null;
 
     useEffect(() => {
         if (!student) return;
@@ -132,6 +129,7 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
         if (opciones.length === 1 && !asignacionKey) {
             setAsignacionKey(`${opciones[0].seccion_id}-${opciones[0].materia_id}`);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [student?.id, opciones.length]);
 
     useEffect(() => {
@@ -143,9 +141,10 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
 
         if (currentNoteObj?.id) {
             setLoadingHistorial(true);
-            axios.get(`/notas/${currentNoteObj.id}/historial`)
-                .then(res => setHistorial(res.data))
-                .catch(err => console.error(err))
+            axios
+                .get(`/notas/${currentNoteObj.id}/historial`)
+                .then((res) => setHistorial(res.data))
+                .catch((err) => console.error(err))
                 .finally(() => setLoadingHistorial(false));
         }
     }, [currentNoteObj?.id, asignacionKey]);
@@ -177,7 +176,7 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2.5 text-base">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold uppercase text-primary">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary uppercase">
                             {student.name.slice(0, 2).toUpperCase()}
                         </span>
                         <span className="truncate">{student.name}</span>
@@ -190,7 +189,7 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                         <div className="flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
                             <CalendarDays className="h-4 w-4 shrink-0 text-primary" />
                             <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                                <span className="text-sm font-medium truncate">
+                                <span className="truncate text-sm font-medium">
                                     {unidadActual.orden}. {unidadActual.nombre}
                                 </span>
                                 {(unidadActual.fecha_inicio || unidadActual.fecha_fin) && (
@@ -211,9 +210,7 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                         <>
                             {/* Materia selection */}
                             {opciones.length === 0 ? (
-                                <p className="py-3 text-center text-sm text-muted-foreground">
-                                    Este estudiante no tiene materias disponibles.
-                                </p>
+                                <p className="py-3 text-center text-sm text-muted-foreground">Este estudiante no tiene materias disponibles.</p>
                             ) : opciones.length === 1 ? (
                                 /* Single option: show as read-only chip */
                                 <div className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
@@ -235,13 +232,11 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                                         </SelectTrigger>
                                         <SelectContent>
                                             {opciones.map((o) => (
-                                                <SelectItem
-                                                    key={`${o.seccion_id}-${o.materia_id}`}
-                                                    value={`${o.seccion_id}-${o.materia_id}`}
-                                                >
+                                                <SelectItem key={`${o.seccion_id}-${o.materia_id}`} value={`${o.seccion_id}-${o.materia_id}`}>
                                                     {o.materia_nombre}
                                                     {o.materia_codigo ? ` (${o.materia_codigo})` : ''}
-                                                    {' · '}{o.seccion_nombre}
+                                                    {' · '}
+                                                    {o.seccion_nombre}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -254,7 +249,9 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                                 <div className="space-y-3">
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="nota-dlg" className="text-xs">Nota (0–100)</Label>
+                                            <Label htmlFor="nota-dlg" className="text-xs">
+                                                Nota (0–100)
+                                            </Label>
                                             <Input
                                                 id="nota-dlg"
                                                 type="number"
@@ -269,7 +266,9 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="obs-dlg" className="text-xs">Observaciones</Label>
+                                            <Label htmlFor="obs-dlg" className="text-xs">
+                                                Observaciones
+                                            </Label>
                                             <Textarea
                                                 id="obs-dlg"
                                                 value={obs}
@@ -284,37 +283,46 @@ export default function AgregarNotaDialog({ student, notas = [], onClose, esCate
                                     {/* History Table */}
                                     {currentNoteObj?.id && (
                                         <div className="mt-5 border-t pt-4">
-                                            <h4 className="text-[13px] font-semibold mb-2.5 flex items-center gap-2 text-foreground/80">
-                                                <Activity className="h-3.5 w-3.5"/> Historial de Notas
+                                            <h4 className="mb-2.5 flex items-center gap-2 text-[13px] font-semibold text-foreground/80">
+                                                <Activity className="h-3.5 w-3.5" /> Historial de Notas
                                             </h4>
                                             {loadingHistorial ? (
-                                                <p className="text-xs text-muted-foreground animate-pulse">Cargando...</p>
+                                                <p className="animate-pulse text-xs text-muted-foreground">Cargando...</p>
                                             ) : historial.length === 0 ? (
                                                 <p className="text-xs text-muted-foreground">Sin historial registrado.</p>
                                             ) : (
                                                 <div className="max-h-40 overflow-y-auto rounded-md border text-xs">
                                                     <Table>
-                                                        <TableHeader className="sticky top-0 bg-background hover:bg-background z-10 shadow-sm">
+                                                        <TableHeader className="sticky top-0 z-10 bg-background shadow-sm hover:bg-background">
                                                             <TableRow>
-                                                                <TableHead className="h-8 py-1 truncate">Fecha</TableHead>
-                                                                <TableHead className="h-8 py-1 truncate">Usuario</TableHead>
-                                                                <TableHead className="h-8 py-1 truncate">Nota</TableHead>
+                                                                <TableHead className="h-8 truncate py-1">Fecha</TableHead>
+                                                                <TableHead className="h-8 truncate py-1">Usuario</TableHead>
+                                                                <TableHead className="h-8 truncate py-1">Nota</TableHead>
                                                                 <TableHead className="h-8 py-1">Obs.</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
                                                             {historial.map((act, i) => (
                                                                 <TableRow key={i}>
-                                                                    <TableCell className="py-2 text-muted-foreground align-top">
-                                                                        {new Date(act.created_at).toLocaleString('es-GT', {dateStyle: 'short', timeStyle: 'short'})}
+                                                                    <TableCell className="py-2 align-top text-muted-foreground">
+                                                                        {new Date(act.created_at).toLocaleString('es-GT', {
+                                                                            dateStyle: 'short',
+                                                                            timeStyle: 'short',
+                                                                        })}
                                                                     </TableCell>
-                                                                    <TableCell className="py-2 font-medium truncate max-w-[100px] align-top" title={act.causer?.name || 'Sistema'}>
+                                                                    <TableCell
+                                                                        className="max-w-[100px] truncate py-2 align-top font-medium"
+                                                                        title={act.causer?.name || 'Sistema'}
+                                                                    >
                                                                         {act.causer?.name || 'Sistema'}
                                                                     </TableCell>
-                                                                    <TableCell className="py-2 font-mono text-primary font-semibold align-top whitespace-nowrap">
+                                                                    <TableCell className="py-2 align-top font-mono font-semibold whitespace-nowrap text-primary">
                                                                         {act.properties?.attributes?.nota || '0'} pts
                                                                     </TableCell>
-                                                                    <TableCell className="py-2 text-muted-foreground break-words whitespace-normal text-xs leading-relaxed align-top" title={act.properties?.attributes?.observaciones || ''}>
+                                                                    <TableCell
+                                                                        className="py-2 align-top text-xs leading-relaxed break-words whitespace-normal text-muted-foreground"
+                                                                        title={act.properties?.attributes?.observaciones || ''}
+                                                                    >
                                                                         {act.properties?.attributes?.observaciones || '—'}
                                                                     </TableCell>
                                                                 </TableRow>

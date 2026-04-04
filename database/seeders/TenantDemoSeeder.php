@@ -85,11 +85,11 @@ class TenantDemoSeeder extends Seeder
             Unidad::withoutTrashed()->updateOrCreate(
                 ['nombre' => $unidad['nombre'], 'ciclo_escolar' => self::CICLO],
                 [
-                    'orden'         => $unidad['orden'],
-                    'descripcion'   => $unidad['descripcion'],
+                    'orden' => $unidad['orden'],
+                    'descripcion' => $unidad['descripcion'],
                     'ciclo_escolar' => self::CICLO,
-                    'fecha_inicio'  => $unidad['fecha_inicio'],
-                    'fecha_fin'     => $unidad['fecha_fin'],
+                    'fecha_inicio' => $unidad['fecha_inicio'],
+                    'fecha_fin' => $unidad['fecha_fin'],
                 ]
             );
         }
@@ -106,7 +106,7 @@ class TenantDemoSeeder extends Seeder
             ['nombre' => 'Primero Básico B',   'ciclo' => 'basico',       'ciclo_escolar' => self::CICLO],
             ['nombre' => 'Segundo Básico A',   'ciclo' => 'basico',       'ciclo_escolar' => self::CICLO],
             ['nombre' => 'Tercero Básico A',   'ciclo' => 'basico',       'ciclo_escolar' => self::CICLO],
-            ['nombre' => 'Cuarto Bachillerato','ciclo' => 'diversificado', 'ciclo_escolar' => self::CICLO],
+            ['nombre' => 'Cuarto Bachillerato', 'ciclo' => 'diversificado', 'ciclo_escolar' => self::CICLO],
         ];
 
         foreach ($secciones as $seccion) {
@@ -134,9 +134,9 @@ class TenantDemoSeeder extends Seeder
 
         foreach ($catedraticos as $data) {
             $user = User::firstOrCreate(['email' => $data['email']], [
-                'name'            => $data['name'],
-                'password'        => Hash::make('Pass1234.'),
-                'creado_por'      => $adminId,
+                'name' => $data['name'],
+                'password' => Hash::make('Pass1234.'),
+                'creado_por' => $adminId,
                 'actualizado_por' => $adminId,
             ]);
 
@@ -204,9 +204,9 @@ class TenantDemoSeeder extends Seeder
 
         foreach ($estudiantes as $data) {
             $user = User::firstOrCreate(['email' => $data['email']], [
-                'name'            => $data['name'],
-                'password'        => Hash::make('Pass1234.'),
-                'creado_por'      => $adminId,
+                'name' => $data['name'],
+                'password' => Hash::make('Pass1234.'),
+                'creado_por' => $adminId,
                 'actualizado_por' => $adminId,
             ]);
 
@@ -238,27 +238,27 @@ class TenantDemoSeeder extends Seeder
             // Primero Básico A
             'Primero Básico A' => [
                 'MAT' => $cat1, 'CL' => $cat2, 'CN' => $cat3,
-                'CS'  => $cat4, 'ING' => $cat2, 'EF' => $cat3,
+                'CS' => $cat4, 'ING' => $cat2, 'EF' => $cat3,
             ],
             // Primero Básico B
             'Primero Básico B' => [
                 'MAT' => $cat1, 'CL' => $cat2, 'CN' => $cat3,
-                'CS'  => $cat4, 'ING' => $cat2, 'EF' => $cat3,
+                'CS' => $cat4, 'ING' => $cat2, 'EF' => $cat3,
             ],
             // Segundo Básico A
             'Segundo Básico A' => [
                 'MAT' => $cat1, 'CL' => $cat2, 'CN' => $cat3,
-                'CS'  => $cat4, 'ING' => $cat2, 'EF' => $cat3,
+                'CS' => $cat4, 'ING' => $cat2, 'EF' => $cat3,
             ],
             // Tercero Básico A
             'Tercero Básico A' => [
                 'MAT' => $cat1, 'CL' => $cat2, 'CN' => $cat3,
-                'CS'  => $cat4, 'ING' => $cat2, 'EF' => $cat3,
+                'CS' => $cat4, 'ING' => $cat2, 'EF' => $cat3,
             ],
             // Cuarto Bachillerato
             'Cuarto Bachillerato' => [
                 'MAT' => $cat1, 'FIS' => $cat3, 'QUI' => $cat4,
-                'CL'  => $cat2, 'ING' => $cat2, 'EF'  => $cat3,
+                'CL' => $cat2, 'ING' => $cat2, 'EF' => $cat3,
             ],
         ];
 
@@ -275,11 +275,11 @@ class TenantDemoSeeder extends Seeder
                 }
 
                 DB::table('materia_seccion')->insertOrIgnore([
-                    'materia_id'    => $materiaId,
-                    'seccion_id'    => $seccionId,
+                    'materia_id' => $materiaId,
+                    'seccion_id' => $seccionId,
                     'catedratico_id' => $catedraticoId,
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -337,7 +337,7 @@ class TenantDemoSeeder extends Seeder
             foreach ($userIds as $userId) {
                 DB::table('seccion_user')->insertOrIgnore([
                     'seccion_id' => $seccionId,
-                    'user_id'    => $userId,
+                    'user_id' => $userId,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -351,7 +351,7 @@ class TenantDemoSeeder extends Seeder
 
     private function seedNotas(): void
     {
-        $unidades  = Unidad::where('ciclo_escolar', self::CICLO)->orderBy('orden')->get();
+        $unidades = Unidad::where('ciclo_escolar', self::CICLO)->orderBy('orden')->get();
         $secciones = Seccion::where('ciclo_escolar', self::CICLO)->with('materias', 'estudiantes')->get();
 
         foreach ($secciones as $seccion) {
@@ -370,14 +370,14 @@ class TenantDemoSeeder extends Seeder
                         Nota::firstOrCreate(
                             [
                                 'estudiante_id' => $estudiante->id,
-                                'materia_id'    => $materia->id,
-                                'unidad_id'     => $unidad->id,
-                                'seccion_id'    => $seccion->id,
+                                'materia_id' => $materia->id,
+                                'unidad_id' => $unidad->id,
+                                'seccion_id' => $seccion->id,
                             ],
                             [
                                 'catedratico_id' => $catedraticoId,
-                                'nota'           => $nota,
-                                'observaciones'  => $nota < 60 ? 'Requiere refuerzo académico.' : null,
+                                'nota' => $nota,
+                                'observaciones' => $nota < 60 ? 'Requiere refuerzo académico.' : null,
                             ]
                         );
                     }
@@ -399,10 +399,10 @@ class TenantDemoSeeder extends Seeder
         $seed = ($studentId * 7 + random_int(0, 20)) % 100;
 
         return match (true) {
-            $seed < 10  => round(random_int(40, 59) + (random_int(0, 99) / 100), 2),
-            $seed < 30  => round(random_int(60, 69) + (random_int(0, 99) / 100), 2),
-            $seed < 70  => round(random_int(70, 84) + (random_int(0, 99) / 100), 2),
-            default     => round(random_int(85, 100) + (random_int(0, 99) / 100), 2),
+            $seed < 10 => round(random_int(40, 59) + (random_int(0, 99) / 100), 2),
+            $seed < 30 => round(random_int(60, 69) + (random_int(0, 99) / 100), 2),
+            $seed < 70 => round(random_int(70, 84) + (random_int(0, 99) / 100), 2),
+            default => round(random_int(85, 100) + (random_int(0, 99) / 100), 2),
         };
     }
 }

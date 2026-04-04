@@ -11,7 +11,12 @@ import React from 'react';
 import Actions from './Actions';
 import Filter from './Filter';
 
-interface Seccion { id: number; nombre: string; ciclo: string; ciclo_escolar: number }
+interface Seccion {
+    id: number;
+    nombre: string;
+    ciclo: string;
+    ciclo_escolar: number;
+}
 
 interface EstudianteRow {
     id: number;
@@ -43,9 +48,7 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: EstudianteRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />
-        ),
+        cell: ({ row }: { row: { original: EstudianteRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -58,9 +61,10 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
                 <GraduationCap className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div>
                     <div className="font-medium">{row.original.name}</div>
-                    <div className="text-xs text-muted-foreground">{row.original.email}</div>
                     {row.original.deleted_at && (
-                        <Badge variant="destructive" className="mt-0.5 text-xs">Inactivo</Badge>
+                        <Badge variant="destructive" className="mt-0.5 text-xs">
+                            Inactivo
+                        </Badge>
                     )}
                 </div>
             </div>
@@ -77,11 +81,13 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
                 <div className="flex flex-wrap gap-1">
                     {secs.slice(0, 3).map((s) => (
                         <Badge key={s.id} variant="outline" className="text-xs">
-                            {s.nombre} · {s.ciclo_escolar}
+                            {s.nombre}
                         </Badge>
                     ))}
                     {secs.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">+{secs.length - 3}</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                            +{secs.length - 3}
+                        </Badge>
                     )}
                 </div>
             );
@@ -92,9 +98,7 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
         id: 'telefono',
         header: 'Teléfono',
         accessorKey: 'telefono',
-        cell: ({ row }: { row: { original: EstudianteRow } }) => (
-            <span className="text-sm">{row.original.telefono || '—'}</span>
-        ),
+        cell: ({ row }: { row: { original: EstudianteRow } }) => <span className="text-sm">{row.original.telefono || '—'}</span>,
     },
     {
         id: 'created_at',
@@ -108,7 +112,7 @@ const columns: ExtendedColumnDef<EstudianteRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ estudiantes, secciones }: IndexProps) {
+export default function Index({ estudiantes, secciones, filters }: IndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -116,8 +120,8 @@ export default function Index({ estudiantes, secciones }: IndexProps) {
         perPage: estudiantes.per_page ?? 10,
         total: estudiantes.total ?? 0,
         lastPage: estudiantes.last_page ?? 1,
-        from: estudiantes.from ?? 1,
-        to: estudiantes.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: (filters.sort_direction as 'asc' | 'desc' | undefined) ?? undefined,
     };
 
     return (
@@ -128,7 +132,9 @@ export default function Index({ estudiantes, secciones }: IndexProps) {
                     <Filter secciones={secciones} />
                     {can('crear usuarios') && (
                         <Link href={route('estudiantes.create')} className="shrink-0">
-                            <Button size="sm" color="blue">Crear Estudiante</Button>
+                            <Button size="sm" color="blue">
+                                Crear Estudiante
+                            </Button>
                         </Link>
                     )}
                 </div>

@@ -20,7 +20,6 @@ export default function Create() {
         nombre: '',
         descripcion: '',
         orden: '1',
-        ciclo_escolar: new Date().getFullYear().toString(),
         fecha_inicio: '',
         fecha_fin: '',
     });
@@ -45,7 +44,12 @@ export default function Create() {
                                 placeholder="Ej: Primer Bimestre"
                                 className={errors.nombre ? 'border-red-500' : ''}
                             />
-                            {errors.nombre && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.nombre}</p>}
+                            {errors.nombre && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.nombre}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="orden">Orden *</Label>
@@ -58,19 +62,12 @@ export default function Create() {
                                 onChange={(e) => setData('orden', e.target.value)}
                                 className={errors.orden ? 'border-red-500' : ''}
                             />
-                            {errors.orden && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.orden}</p>}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="ciclo_escolar">Ciclo Escolar *</Label>
-                            <Input
-                                id="ciclo_escolar"
-                                type="number"
-                                value={data.ciclo_escolar}
-                                onChange={(e) => setData('ciclo_escolar', e.target.value)}
-                                placeholder="Ej: 2024"
-                                className={errors.ciclo_escolar ? 'border-red-500' : ''}
-                            />
-                            {errors.ciclo_escolar && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.ciclo_escolar}</p>}
+                            {errors.orden && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.orden}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_inicio">Fecha inicio</Label>
@@ -81,7 +78,12 @@ export default function Create() {
                                 onChange={(e) => setData('fecha_inicio', e.target.value)}
                                 className={errors.fecha_inicio ? 'border-red-500' : ''}
                             />
-                            {errors.fecha_inicio && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.fecha_inicio}</p>}
+                            {errors.fecha_inicio && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.fecha_inicio}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="fecha_fin">Fecha fin</Label>
@@ -92,7 +94,12 @@ export default function Create() {
                                 onChange={(e) => setData('fecha_fin', e.target.value)}
                                 className={errors.fecha_fin ? 'border-red-500' : ''}
                             />
-                            {errors.fecha_fin && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.fecha_fin}</p>}
+                            {errors.fecha_fin && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.fecha_fin}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="space-y-2">

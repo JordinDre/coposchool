@@ -11,8 +11,17 @@ import React from 'react';
 import Actions from './Actions';
 import Filter from './Filter';
 
-interface Materia { id: number; nombre: string; codigo?: string }
-interface Seccion { id: number; nombre: string; ciclo: string; ciclo_escolar: number }
+interface Materia {
+    id: number;
+    nombre: string;
+    codigo?: string;
+}
+interface Seccion {
+    id: number;
+    nombre: string;
+    ciclo: string;
+    ciclo_escolar: number;
+}
 
 interface CatedraticoRow {
     id: number;
@@ -45,9 +54,7 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: CatedraticoRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />
-        ),
+        cell: ({ row }: { row: { original: CatedraticoRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -61,7 +68,11 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
                 <div>
                     <div className="font-medium">{row.original.name}</div>
                     <div className="text-xs text-muted-foreground">{row.original.email}</div>
-                    {row.original.deleted_at && <Badge variant="destructive" className="mt-0.5 text-xs">Inactivo</Badge>}
+                    {row.original.deleted_at && (
+                        <Badge variant="destructive" className="mt-0.5 text-xs">
+                            Inactivo
+                        </Badge>
+                    )}
                 </div>
             </div>
         ),
@@ -78,10 +89,14 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
             return (
                 <div className="flex flex-wrap gap-1">
                     {unique.slice(0, 4).map((m) => (
-                        <Badge key={m.id} variant="outline" className="text-xs">{m.nombre}</Badge>
+                        <Badge key={m.id} variant="outline" className="text-xs">
+                            {m.nombre}
+                        </Badge>
                     ))}
                     {unique.length > 4 && (
-                        <Badge variant="secondary" className="text-xs">+{unique.length - 4}</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                            +{unique.length - 4}
+                        </Badge>
                     )}
                 </div>
             );
@@ -92,9 +107,7 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
         id: 'telefono',
         header: 'Teléfono',
         accessorKey: 'telefono',
-        cell: ({ row }: { row: { original: CatedraticoRow } }) => (
-            <span className="text-sm">{row.original.telefono || '—'}</span>
-        ),
+        cell: ({ row }: { row: { original: CatedraticoRow } }) => <span className="text-sm">{row.original.telefono || '—'}</span>,
     },
     {
         id: 'created_at',
@@ -108,7 +121,7 @@ const columns: ExtendedColumnDef<CatedraticoRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ catedraticos, secciones, materias }: IndexProps) {
+export default function Index({ catedraticos, secciones, materias, filters }: IndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -116,8 +129,8 @@ export default function Index({ catedraticos, secciones, materias }: IndexProps)
         perPage: catedraticos.per_page ?? 10,
         total: catedraticos.total ?? 0,
         lastPage: catedraticos.last_page ?? 1,
-        from: catedraticos.from ?? 1,
-        to: catedraticos.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: (filters.sort_direction as 'asc' | 'desc' | undefined) ?? undefined,
     };
 
     return (
@@ -128,7 +141,9 @@ export default function Index({ catedraticos, secciones, materias }: IndexProps)
                     <Filter secciones={secciones} materias={materias} />
                     {can('crear usuarios') && (
                         <Link href={route('catedraticos.create')} className="shrink-0">
-                            <Button size="sm" color="blue">Crear Catedrático</Button>
+                            <Button size="sm" color="blue">
+                                Crear Catedrático
+                            </Button>
                         </Link>
                     )}
                 </div>

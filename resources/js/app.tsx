@@ -4,9 +4,11 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+import { initializeSimpleMode } from './hooks/use-simple-mode';
 import { setGlobalSimboloMoneda } from './lib/utils';
 
 import { CartProvider } from './Contexts/CartContext';
+import { PageLoader } from './components/page-loader';
 
 const appName =
     (typeof document !== 'undefined' && document.querySelector('meta[name="application-name"]')?.getAttribute('content')) ||
@@ -25,6 +27,7 @@ createInertiaApp({
 
         root.render(
             <CartProvider>
+                <PageLoader />
                 <App {...props} />
             </CartProvider>,
         );
@@ -36,6 +39,7 @@ createInertiaApp({
 
 // This will set light / dark mode on load...
 initializeTheme();
+initializeSimpleMode();
 
 // Register PWA service worker
 if ('serviceWorker' in navigator) {

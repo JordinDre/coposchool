@@ -50,9 +50,7 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
     {
         id: 'actions',
         header: 'Acciones',
-        cell: ({ row }: { row: { original: SeccionRow } }) => (
-            <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />
-        ),
+        cell: ({ row }: { row: { original: SeccionRow } }) => <Actions id={row.original.id} isDeleted={!!row.original.deleted_at} align="start" />,
         enableSorting: false,
         enableHiding: false,
     },
@@ -65,7 +63,9 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
                 <GraduationCap className="h-4 w-4 text-blue-600" />
                 <span className="font-medium">{row.original.nombre}</span>
                 {row.original.deleted_at && (
-                    <Badge variant="destructive" className="text-xs">Inactiva</Badge>
+                    <Badge variant="destructive" className="text-xs">
+                        Inactiva
+                    </Badge>
                 )}
             </div>
         ),
@@ -75,7 +75,9 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
         header: 'Ciclo',
         accessorKey: 'ciclo',
         cell: ({ row }: { row: { original: SeccionRow } }) => (
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${CICLO_COLORS[row.original.ciclo] || ''}`}>
+            <span
+                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${CICLO_COLORS[row.original.ciclo] || ''}`}
+            >
                 {row.original.ciclo}
             </span>
         ),
@@ -89,17 +91,13 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
         id: 'materias_count',
         header: 'Materias',
         accessorKey: 'materias_count',
-        cell: ({ row }: { row: { original: SeccionRow } }) => (
-            <Badge variant="secondary">{row.original.materias_count}</Badge>
-        ),
+        cell: ({ row }: { row: { original: SeccionRow } }) => <Badge variant="secondary">{row.original.materias_count}</Badge>,
     },
     {
         id: 'estudiantes_count',
         header: 'Estudiantes',
         accessorKey: 'estudiantes_count',
-        cell: ({ row }: { row: { original: SeccionRow } }) => (
-            <Badge variant="outline">{row.original.estudiantes_count}</Badge>
-        ),
+        cell: ({ row }: { row: { original: SeccionRow } }) => <Badge variant="outline">{row.original.estudiantes_count}</Badge>,
     },
     {
         id: 'created_at',
@@ -113,7 +111,7 @@ const columns: ExtendedColumnDef<SeccionRow>[] = [
 
 Index.layout = (page: React.ReactNode) => <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>;
 
-export default function Index({ secciones }: SeccionesIndexProps) {
+export default function Index({ secciones, filters }: SeccionesIndexProps) {
     const { can } = useCan();
 
     const meta = {
@@ -121,8 +119,8 @@ export default function Index({ secciones }: SeccionesIndexProps) {
         perPage: secciones.per_page ?? 10,
         total: secciones.total ?? 0,
         lastPage: secciones.last_page ?? 1,
-        from: secciones.from ?? 1,
-        to: secciones.to ?? 0,
+        sortBy: filters.sort_by ?? undefined,
+        sortDir: (filters.sort_direction as 'asc' | 'desc' | undefined) ?? undefined,
     };
 
     return (
@@ -134,7 +132,9 @@ export default function Index({ secciones }: SeccionesIndexProps) {
                     <div className="flex gap-2">
                         {can('crear seccion') && (
                             <Link href={route('secciones.create')}>
-                                <Button size="sm" color="blue">Crear Sección</Button>
+                                <Button size="sm" color="blue">
+                                    Crear Sección
+                                </Button>
                             </Link>
                         )}
                     </div>

@@ -30,8 +30,8 @@ function seccionAdmin(array $permissions): User
 
 test('resolveRouteBinding finds active secciones', function () {
     $seccion = Seccion::create([
-        'nombre'        => 'Sección A',
-        'ciclo'         => 'basico',
+        'nombre' => 'Sección A',
+        'ciclo' => 'basico',
         'ciclo_escolar' => 2025,
     ]);
 
@@ -43,8 +43,8 @@ test('resolveRouteBinding finds active secciones', function () {
 
 test('resolveRouteBinding finds soft-deleted secciones', function () {
     $seccion = Seccion::create([
-        'nombre'        => 'Sección Eliminada',
-        'ciclo'         => 'basico',
+        'nombre' => 'Sección Eliminada',
+        'ciclo' => 'basico',
         'ciclo_escolar' => 2025,
     ]);
     $seccion->delete();
@@ -62,8 +62,8 @@ test('inscribir returns 404 for a soft-deleted seccion', function () {
     $user = seccionAdmin(['editar seccion', 'ver seccion']);
 
     $seccion = Seccion::create([
-        'nombre'        => 'Sección Borrada',
-        'ciclo'         => 'basico',
+        'nombre' => 'Sección Borrada',
+        'ciclo' => 'basico',
         'ciclo_escolar' => 2025,
     ]);
     $seccion->delete();
@@ -77,8 +77,8 @@ test('asignarMaterias returns 404 for a soft-deleted seccion', function () {
     $user = seccionAdmin(['editar seccion', 'ver seccion']);
 
     $seccion = Seccion::create([
-        'nombre'        => 'Sección Borrada',
-        'ciclo'         => 'basico',
+        'nombre' => 'Sección Borrada',
+        'ciclo' => 'basico',
         'ciclo_escolar' => 2025,
     ]);
     $seccion->delete();
@@ -92,8 +92,8 @@ test('inscribir is accessible for an active seccion', function () {
     $user = seccionAdmin(['editar seccion', 'ver seccion']);
 
     $seccion = Seccion::create([
-        'nombre'        => 'Sección Activa',
-        'ciclo'         => 'basico',
+        'nombre' => 'Sección Activa',
+        'ciclo' => 'basico',
         'ciclo_escolar' => 2025,
     ]);
 

@@ -193,7 +193,7 @@ export default function Filter() {
     // Función para obtener el texto del filtro
     const getFilterText = (key: string, value: string) => {
         if (key === 'search') {
-            const fieldLabel = searchField !== 'all' ? getFieldLabel(searchField) : 'Todos los campos';
+            const fieldLabel = searchField !== 'all' ? getFieldLabel(searchField) : 'Todo';
             return `Búsqueda (${fieldLabel}): "${value}"`;
         }
 
@@ -211,7 +211,7 @@ export default function Filter() {
 
     const getFieldLabel = (field: string): string => {
         const fieldLabels: Record<string, string> = {
-            all: 'Todos los campos',
+            all: 'Todo',
             id: 'ID',
             name: 'Nombre',
         };
@@ -220,7 +220,7 @@ export default function Filter() {
 
     const getPlaceholder = (field: string): string => {
         const placeholders: Record<string, string> = {
-            all: 'Buscar en todos los campos... (presiona Enter)',
+            all: 'Buscar en todo... (presiona Enter)',
             id: 'Buscar por ID... (presiona Enter)',
             name: 'Buscar por nombre... (presiona Enter)',
         };
@@ -261,19 +261,19 @@ export default function Filter() {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Todos los campos</SelectItem>
+                            <SelectItem value="all">Todo</SelectItem>
                             <SelectItem value="id">ID</SelectItem>
                             <SelectItem value="name">Nombre</SelectItem>
                         </SelectContent>
                     </Select>
                     <div className="relative flex-1">
-                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground" />
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors peer-focus:text-foreground" />
                         <Input
                             placeholder={getPlaceholder(searchField)}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             onKeyDown={handleSearchSubmit}
-                            className="pl-10"
+                            className="peer pl-10"
                         />
                     </div>
                 </div>

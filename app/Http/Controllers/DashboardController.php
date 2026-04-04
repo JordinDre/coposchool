@@ -17,14 +17,14 @@ class DashboardController extends Controller
 {
     public function index(Request $request): Response
     {
-        $user         = Auth::user();
+        $user = Auth::user();
         $cicloEscolar = $request->input('ciclo_escolar', now()->year);
 
         $stats = [];
 
         // ── Totales de personas ──────────────────────────────────────────────
         if ($user->can('ver usuarios')) {
-            $stats['totalEstudiantes']  = User::role('estudiante')->count();
+            $stats['totalEstudiantes'] = User::role('estudiante')->count();
             $stats['totalCatedraticos'] = User::role('catedratico')->count();
         }
 
@@ -39,13 +39,13 @@ class DashboardController extends Controller
         }
 
         // ── Distribución de notas (5 rangos) ─────────────────────────────────
-        $distribucionNotas    = [];
-        $topMaterias          = [];
-        $notasUltimos14Dias   = [];
+        $distribucionNotas = [];
+        $topMaterias = [];
+        $notasUltimos14Dias = [];
         if ($user->can('listar notas')) {
             $todasLasNotas = Nota::whereHas(
-                    'unidad', fn ($q) => $q->where('ciclo_escolar', $cicloEscolar)
-                )
+                'unidad', fn ($q) => $q->where('ciclo_escolar', $cicloEscolar)
+            )
                 ->whereNotNull('nota')
                 ->pluck('nota')
                 ->map(fn ($n) => (float) $n);
@@ -53,7 +53,7 @@ class DashboardController extends Controller
             $total = $todasLasNotas->count();
 
             $distribucionNotas = [
-                ['rango' => 'Reprobado',     'min' => 0,  'max' => 59,  'count' => $todasLasNotas->filter(fn ($n) => $n <  60)->count()],
+                ['rango' => 'Reprobado',     'min' => 0,  'max' => 59,  'count' => $todasLasNotas->filter(fn ($n) => $n < 60)->count()],
                 ['rango' => 'Suficiente',    'min' => 60, 'max' => 69,  'count' => $todasLasNotas->filter(fn ($n) => $n >= 60 && $n < 70)->count()],
                 ['rango' => 'Bueno',         'min' => 70, 'max' => 79,  'count' => $todasLasNotas->filter(fn ($n) => $n >= 70 && $n < 80)->count()],
                 ['rango' => 'Muy bueno',     'min' => 80, 'max' => 89,  'count' => $todasLasNotas->filter(fn ($n) => $n >= 80 && $n < 90)->count()],
@@ -69,11 +69,12 @@ class DashboardController extends Controller
                     $avg = Nota::where('unidad_id', $u->id)
                         ->whereNotNull('nota')
                         ->avg('nota');
+
                     return [
-                        'nombre'    => $u->nombre,
-                        'orden'     => $u->orden,
-                        'promedio'  => $avg !== null ? round((float) $avg, 1) : null,
-                        'count'     => Nota::where('unidad_id', $u->id)->whereNotNull('nota')->count(),
+                        'nombre' => $u->nombre,
+                        'orden' => $u->orden,
+                        'promedio' => $avg !== null ? round((float) $avg, 1) : null,
+                        'count' => Nota::where('unidad_id', $u->id)->whereNotNull('nota')->count(),
                     ];
                 });
 
@@ -81,7 +82,7 @@ class DashboardController extends Controller
 
             // KPIs globales
             $stats['promedioGeneral'] = $total > 0 ? round($todasLasNotas->avg(), 1) : null;
-            $stats['pctAprobados']    = $total > 0
+            $stats['pctAprobados'] = $total > 0
                 ? (int) round($todasLasNotas->filter(fn ($n) => $n >= 60)->count() / $total * 100)
                 : null;
 
@@ -105,10 +106,10 @@ class DashboardController extends Controller
                 ->limit(6)
                 ->get()
                 ->map(fn ($row) => [
-                    'nombre'         => $row->nombre,
-                    'reprobadas'     => (int) $row->reprobadas,
-                    'total'          => (int) $row->total_notas,
-                    'promedio'       => (float) $row->promedio,
+                    'nombre' => $row->nombre,
+                    'reprobadas' => (int) $row->reprobadas,
+                    'total' => (int) $row->total_notas,
+                    'promedio' => (float) $row->promedio,
                     'pct_reprobadas' => (int) $row->total_notas > 0
                         ? (int) round((int) $row->reprobadas / (int) $row->total_notas * 100)
                         : 0,
@@ -154,10 +155,10 @@ class DashboardController extends Controller
                 ->take(8)
                 ->get(['id', 'name'])
                 ->map(fn (User $u) => [
-                    'id'         => $u->id,
-                    'name'       => $u->name,
+                    'id' => $u->id,
+                    'name' => $u->name,
                     'reprobadas' => (int) $u->notas_reprobadas,
-                    'total'      => (int) $u->total_notas,
+                    'total' => (int) $u->total_notas,
                 ])
                 ->values();
         }
@@ -177,19 +178,19 @@ class DashboardController extends Controller
                         ->pluck('nota')
                         ->map(fn ($n) => (float) $n);
 
-                    $total     = $notasData->count();
-                    $promedio  = $total > 0 ? round($notasData->avg(), 1) : null;
+                    $total = $notasData->count();
+                    $promedio = $total > 0 ? round($notasData->avg(), 1) : null;
                     $aprobados = $notasData->filter(fn ($n) => $n >= 60)->count();
 
                     return [
-                        'id'                => $sec->id,
-                        'nombre'            => $sec->nombre,
-                        'ciclo'             => $sec->ciclo,
-                        'ciclo_escolar'     => $sec->ciclo_escolar,
+                        'id' => $sec->id,
+                        'nombre' => $sec->nombre,
+                        'ciclo' => $sec->ciclo,
+                        'ciclo_escolar' => $sec->ciclo_escolar,
                         'total_estudiantes' => $sec->estudiantes_count,
                         'notas_registradas' => $total,
-                        'promedio'          => $promedio,
-                        'pct_aprobados'     => $total > 0 ? (int) round($aprobados / $total * 100) : null,
+                        'promedio' => $promedio,
+                        'pct_aprobados' => $total > 0 ? (int) round($aprobados / $total * 100) : null,
                     ];
                 })
                 ->values();
@@ -206,13 +207,13 @@ class DashboardController extends Controller
                 ->with(['materias' => fn ($q) => $q->where('materia_seccion.catedratico_id', $user->id)])
                 ->get()
                 ->map(fn (Seccion $s) => [
-                    'id'                => $s->id,
-                    'nombre'            => $s->nombre,
-                    'ciclo'             => $s->ciclo,
-                    'ciclo_escolar'     => $s->ciclo_escolar,
+                    'id' => $s->id,
+                    'nombre' => $s->nombre,
+                    'ciclo' => $s->ciclo,
+                    'ciclo_escolar' => $s->ciclo_escolar,
                     'total_estudiantes' => $s->estudiantes_count,
-                    'materias'          => $s->materias->map(fn ($m) => [
-                        'id'     => $m->id,
+                    'materias' => $s->materias->map(fn ($m) => [
+                        'id' => $m->id,
                         'nombre' => $m->nombre,
                         'codigo' => $m->codigo,
                     ]),
@@ -220,11 +221,11 @@ class DashboardController extends Controller
                 ->values();
 
             // Tendencia de promedio por unidad para sus materias asignadas
-            $seccionIds  = \Illuminate\Support\Facades\DB::table('materia_seccion')
+            $seccionIds = \Illuminate\Support\Facades\DB::table('materia_seccion')
                 ->where('catedratico_id', $user->id)
                 ->pluck('seccion_id')
                 ->unique();
-            $materiaIds  = \Illuminate\Support\Facades\DB::table('materia_seccion')
+            $materiaIds = \Illuminate\Support\Facades\DB::table('materia_seccion')
                 ->where('catedratico_id', $user->id)
                 ->pluck('materia_id')
                 ->unique();
@@ -239,8 +240,9 @@ class DashboardController extends Controller
                         ->whereIn('materia_id', $materiaIds)
                         ->whereNotNull('nota')
                         ->avg('nota');
+
                     return [
-                        'nombre'   => $u->nombre,
+                        'nombre' => $u->nombre,
                         'promedio' => $avg !== null ? round((float) $avg, 1) : null,
                     ];
                 })
@@ -265,14 +267,14 @@ class DashboardController extends Controller
                 ->take(15)
                 ->get()
                 ->map(fn (Activity $a) => [
-                    'id'           => $a->id,
-                    'descripcion'  => $a->description,
-                    'evento'       => $a->event,
+                    'id' => $a->id,
+                    'descripcion' => $a->description,
+                    'evento' => $a->event,
                     'subject_type' => $a->subject_type,
-                    'subject_id'   => $a->subject_id,
-                    'causer'       => $a->causer ? ['id' => $a->causer->id, 'name' => $a->causer->name] : null,
-                    'created_at'   => $a->created_at,
-                    'propiedades'  => $a->properties->only(['attributes', 'old'])->toArray(),
+                    'subject_id' => $a->subject_id,
+                    'causer' => $a->causer ? ['id' => $a->causer->id, 'name' => $a->causer->name] : null,
+                    'created_at' => $a->created_at,
+                    'propiedades' => $a->properties->only(['attributes', 'old'])->toArray(),
                 ]);
         }
 
@@ -280,24 +282,24 @@ class DashboardController extends Controller
         $unidadActual = Unidad::actual();
 
         return Inertia::render('dashboard', [
-            'cicloEscolar'                  => $cicloEscolar,
-            'stats'                         => $stats,
-            'distribucionNotas'             => $distribucionNotas,
-            'topMaterias'                   => $topMaterias,
-            'notasUltimos14Dias'            => $notasUltimos14Dias,
-            'estudiantesEnRiesgo'           => $estudiantesEnRiesgo,
-            'rendimientoSecciones'          => $rendimientoSecciones,
-            'misSecciones'                  => $misSecciones,
-            'notasTendenciaCatedratico'     => $notasTendenciaCatedratico,
-            'misNotas'                      => $misNotas,
-            'actividadReciente'             => $actividadReciente,
-            'unidadActual'                  => $unidadActual ? [
-                'id'            => $unidadActual->id,
-                'nombre'        => $unidadActual->nombre,
-                'orden'         => $unidadActual->orden,
+            'cicloEscolar' => $cicloEscolar,
+            'stats' => $stats,
+            'distribucionNotas' => $distribucionNotas,
+            'topMaterias' => $topMaterias,
+            'notasUltimos14Dias' => $notasUltimos14Dias,
+            'estudiantesEnRiesgo' => $estudiantesEnRiesgo,
+            'rendimientoSecciones' => $rendimientoSecciones,
+            'misSecciones' => $misSecciones,
+            'notasTendenciaCatedratico' => $notasTendenciaCatedratico,
+            'misNotas' => $misNotas,
+            'actividadReciente' => $actividadReciente,
+            'unidadActual' => $unidadActual ? [
+                'id' => $unidadActual->id,
+                'nombre' => $unidadActual->nombre,
+                'orden' => $unidadActual->orden,
                 'ciclo_escolar' => $unidadActual->ciclo_escolar,
-                'fecha_inicio'  => $unidadActual->fecha_inicio?->toDateString(),
-                'fecha_fin'     => $unidadActual->fecha_fin?->toDateString(),
+                'fecha_inicio' => $unidadActual->fecha_inicio?->toDateString(),
+                'fecha_fin' => $unidadActual->fecha_fin?->toDateString(),
             ] : null,
         ]);
     }

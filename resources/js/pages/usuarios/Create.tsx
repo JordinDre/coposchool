@@ -8,7 +8,10 @@ import { Head, useForm } from '@inertiajs/react';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 
-interface Role { id: number; name: string }
+interface Role {
+    id: number;
+    name: string;
+}
 
 interface CreateProps {
     roles: Role[];
@@ -35,7 +38,10 @@ export default function Create({ roles }: CreateProps) {
         if (checked) {
             setData('roles', [...data.roles, roleId]);
         } else {
-            setData('roles', data.roles.filter((id) => id !== roleId));
+            setData(
+                'roles',
+                data.roles.filter((id) => id !== roleId),
+            );
         }
     };
 
@@ -59,7 +65,12 @@ export default function Create({ roles }: CreateProps) {
                                 placeholder="Nombre completo"
                                 className={errors.name ? 'border-red-500' : ''}
                             />
-                            {errors.name && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.name}</p>}
+                            {errors.name && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.name}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Correo *</Label>
@@ -71,7 +82,12 @@ export default function Create({ roles }: CreateProps) {
                                 placeholder="correo@ejemplo.com"
                                 className={errors.email ? 'border-red-500' : ''}
                             />
-                            {errors.email && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.email}</p>}
+                            {errors.email && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="telefono">Teléfono</Label>
@@ -91,7 +107,12 @@ export default function Create({ roles }: CreateProps) {
                                 onChange={(e) => setData('password', e.target.value)}
                                 className={errors.password ? 'border-red-500' : ''}
                             />
-                            {errors.password && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.password}</p>}
+                            {errors.password && (
+                                <p className="flex items-center gap-1 text-sm text-red-500">
+                                    <AlertCircle className="h-3 w-3" />
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password_confirmation">Confirmar Contraseña *</Label>
@@ -106,14 +127,19 @@ export default function Create({ roles }: CreateProps) {
 
                     <div className="space-y-3">
                         <Label>Roles *</Label>
-                        {errors.roles && <p className="flex items-center gap-1 text-sm text-red-500"><AlertCircle className="h-3 w-3" />{errors.roles}</p>}
+                        {errors.roles && (
+                            <p className="flex items-center gap-1 text-sm text-red-500">
+                                <AlertCircle className="h-3 w-3" />
+                                {errors.roles}
+                            </p>
+                        )}
                         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                             {roles.map((role) => (
-                                <label key={role.id} className="flex cursor-pointer items-center gap-2 rounded-md border bg-card p-2 hover:bg-muted/50">
-                                    <Checkbox
-                                        checked={data.roles.includes(role.id)}
-                                        onCheckedChange={(c) => toggleRole(role.id, c as boolean)}
-                                    />
+                                <label
+                                    key={role.id}
+                                    className="flex cursor-pointer items-center gap-2 rounded-md border bg-card p-2 hover:bg-muted/50"
+                                >
+                                    <Checkbox checked={data.roles.includes(role.id)} onCheckedChange={(c) => toggleRole(role.id, c as boolean)} />
                                     <span className="text-sm capitalize">{role.name}</span>
                                 </label>
                             ))}

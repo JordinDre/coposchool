@@ -93,9 +93,6 @@ export default function ImageUploader({
 
         // Remover archivos inválidos inmediatamente
         if (filesToRemove.length > 0) {
-            filesToRemove.forEach((item) => {
-                item.remove();
-            });
             const fileNames = filesToRemove.map((item) => (item.file instanceof File ? item.file.name : '')).join(', ');
             const errorMessage = `Las siguientes imágenes exceden el tamaño máximo de ${maxSizeInMB}MB: ${fileNames}`;
             setSizeError(errorMessage);

@@ -2,13 +2,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCan } from '@/hooks/use-can';
 import AppLayout from '@/layouts/app-layout';
+import { formatDate } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Edit, Mail, Phone, User } from 'lucide-react';
 import React from 'react';
-import { formatDate } from '@/lib/utils';
 
-interface Role { id: number; name: string }
+interface Role {
+    id: number;
+    name: string;
+}
 
 interface ShowProps {
     user: {
@@ -38,7 +41,7 @@ export default function Show({ user }: ShowProps) {
     return (
         <>
             <Head title={user.name} />
-            <div className="p-4 space-y-6">
+            <div className="space-y-6 p-4">
                 <div className="flex items-start justify-between">
                     <div className="space-y-2">
                         <div className="flex items-center gap-2">
@@ -58,13 +61,18 @@ export default function Show({ user }: ShowProps) {
                         )}
                         <div className="flex flex-wrap gap-1 pt-1">
                             {(user.roles || []).map((r) => (
-                                <Badge key={r.id} variant="outline" className="capitalize">{r.name}</Badge>
+                                <Badge key={r.id} variant="outline" className="capitalize">
+                                    {r.name}
+                                </Badge>
                             ))}
                         </div>
                     </div>
                     {can('editar usuarios') && !user.deleted_at && (
                         <Link href={route('usuarios.edit', user.id)}>
-                            <Button variant="outline" size="sm"><Edit className="mr-2 h-4 w-4" />Editar</Button>
+                            <Button variant="outline" size="sm">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                            </Button>
                         </Link>
                     )}
                 </div>

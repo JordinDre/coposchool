@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useCan } from '@/hooks/use-can';
+import { cn } from '@/lib/utils';
 import { Download } from 'lucide-react';
 import { useCallback } from 'react';
 
@@ -15,7 +16,7 @@ interface ExportProps {
     /**
      * Tamaño del botón
      */
-    size?: 'sm' | 'md' | 'lg' | 'icon';
+    size?: 'sm' | 'lg' | 'icon' | 'default';
     /**
      * Clase adicional para el botón
      */
@@ -93,7 +94,7 @@ export default function Export({ routeBase, tableKey, size = 'sm', className = '
     }
 
     return (
-        <Button size={size} color="green" onClick={handleExport} className={className}>
+        <Button size={size} className={cn('bg-green-600 text-white hover:bg-green-700', className)} onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
             Exportar Excel
         </Button>

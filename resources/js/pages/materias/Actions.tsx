@@ -24,19 +24,26 @@ export default function Actions({ id, isDeleted = false, align = 'end' }: Action
             <DropdownMenuContent align={align}>
                 {can('ver materia') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('materias.show', id)}><Eye className="mr-2 h-4 w-4" />Ver</Link>
+                        <Link href={route('materias.show', id)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Ver
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {!isDeleted && can('editar materia') && (
                     <DropdownMenuItem asChild>
-                        <Link href={route('materias.edit', id)}><Edit className="mr-2 h-4 w-4" />Editar</Link>
+                        <Link href={route('materias.edit', id)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                        </Link>
                     </DropdownMenuItem>
                 )}
                 {isDeleted && can('editar materia') && (
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.post(route('materias.restore', id))}>
-                            <RotateCcw className="mr-2 h-4 w-4" />Reactivar
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Reactivar
                         </DropdownMenuItem>
                     </>
                 )}
@@ -47,7 +54,8 @@ export default function Actions({ id, isDeleted = false, align = 'end' }: Action
                             className="text-red-600"
                             onClick={() => confirm('¿Desactivar esta materia?') && router.delete(route('materias.destroy', id))}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-600" />Desactivar
+                            <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                            Desactivar
                         </DropdownMenuItem>
                     </>
                 )}

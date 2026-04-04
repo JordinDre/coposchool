@@ -31,17 +31,24 @@ export default function Filter() {
     return (
         <div className="flex flex-1 gap-2">
             <div className="relative flex-1">
-                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-muted-foreground transition-colors peer-focus:text-foreground" />
                 <Input
                     placeholder="Buscar unidades... (presiona Enter)"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="pl-10"
+                    className="peer pl-10"
                 />
             </div>
             {search && (
-                <Button variant="outline" size="sm" onClick={() => { setSearch(''); applySearch(''); }}>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                        setSearch('');
+                        applySearch('');
+                    }}
+                >
                     <X className="h-4 w-4" />
                 </Button>
             )}

@@ -23,11 +23,11 @@ return new class extends Migration
             Permission::firstOrCreate(['name' => $p, 'guard_name' => 'web']);
         }
 
-        $rolAdmin = Role::where('name', 'Super Admin')->first();
+        $rolAdmin = Role::where('name', 'super-admin')->first();
         if ($rolAdmin) {
             $rolAdmin->givePermissionTo($permissions);
         }
-        
+
         $rolCatedratico = Role::where('name', 'catedratico')->first();
         if ($rolCatedratico) {
             $rolCatedratico->givePermissionTo($permissions);

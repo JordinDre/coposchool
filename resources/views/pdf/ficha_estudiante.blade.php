@@ -2,181 +2,382 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ficha Académica — {{ $estudiante->name }}</title>
+    <title>Ficha de Calificaciones</title>
     <style>
-        @page { margin: 2.5cm 2.8cm; }
+        @page {
+            size: letter portrait;
+            margin: 1.5cm 1.8cm;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #111827; background: #fff; line-height: 1.5; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            color: #111;
+            background: #fff;
+            line-height: 1.4;
+        }
 
-        /* ── Letterhead ── */
-        .lh           { display: table; width: 100%; border-bottom: 2px solid #111827; padding-bottom: 14px; margin-bottom: 28px; }
-        .lh-left      { display: table-cell; vertical-align: bottom; }
-        .lh-school    { font-size: 17px; font-weight: bold; color: #111827; letter-spacing: -0.3px; }
-        .lh-subtitle  { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #6b7280; margin-top: 4px; }
-        .lh-right     { display: table-cell; width: 140px; text-align: right; vertical-align: bottom; }
-        .lh-date-lbl  { font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af; }
-        .lh-date      { font-size: 10px; color: #374151; margin-top: 3px; }
+        /* Header */
+        .hdr { width: 100%; border-collapse: collapse; }
+        .hdr td { padding: 0; vertical-align: middle; }
+        .hdr-logo { width: 90px; text-align: center; }
+        .hdr-logo img { max-width: 82px; max-height: 82px; }
+        .hdr-center { text-align: center; padding: 0 10px; }
+        .school-name {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+        .school-sub {
+            font-size: 9px;
+            color: #555;
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+        .school-detail { font-size: 8.5px; color: #666; margin-top: 2px; }
 
-        /* ── Student info block ── */
-        .student-block      { margin-bottom: 28px; }
-        .block-title        { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #9ca3af; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 14px; }
-        .info-table         { display: table; width: 100%; }
-        .info-row           { display: table; width: 100%; margin-bottom: 8px; }
-        .info-key           { display: table-cell; width: 90px; font-size: 10px; color: #9ca3af; vertical-align: top; }
-        .info-val           { display: table-cell; font-size: 11px; color: #111827; vertical-align: top; }
-        .info-val.name      { font-size: 13px; font-weight: bold; }
-        .badge-inactive     { font-size: 8.5px; color: #dc2626; font-weight: normal; margin-left: 6px; }
+        /* Dividers */
+        .rule-thick { width: 100%; border-top: 2.5px solid #111; margin: 7px 0 3px; }
+        .rule-thin  { width: 100%; border-top: 1px solid #111; margin: 3px 0 6px; }
 
-        /* ── Grades section ── */
-        .grades-title       { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #9ca3af; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 14px; }
+        /* Title */
+        .doc-title {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 6px 0 2px;
+        }
+        .doc-year {
+            text-align: center;
+            font-size: 10.5px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
 
-        /* ── Grades table ── */
-        .tbl                { width: 100%; border-collapse: collapse; }
-        .tbl thead th       { background: #111827; color: #f9fafb; padding: 9px 11px; font-size: 9px; font-weight: bold; text-align: center; letter-spacing: 0.04em; }
-        .tbl thead th.mat   { text-align: left; }
-        .tbl thead th.prom  { background: #030712; }
-        .tbl tbody tr:nth-child(even) td { background: #f9fafb; }
-        .tbl tbody td       { padding: 9px 11px; font-size: 10.5px; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
-        .tbl tbody td.nota  { text-align: center; font-family: 'Courier New', monospace; font-weight: bold; font-size: 11px; }
-        .tbl tbody td.prom  { text-align: center; font-family: 'Courier New', monospace; font-weight: bold; font-size: 11.5px; background: #f3f4f6; }
-        .tbl tbody tr:nth-child(even) td.prom { background: #e9eaec; }
-        .nota-pass          { color: #111827; }
-        .nota-mid           { color: #b45309; }
-        .nota-fail          { color: #dc2626; }
-        .nota-empty         { color: #d1d5db; font-weight: normal; }
-        .code               { font-size: 8.5px; color: #9ca3af; margin-right: 5px; }
+        /* Info rows */
+        .info-tbl { width: 100%; border-collapse: separate; border-spacing: 0 5px; margin-bottom: 6px; }
+        .info-lbl {
+            width: 140px;
+            font-weight: bold;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding-right: 12px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        .info-val {
+            background: #f4f4f4;
+            border: 1.5px solid #999;
+            padding: 5px 14px;
+            font-weight: bold;
+            font-size: 11.5px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
 
-        /* ── Footer ── */
-        .footer             { display: table; width: 100%; margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
-        .sig-cell           { display: table-cell; width: 50%; vertical-align: bottom; }
-        .sig-line           { border-top: 1px solid #9ca3af; width: 170px; padding-top: 5px; font-size: 8.5px; color: #9ca3af; }
-        .meta-cell          { display: table-cell; text-align: right; vertical-align: bottom; }
-        .meta-text          { font-size: 8.5px; color: #d1d5db; line-height: 1.6; }
+        /* Grades table */
+        .grd { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+        .grd th {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #1a1a1a;
+            padding: 5px 4px;
+            font-size: 8.5px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .grd th.th-left { text-align: left; padding-left: 8px; }
+        .grd td {
+            border: 1px solid #ccc;
+            padding: 3px 5px;
+            height: 19px;
+            vertical-align: middle;
+            font-size: 9.5px;
+        }
+        .grd tr:nth-child(even) td { background: #f6f6f6; }
+        .grd tr.row-avg td {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #1a1a1a;
+            font-weight: bold;
+        }
+        .td-no  { width: 28px; text-align: center; color: #777; font-size: 8.5px; }
+        .td-area { text-align: left; padding-left: 8px; font-weight: bold; }
+        .td-nota { text-align: center; font-weight: bold; }
+        .pass { color: #14532d; }
+        .warn { color: #78350f; }
+        .fail { color: #7f1d1d; }
+        .empty { color: #bbb; font-weight: normal; }
 
-        .empty-msg          { text-align: center; color: #9ca3af; font-size: 10px; padding: 30px 0; }
+        /* Teacher box */
+        .teacher-tbl { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .teacher-lbl {
+            font-size: 8.5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding-right: 8px;
+            white-space: nowrap;
+            vertical-align: middle;
+            color: #444;
+        }
+        .teacher-box {
+            border: 1px solid #aaa;
+            height: 36px;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        /* Legal */
+        .legal {
+            font-size: 8px;
+            color: #444;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 16px;
+        }
+
+        /* Signatures */
+        .sig-tbl { width: 100%; border-collapse: collapse; }
+        .sig-cell { width: 33.33%; text-align: center; vertical-align: bottom; padding: 0 6px; }
+        .sig-role {
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        .sig-line { border-top: 1px solid #111; width: 90%; margin: 0 auto 4px; }
+        .sig-name { font-size: 8.5px; font-weight: bold; color: #111; }
+        .seal-img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #111; margin: 0 auto 4px; display: block; }
+        .seal-circle {
+            width: 64px;
+            height: 64px;
+            border: 2px solid #111;
+            border-radius: 50%;
+            margin: 0 auto 4px;
+            text-align: center;
+            font-size: 7px;
+            font-weight: bold;
+            padding-top: 22px;
+            line-height: 1.4;
+        }
+
+        /* Slogan */
+        .slogan {
+            text-align: center;
+            font-style: italic;
+            font-size: 9.5px;
+            color: #444;
+            margin-top: 14px;
+        }
     </style>
 </head>
 <body>
+
 @php
-    $tenant   = tenancy()->tenant;
-    $colegio  = $tenant->company_name ?? 'CopoSchool';
-    $hoy      = now()->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
+    use Illuminate\Support\Str;
 
-    $lookup = [];
-    foreach ($notas as $n) {
-        $lookup[$n->materia_id][$n->unidad_id] = $n->nota;
-    }
+    $config     = $configuracion;
+    $nombreFull = trim(($config->nombre_completo ?? '') . ' ' . ($config->abreviatura ?? ''));
+    $ciclo      = $config->ciclo_actual ?? date('Y');
 
+    // Materias deduplicadas de todas las secciones
     $materiasMap = [];
     foreach ($estudiante->secciones as $sec) {
         foreach ($sec->materias as $mat) {
             $materiasMap[$mat->id] = $mat;
         }
     }
-    $materias = array_values($materiasMap);
-    $seccion  = $estudiante->secciones->first();
+    $materiasList = array_values($materiasMap);
+
+    // Notas: [materia_id][unidad_id] => nota
+    $lookup = [];
+    foreach ($notas as $n) {
+        $lookup[$n->materia_id][$n->unidad_id] = $n->nota;
+    }
+
+    // Columnas ordenadas
+    $cols  = $unidades->sortBy('orden')->values();
+    $roman = ['I','II','III','IV','V','VI','VII','VIII'];
+
+    $seccion = $estudiante->secciones->first();
+    $minRows = max(12, count($materiasList));
+
+    // Totales por bimestre
+    $totals = [];
+    $counts = [];
+    foreach ($cols as $u) { $totals[$u->id] = 0; $counts[$u->id] = 0; }
+    foreach ($materiasList as $m) {
+        foreach ($cols as $u) {
+            $nota = $lookup[$m->id][$u->id] ?? null;
+            if ($nota !== null) { $totals[$u->id] += $nota; $counts[$u->id]++; }
+        }
+    }
+
+    // Logo
+    $logoPath = null;
+    if ($config->logo_url) {
+        $raw = $config->logo_url;
+        $p   = Str::startsWith($raw, 'http') ? $raw : public_path($raw);
+        if (Str::startsWith($raw, 'http') || file_exists($p)) $logoPath = $p;
+    }
 @endphp
 
-{{-- Letterhead --}}
-<div class="lh">
-    <div class="lh-left">
-        <div class="lh-school">{{ $colegio }}</div>
-        <div class="lh-subtitle">Ficha Académica del Estudiante</div>
-    </div>
-    <div class="lh-right">
-        <div class="lh-date-lbl">Fecha de emisión</div>
-        <div class="lh-date">{{ $hoy }}</div>
-    </div>
-</div>
+{{-- HEADER --}}
+<table class="hdr">
+    <tr>
+        <td class="hdr-logo">
+            @if($logoPath)
+                <img src="{{ $logoPath }}" alt="Logo">
+            @endif
+        </td>
+        <td class="hdr-center">
+            <div class="school-name">{{ $nombreFull ?: ($config->nombre_empresa ?? 'INSTITUCIÓN EDUCATIVA') }}</div>
+            @if($config->descripcion_establecimiento)
+                <div class="school-sub">{{ $config->descripcion_establecimiento }}</div>
+            @endif
+            @if($config->direccion)
+                <div class="school-detail">{{ $config->direccion }}</div>
+            @endif
+            @if($config->telefono)
+                <div class="school-detail">Tel. {{ $config->telefono }}</div>
+            @endif
+            @if($config->descripcion_ciclo)
+                <div class="school-detail">{{ $config->descripcion_ciclo }}</div>
+            @endif
+        </td>
+        <td class="hdr-logo">
+            {{-- slot for second logo --}}
+        </td>
+    </tr>
+</table>
 
-{{-- Student data --}}
-<div class="student-block">
-    <div class="block-title">Datos del Estudiante</div>
-    <div class="info-row">
-        <div class="info-key">Nombre</div>
-        <div class="info-val name">{{ $estudiante->name }}</div>
-    </div>
-    <div class="info-row">
-        <div class="info-key">Correo</div>
-        <div class="info-val">{{ $estudiante->email }}</div>
-    </div>
-    @if($estudiante->telefono)
-    <div class="info-row">
-        <div class="info-key">Teléfono</div>
-        <div class="info-val">{{ $estudiante->telefono }}</div>
-    </div>
-    @endif
-    @if($seccion)
-    <div class="info-row">
-        <div class="info-key">Sección</div>
-        <div class="info-val">{{ $seccion->nombre }} &nbsp;·&nbsp; {{ ucfirst($seccion->ciclo) }} {{ $seccion->ciclo_escolar }}</div>
-    </div>
-    @endif
-</div>
+<table style="width:100%; border-collapse:collapse; margin:7px 0 3px;"><tr><td style="border-top:2.5px solid #111; padding:0;"></td></tr></table>
+<div class="doc-title">Hoja Informativa de Calificaciones</div>
+<div class="doc-year">Ciclo {{ $ciclo }}</div>
+<table style="width:100%; border-collapse:collapse; margin:3px 0 6px;"><tr><td style="border-top:1px solid #111; padding:0;"></td></tr></table>
 
-{{-- Grades --}}
-<div class="grades-title">Calificaciones por Unidad</div>
+{{-- STUDENT INFO --}}
+<table class="info-tbl">
+    <tr>
+        <td class="info-lbl">Alumno(a)</td>
+        <td class="info-val">{{ strtoupper($estudiante->name) }}</td>
+    </tr>
+    <tr><td colspan="2" style="height:5px;"></td></tr>
+    <tr>
+        <td class="info-lbl">Grado y Sección</td>
+        <td class="info-val">{{ strtoupper($seccion ? $seccion->nombre : 'SIN ASIGNAR') }}</td>
+    </tr>
+</table>
 
-@if(count($materias) > 0 && $unidades->count() > 0)
-<table class="tbl">
+{{-- GRADES TABLE --}}
+<table class="grd">
     <thead>
         <tr>
-            <th class="mat" style="width:38%">Materia</th>
-            @foreach($unidades as $u)
-                <th style="width:{{ round(53 / $unidades->count(), 1) }}%">
-                    {{ $u->orden }}. {{ Str::limit($u->nombre, 12) }}
+            <th class="td-no">No.</th>
+            <th class="th-left">Área o Subárea</th>
+            @foreach($cols as $u)
+                <th style="width:{{ max(55, intval(240 / $cols->count())) }}px;">
+                    Notas {{ $roman[$u->orden - 1] ?? $u->orden }} BIM
                 </th>
             @endforeach
-            <th class="prom" style="width:9%">Prom.</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($materias as $m)
-        @php
-            $rowNotas = [];
-            foreach ($unidades as $u) {
-                $rowNotas[] = $lookup[$m->id][$u->id] ?? null;
-            }
-            $filled   = array_filter($rowNotas, fn ($n) => $n !== null);
-            $promedio = count($filled) > 0 ? round(array_sum($filled) / count($filled), 1) : null;
-        @endphp
+        @foreach($materiasList as $idx => $m)
         <tr>
-            <td>
-                @if($m->codigo)<span class="code">{{ $m->codigo }}</span>@endif{{ $m->nombre }}
-            </td>
-            @foreach($rowNotas as $nota)
-            <td class="nota">
-                @if($nota !== null)
-                    <span class="{{ $nota >= 60 ? 'nota-pass' : ($nota >= 50 ? 'nota-mid' : 'nota-fail') }}">{{ number_format($nota, 0) }}</span>
-                @else
-                    <span class="nota-fail">0</span>
-                @endif
-            </td>
+            <td class="td-no">{{ $idx + 1 }}</td>
+            <td class="td-area">{{ $m->nombre }}</td>
+            @foreach($cols as $u)
+                @php $nota = $lookup[$m->id][$u->id] ?? null; @endphp
+                <td class="td-nota">
+                    @if($nota !== null)
+                        @php $n = (float)$nota; @endphp
+                        <span class="{{ $n >= 60 ? 'pass' : ($n >= 50 ? 'warn' : 'fail') }}">
+                            {{ number_format($n, 0) }}
+                        </span>
+                    @else
+                        <span class="empty">—</span>
+                    @endif
+                </td>
             @endforeach
-            <td class="prom">
-                @if($promedio !== null)
-                    <span class="{{ $promedio >= 60 ? 'nota-pass' : ($promedio >= 50 ? 'nota-mid' : 'nota-fail') }}">{{ number_format($promedio, 1) }}</span>
-                @else
-                    <span class="nota-fail">0.0</span>
-                @endif
-            </td>
         </tr>
         @endforeach
+
+        @for($i = count($materiasList) + 1; $i <= $minRows; $i++)
+        <tr>
+            <td class="td-no">{{ $i }}</td>
+            <td class="td-area"></td>
+            @foreach($cols as $u)<td class="td-nota"></td>@endforeach
+        </tr>
+        @endfor
+
+        <tr class="row-avg">
+            <td class="td-no"></td>
+            <td style="text-align:right; padding-right:10px; font-size:8px; letter-spacing:0.5px;">PROMEDIO</td>
+            @foreach($cols as $u)
+                <td class="td-nota">
+                    {{ $counts[$u->id] > 0 ? number_format($totals[$u->id] / $counts[$u->id], 1) : '—' }}
+                </td>
+            @endforeach
+        </tr>
     </tbody>
 </table>
-@else
-    <div class="empty-msg">No hay materias o unidades registradas para este estudiante.</div>
-@endif
 
-{{-- Footer --}}
-<div class="footer">
-    <div class="sig-cell">
-        <div class="sig-line">Firma y sello</div>
-    </div>
-    <div class="meta-cell">
-        <div class="meta-text">{{ $colegio }}<br>Documento generado automáticamente</div>
-    </div>
+{{-- TEACHER / GUIDE --}}
+<table class="teacher-tbl">
+    <tr>
+        <td class="teacher-lbl">Maestro(a) Guía</td>
+        <td class="teacher-box">&nbsp;</td>
+    </tr>
+</table>
+
+{{-- LEGAL --}}
+<div class="legal">
+    De conformidad con el Reglamento General de Evaluación del Ministerio de Educación, las Áreas y Subáreas se aprueban con el punteo mínimo de sesenta (60) puntos.
+    Para los usos legales que al interesado convenga, se extiende la presente en
+    {{ $config->direccion ? explode(',', $config->direccion)[0] : 'la ciudad' }},
+    a los {{ now()->locale('es')->isoFormat('D [de] MMMM [del] YYYY') }}.
 </div>
+
+{{-- SIGNATURES --}}
+<table class="sig-tbl">
+    <tr>
+        <td class="sig-cell">
+            <div class="sig-role">Coordinador(a) Académico(a)</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">{{ $config->coordinador_nombre ?? '________________________________' }}</div>
+        </td>
+        <td class="sig-cell">
+            @if($logoPath)
+                <img src="{{ $logoPath }}" alt="Sello" class="seal-img">
+            @else
+                <div class="seal-circle">DIRECCIÓN<br>{{ $config->abreviatura ?? '' }}</div>
+            @endif
+        </td>
+        <td class="sig-cell">
+            <div class="sig-role">Director(a)</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">{{ $config->director_nombre ?? '________________________________' }}</div>
+        </td>
+    </tr>
+</table>
+
+@if($config->eslogan)
+<div class="slogan">{{ $config->eslogan }}</div>
+@endif
 
 </body>
 </html>

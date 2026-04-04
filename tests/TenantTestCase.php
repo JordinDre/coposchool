@@ -38,9 +38,9 @@ abstract class TenantTestCase extends TestCase
         // within this request accesses the same in-memory store.
         config([
             'database.connections.tenant' => [
-                'driver'                  => 'sqlite',
-                'database'                => ':memory:',
-                'prefix'                  => '',
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => '',
                 'foreign_key_constraints' => true,
             ],
         ]);
@@ -52,7 +52,7 @@ abstract class TenantTestCase extends TestCase
         // (avoids CreateDatabase which tries to provision a real MySQL DB)
         $this->tenant = Tenant::withoutEvents(function () {
             return Tenant::create([
-                'id'           => 'test',
+                'id' => 'test',
                 'company_name' => 'Test School',
             ]);
         });
@@ -62,9 +62,9 @@ abstract class TenantTestCase extends TestCase
 
         // Migrate tenant tables onto the in-memory tenant connection
         $this->artisan('migrate', [
-            '--path'     => 'database/migrations/tenant',
+            '--path' => 'database/migrations/tenant',
             '--database' => 'tenant',
-            '--force'    => true,
+            '--force' => true,
         ]);
     }
 

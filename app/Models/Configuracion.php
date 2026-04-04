@@ -18,10 +18,16 @@ class Configuracion extends Model
             ->setDescriptionForEvent(fn (string $eventName) => "Configuración {$eventName}")
             ->dontSubmitEmptyLogs();
     }
+
     protected $table = 'configuraciones';
 
     protected $fillable = [
         'nombre_empresa',
+        'nombre_completo',
+        'abreviatura',
+        'ciclo_actual',
+        'descripcion_establecimiento',
+        'descripcion_ciclo',
         'logo_url',
         'favicon_url',
         'email',
@@ -30,6 +36,9 @@ class Configuracion extends Model
         'codigo_establecimiento',
         'nivel_educativo',
         'director_nombre',
+        'sub_director_nombre',
+        'coordinador_nombre',
+        'eslogan',
         'firma_cargo',
         'encabezado_impresion',
         'pie_impresion',

@@ -92,13 +92,20 @@ export function useHasAllPermissions(permissions: string[]) {
 }
 
 /**
- * Hook para obtener todos los roles del usuario
+ * Hook para obtener todos los roles del usuario y verificarlos
  */
 export function useRoles() {
     const page = usePage<PageProps>();
 
     return useMemo(() => {
-        return page.props.auth.roles || [];
+        const roles = page.props.auth.roles || [];
+        const hasRole = (required: string | string[]) =>
+            Array.isArray(required) ? required.some((r) => roles.includes(r.toLowerCase())) : roles.includes(required.toLowerCase());
+
+        return {
+            roles,
+            hasRole,
+        };
     }, [page.props.auth.roles]);
 }
 
@@ -106,31 +113,31 @@ export function useRoles() {
  * Hook para verificar si el usuario tiene un rol específico
  */
 export function useHasRole(role: string) {
-    const roles = useRoles();
+    const { roles } = useRoles();
 
     return useMemo(() => {
-        return roles.includes(role);
+        return roles.includes(role.toLowerCase());
     }, [roles, role]);
 }
 
 /**
  * Hook para verificar si el usuario tiene alguno de los roles especificados
  */
-export function useHasAnyRole(roles: string[]) {
-    const userRoles = useRoles();
+export function useHasAnyRole(rolesRequired: string[]) {
+    const { roles } = useRoles();
 
     return useMemo(() => {
-        return roles.some((role) => userRoles.includes(role));
-    }, [userRoles, roles]);
+        return rolesRequired.some((role) => roles.includes(role.toLowerCase()));
+    }, [roles, rolesRequired]);
 }
 
 /**
  * Hook para verificar si el usuario tiene todos los roles especificados
  */
-export function useHasAllRoles(roles: string[]) {
-    const userRoles = useRoles();
+export function useHasAllRoles(rolesRequired: string[]) {
+    const { roles } = useRoles();
 
     return useMemo(() => {
-        return roles.every((role) => userRoles.includes(role));
-    }, [userRoles, roles]);
+        return rolesRequired.every((role) => roles.includes(role.toLowerCase()));
+    }, [roles, rolesRequired]);
 }

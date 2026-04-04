@@ -45,11 +45,11 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
             setSearch(value);
             if (debounceRef.current) clearTimeout(debounceRef.current);
             debounceRef.current = setTimeout(() => {
-                router.get(
-                    `/catedraticos/${catedratico.id}/asignaciones`,
-                    value ? { search: value } : {},
-                    { preserveState: true, preserveScroll: true, replace: true },
-                );
+                router.get(`/catedraticos/${catedratico.id}/asignaciones`, value ? { search: value } : {}, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true,
+                });
             }, 350);
         },
         [catedratico.id],
@@ -91,33 +91,28 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                            <User className="text-primary h-5 w-5" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                            <User className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold">{catedratico.name}</h2>
-                            <p className="text-muted-foreground text-sm">Asignaciones de secciones y materias</p>
+                            <p className="text-sm text-muted-foreground">Asignaciones de secciones y materias</p>
                         </div>
                     </div>
-                    <div className="bg-muted/40 flex items-center gap-2 rounded-lg border px-3 py-1.5">
+                    <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-1.5">
                         <span className="text-sm font-medium tabular-nums">{totalAsignadas} asignaciones</span>
                     </div>
                 </div>
 
                 {/* Buscador */}
                 <div className="relative">
-                    <Search className="text-muted-foreground absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2" />
-                    <Input
-                        value={search}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        placeholder="Buscar por materia..."
-                        className="pl-8"
-                    />
+                    <Search className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input value={search} onChange={(e) => handleSearch(e.target.value)} placeholder="Buscar por materia..." className="pl-8" />
                     {search && (
                         <button
                             type="button"
                             onClick={() => handleSearch('')}
-                            className="text-muted-foreground hover:text-foreground absolute right-2.5 top-1/2 -translate-y-1/2"
+                            className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -126,7 +121,7 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
 
                 {/* Secciones */}
                 {secciones.length === 0 ? (
-                    <div className="text-muted-foreground rounded-lg border border-dashed py-12 text-center text-sm">
+                    <div className="rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
                         {search ? 'No se encontraron materias' : 'No hay secciones con materias configuradas'}
                     </div>
                 ) : (
@@ -136,15 +131,13 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
                             return (
                                 <div key={seccion.id} className="overflow-hidden rounded-lg border">
                                     {/* Encabezado de sección */}
-                                    <div className="bg-muted/40 flex items-center justify-between px-4 py-2.5">
+                                    <div className="flex items-center justify-between bg-muted/40 px-4 py-2.5">
                                         <div>
                                             <span className="text-sm font-medium">{seccion.nombre}</span>
-                                            <span className="text-muted-foreground ml-2 text-xs capitalize">
-                                                {seccion.ciclo} · {seccion.ciclo_escolar}
-                                            </span>
+                                            <span className="ml-2 text-xs text-muted-foreground capitalize">{seccion.ciclo}</span>
                                         </div>
                                         {asignadasCount > 0 && (
-                                            <span className="text-primary text-xs font-medium">
+                                            <span className="text-xs font-medium text-primary">
                                                 {asignadasCount}/{seccion.materias.length}
                                             </span>
                                         )}
@@ -185,7 +178,7 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
 
                                                     {/* Código badge */}
                                                     {materia.codigo && (
-                                                        <span className="bg-muted text-muted-foreground flex h-8 w-12 shrink-0 items-center justify-center rounded font-mono text-xs font-semibold">
+                                                        <span className="flex h-8 w-12 shrink-0 items-center justify-center rounded bg-muted font-mono text-xs font-semibold text-muted-foreground">
                                                             {materia.codigo}
                                                         </span>
                                                     )}
@@ -195,7 +188,7 @@ export default function Asignaciones({ catedratico, secciones, search: initialSe
 
                                                     {/* Badge asignado */}
                                                     {materia.asignada && (
-                                                        <span className="bg-primary/10 text-primary shrink-0 rounded-full px-2 py-0.5 text-xs font-medium">
+                                                        <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                                             Asignado
                                                         </span>
                                                     )}

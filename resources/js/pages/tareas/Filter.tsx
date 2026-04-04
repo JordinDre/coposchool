@@ -56,7 +56,7 @@ export default function Filter({ secciones, materias, unidades, filtros }: Filte
                     <SelectItem value="all">Todas las secciones</SelectItem>
                     {secciones.map((s) => (
                         <SelectItem key={s.id} value={String(s.id)}>
-                            {s.nombre} · {s.ciclo_escolar}
+                            {s.nombre}
                         </SelectItem>
                     ))}
                 </SelectContent>
@@ -70,7 +70,8 @@ export default function Filter({ secciones, materias, unidades, filtros }: Filte
                     <SelectItem value="all">Todas las materias</SelectItem>
                     {materias.map((m) => (
                         <SelectItem key={m.id} value={String(m.id)}>
-                            {m.codigo ? `${m.codigo} - ` : ''}{m.nombre}
+                            {m.codigo ? `${m.codigo} - ` : ''}
+                            {m.nombre}
                         </SelectItem>
                     ))}
                 </SelectContent>

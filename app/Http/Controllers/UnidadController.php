@@ -47,10 +47,10 @@ class UnidadController extends Controller
 
         return Inertia::render('unidades/Index', [
             'unidades' => $unidades,
-            'filters'  => [
-                'search'         => $filters['search'] ?? '',
-                'ciclo_escolar'  => $filters['ciclo_escolar'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'ciclo_escolar' => $filters['ciclo_escolar'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -67,7 +67,12 @@ class UnidadController extends Controller
     {
         $this->authorize('create', Unidad::class);
 
-        Unidad::create($request->validated());
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? date('Y');
+        }
+
+        Unidad::create($data);
 
         return redirect()->route('unidades.index')->with('success', 'Unidad creada exitosamente.');
     }
@@ -92,7 +97,13 @@ class UnidadController extends Controller
         $this->authorize('update', $unidad);
 
         return Inertia::render('unidades/Edit', [
-            'unidad' => $unidad,
+            'unidad' => [
+                'id' => $unidad->id,
+                'nombre' => $unidad->nombre,
+                'descripcion' => $unidad->descripcion,
+                'fecha_inicio' => $unidad->fecha_inicio?->format('Y-m-d'),
+                'fecha_fin' => $unidad->fecha_fin?->format('Y-m-d'),
+            ],
         ]);
     }
 
@@ -100,7 +111,12 @@ class UnidadController extends Controller
     {
         $this->authorize('update', $unidad);
 
-        $unidad->update($request->validated());
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? $unidad->ciclo_escolar;
+        }
+
+        $unidad->update($data);
 
         return redirect()->route('unidades.index')->with('success', 'Unidad actualizada exitosamente.');
     }

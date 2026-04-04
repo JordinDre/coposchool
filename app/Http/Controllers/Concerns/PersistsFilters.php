@@ -74,8 +74,8 @@ trait PersistsFilters
                 $remainingFilters,
                 request()->only(['page', 'sortBy', 'sortDir', 'perPage', 'columnas'])
             );
-            $redirect  = redirect()->route($routeName, $redirectParams);
-            $filters   = $remainingFilters;
+            $redirect = redirect()->route($routeName, $redirectParams);
+            $filters = $remainingFilters;
         } elseif ($hasAnyFilter) {
             // Si hay filtros en la URL, usarlos directamente
             $filters = request()->only($filterKeys);

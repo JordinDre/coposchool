@@ -8,9 +8,7 @@ use App\Http\Requests\Seccion\UpdateSeccionRequest;
 use App\Models\Seccion;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 
 class SeccionController extends Controller
 {
@@ -55,11 +53,11 @@ class SeccionController extends Controller
 
         return Inertia::render('secciones/Index', [
             'secciones' => $secciones,
-            'filters'   => [
-                'search'         => $filters['search'] ?? '',
-                'ciclo'          => $filters['ciclo'] ?? '',
-                'ciclo_escolar'  => $filters['ciclo_escolar'] ?? '',
-                'sort_by'        => $persisted['sortBy'],
+            'filters' => [
+                'search' => $filters['search'] ?? '',
+                'ciclo' => $filters['ciclo'] ?? '',
+                'ciclo_escolar' => $filters['ciclo_escolar'] ?? '',
+                'sort_by' => $persisted['sortBy'],
                 'sort_direction' => $persisted['sortDir'],
             ],
         ]);
@@ -76,7 +74,12 @@ class SeccionController extends Controller
     {
         $this->authorize('create', Seccion::class);
 
-        Seccion::create($request->validated());
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? date('Y');
+        }
+
+        Seccion::create($data);
 
         return redirect()->route('secciones.index')->with('success', 'Sección creada exitosamente.');
     }
@@ -100,16 +103,16 @@ class SeccionController extends Controller
                 : null;
 
             return [
-                'id'          => $materia->id,
-                'nombre'      => $materia->nombre,
-                'codigo'      => $materia->codigo,
+                'id' => $materia->id,
+                'nombre' => $materia->nombre,
+                'codigo' => $materia->codigo,
                 'catedratico' => $catedratico,
             ];
         });
 
         return Inertia::render('secciones/Show', [
-            'seccion'   => $seccion,
-            'materias'  => $materias,
+            'seccion' => $seccion,
+            'materias' => $materias,
             'estudiantes' => $seccion->estudiantes,
         ]);
     }
@@ -124,11 +127,11 @@ class SeccionController extends Controller
 
         return Inertia::render('secciones/Edit', [
             'seccion' => [
-                'id'            => $seccion->id,
-                'nombre'        => $seccion->nombre,
-                'ciclo'         => $seccion->ciclo,
+                'id' => $seccion->id,
+                'nombre' => $seccion->nombre,
+                'ciclo' => $seccion->ciclo,
                 'ciclo_escolar' => $seccion->ciclo_escolar,
-                'descripcion'   => $seccion->descripcion ?? '',
+                'descripcion' => $seccion->descripcion ?? '',
             ],
         ]);
     }
@@ -137,7 +140,12 @@ class SeccionController extends Controller
     {
         $this->authorize('update', $seccion);
 
-        $seccion->update($request->only(['nombre', 'ciclo', 'ciclo_escolar', 'descripcion']));
+        $data = $request->validated();
+        if (empty($data['ciclo_escolar'])) {
+            $data['ciclo_escolar'] = \App\Models\Configuracion::cached()->ciclo_actual ?? $seccion->ciclo_escolar;
+        }
+
+        $seccion->update($data);
 
         return redirect()->route('secciones.index')->with('success', 'Sección actualizada exitosamente.');
     }
@@ -160,38 +168,40 @@ class SeccionController extends Controller
         abort_if($seccion->trashed(), 404);
         $this->authorize('update', $seccion);
 
-        $search   = $request->get('search', '');
+        $search = $request->get('search', '');
         $inscritos = $seccion->estudiantes()->pluck('users.id')->toArray();
 
         $query = User::select('id', 'name', 'email')
             ->whereHas('roles', fn ($q) => $q->where('name', 'estudiante'))
             ->whereNull('deleted_at')
+            ->with(['secciones' => fn ($q) => $q->select('secciones.id', 'secciones.nombre')->limit(1)])
             ->orderBy('name');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
         $estudiantes = $query->get()->map(fn ($u) => [
-            'id'       => $u->id,
-            'name'     => $u->name,
-            'email'    => $u->email,
+            'id' => $u->id,
+            'name' => $u->name,
+            'email' => $u->email,
             'inscrito' => in_array($u->id, $inscritos),
+            'seccion_actual' => $u->secciones->first()?->nombre,
         ]);
 
         return Inertia::render('secciones/Inscribir', [
             'seccion' => [
-                'id'            => $seccion->id,
-                'nombre'        => $seccion->nombre,
-                'ciclo'         => $seccion->ciclo,
+                'id' => $seccion->id,
+                'nombre' => $seccion->nombre,
+                'ciclo' => $seccion->ciclo,
                 'ciclo_escolar' => $seccion->ciclo_escolar,
             ],
-            'estudiantes'    => $estudiantes,
+            'estudiantes' => $estudiantes,
             'totalInscritos' => count($inscritos),
-            'search'         => $search,
+            'search' => $search,
         ]);
     }
 
@@ -201,12 +211,16 @@ class SeccionController extends Controller
 
         $request->validate(['estudiante_id' => ['required', 'integer', 'exists:users,id']]);
 
-        $inscrito = $seccion->estudiantes()->where('users.id', $request->estudiante_id)->exists();
+        $estudianteId = $request->estudiante_id;
+        $inscrito = $seccion->estudiantes()->where('users.id', $estudianteId)->exists();
 
         if ($inscrito) {
-            $seccion->estudiantes()->detach($request->estudiante_id);
+            $seccion->estudiantes()->detach($estudianteId);
         } else {
-            $seccion->estudiantes()->attach($request->estudiante_id);
+            // Remover de cualquier otra sección antes de inscribir
+            $estudiante = \App\Models\User::findOrFail($estudianteId);
+            $estudiante->secciones()->detach();
+            $seccion->estudiantes()->attach($estudianteId);
         }
 
         return back();
@@ -226,7 +240,7 @@ class SeccionController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nombre', 'like', "%{$search}%")
-                  ->orWhere('codigo', 'like', "%{$search}%");
+                    ->orWhere('codigo', 'like', "%{$search}%");
             });
         }
 
@@ -235,28 +249,22 @@ class SeccionController extends Controller
             ->mapWithKeys(fn ($m) => [$m->id => $m->pivot->catedratico_id]);
 
         $materias = $query->get()->map(fn ($m) => [
-            'id'             => $m->id,
-            'nombre'         => $m->nombre,
-            'codigo'         => $m->codigo,
-            'asignada'       => $asignadasMap->has($m->id),
+            'id' => $m->id,
+            'nombre' => $m->nombre,
+            'codigo' => $m->codigo,
+            'asignada' => $asignadasMap->has($m->id),
             'catedratico_id' => $asignadasMap->get($m->id),
         ]);
 
-        $catedraticos = User::select('id', 'name', 'email')
-            ->whereHas('roles', fn ($q) => $q->where('name', 'catedratico'))
-            ->orderBy('name')
-            ->get();
-
         return Inertia::render('secciones/AsignarMaterias', [
             'seccion' => [
-                'id'            => $seccion->id,
-                'nombre'        => $seccion->nombre,
-                'ciclo'         => $seccion->ciclo,
+                'id' => $seccion->id,
+                'nombre' => $seccion->nombre,
+                'ciclo' => $seccion->ciclo,
                 'ciclo_escolar' => $seccion->ciclo_escolar,
             ],
-            'materias'    => $materias,
-            'catedraticos' => $catedraticos,
-            'search'      => $search,
+            'materias' => $materias,
+            'search' => $search,
         ]);
     }
 
@@ -265,7 +273,7 @@ class SeccionController extends Controller
         $this->authorize('update', $seccion);
 
         $request->validate([
-            'materia_id'     => ['required', 'integer', 'exists:materias,id'],
+            'materia_id' => ['required', 'integer', 'exists:materias,id'],
             'catedratico_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 
@@ -287,9 +295,22 @@ class SeccionController extends Controller
         $this->authorize('update', $seccion);
 
         $request->validate([
-            'materia_id'     => ['required', 'integer', 'exists:materias,id'],
+            'materia_id' => ['required', 'integer', 'exists:materias,id'],
             'catedratico_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
+
+        // Verificar que el catedrático a asignar no esté ya asignado a esta misma
+        // sección+materia por otro catedrático diferente
+        if ($request->catedratico_id) {
+            $existente = $seccion->materias()
+                ->where('materias.id', $request->materia_id)
+                ->first();
+
+            if ($existente && $existente->pivot->catedratico_id &&
+                $existente->pivot->catedratico_id !== (int) $request->catedratico_id) {
+                return back()->withErrors(['catedratico_id' => 'Esta materia ya tiene un catedrático asignado en esta sección.']);
+            }
+        }
 
         $seccion->materias()->updateExistingPivot($request->materia_id, [
             'catedratico_id' => $request->catedratico_id,
@@ -303,7 +324,7 @@ class SeccionController extends Controller
         $this->authorize('update', $seccion);
 
         $request->validate([
-            'estudiantes'   => ['present', 'array'],
+            'estudiantes' => ['present', 'array'],
             'estudiantes.*' => ['integer', 'exists:users,id'],
         ]);
 

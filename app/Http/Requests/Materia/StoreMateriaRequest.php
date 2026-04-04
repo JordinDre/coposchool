@@ -14,8 +14,8 @@ class StoreMateriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre'      => ['required', 'string', 'max:100'],
-            'codigo'      => ['nullable', 'string', 'max:20', 'unique:materias,codigo'],
+            'nombre' => ['required', 'string', 'max:100'],
+            'codigo' => ['nullable', 'string', 'max:20', 'unique:materias,codigo'],
             'descripcion' => ['nullable', 'string', 'max:500'],
         ];
     }
@@ -24,7 +24,7 @@ class StoreMateriaRequest extends FormRequest
     {
         return [
             'nombre.required' => 'El nombre de la materia es obligatorio.',
-            'codigo.unique'   => 'Este código ya está en uso.',
+            'codigo.unique' => 'Este código ya está en uso.',
         ];
     }
 }
